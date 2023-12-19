@@ -1,0 +1,10 @@
+*.DS_Store
+.DS_Store
+jmai_app/.DS_Store
+jmai_db/.DS_Store
+jmai_api/.DS_Store
+*.vsidx
+.vs
+*.vs
+.vscode
+*.vscode

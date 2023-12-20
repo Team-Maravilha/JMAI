@@ -11,8 +11,8 @@
         <!--begin::Logo-->
         <div class="d-flex align-items-center flex-grow-1 flex-lg-grow-0 me-5 me-lg-0">
             <a href="index.html">
-                <img alt="Logo" src="assets/media/uploads/logos/logo-white.svg" class="d-none d-sm-block mw-175px" />
-                <img alt="Logo" src="assets/media/uploads/logos/logo-white.svg" class="d-block d-sm-none mw-75px" />
+                <img alt="Logo" src="<?php echo $link_home?>assets/media/uploads/logos/logo-white.svg" class="d-none d-sm-block mw-175px" />
+                <img alt="Logo" src="<?php echo $link_home?>assets/media/uploads/logos/logo-white.svg" class="d-block d-sm-none mw-75px" />
             </a>
         </div>
         <!--end::Logo-->
@@ -2857,7 +2857,7 @@
                         <div class="menu-item px-3">
                             <div class="menu-content d-flex align-items-center px-3">
                                 <div class="symbol symbol-50px me-5">
-                                    <img alt="Logo" src="assets/media/avatars/300-3.jpg" />
+                                    <img alt="Logo" src="<?php echo $link_home?>assets/media/avatars/300-3.jpg" />
                                 </div>
                                 <div class="d-flex flex-column">
                                     <div class="fw-bold d-flex align-items-center fs-5">Max Smith

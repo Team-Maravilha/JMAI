@@ -3,6 +3,7 @@
 jmai_app/.DS_Store
 jmai_db/.DS_Store
 jmai_api/.DS_Store
+jmai_api/node_modules
 *.vsidx
 .vs
 *.vs

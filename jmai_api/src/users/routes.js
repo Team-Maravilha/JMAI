@@ -4,6 +4,6 @@ const authMiddleware = require('../../authMiddleware');
 
 const router = Router();
 
-router.get('/user', authMiddleware, controller.NameUser);
+router.get('/listar/tabela', authMiddleware, controller.ListarUtilizadoresDataTable);
 
 module.exports = router;

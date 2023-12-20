@@ -1,4 +1,5 @@
 const jwt = require("jsonwebtoken");
+const pool = require("../../db");
 // Definir as tags da Documentação
 /**
  * @swagger
@@ -16,30 +17,35 @@ const jwt = require("jsonwebtoken");
  *      responses:
  *          '200':
  *              description: Sucesso
+ *          '400':
+ *              description: Erro
  */
-const user = {
-    id: "1",
-    username: "João Correia",
-    cc_num: "12345678",
-};
 
-const Login = ("/login",
-    (req, res) => {
+const LoginUtilizador = ((req, res) => {
+    const { email, palavra_passe } = req.body;
+    const user = req.body;
+
+    pool.query("SELECT * FROM autenticar_utilizador($1, $2)", [email, palavra_passe], (error, results) => {
+        if (error) {
+            res.status(400).json({
+                status: "error",
+                data: null,
+                messages: [error.message],
+            });
+            return;
+        }
         const token = jwt.sign(user, process.env.SECRET, { expiresIn: "1w" });
-
-        res.json({
-            auth: true,
-            token: token,
+        results.rows[0].token = token;
+        res.status(201).json({
+            status: "success",
+            data: results.rows[0],
+            messages: ["Credenciais Válidas!"],
         });
-    });
+    })
+});
 
-const Logout =
-    ("/logout",
-        (req, res) => {
-            const token = req.headers.authorization;
-        });
+
 
 module.exports = {
-    Login,
-    Logout
+    LoginUtilizador,
 };

@@ -14,7 +14,7 @@ const swaggerOptions = {
   swaggerDefinition: {
     openapi: "3.0.0",
     info: {
-      title: "SNS | JMAI",
+      title: "EIM | JMAI",
         description: "Juntas Médicas para Avaliação de Incapacidade <p> Desenvolvido por: João Correia, Rui Cruz e Thays Souza",
       contact: {
         name: "João Correia | Rui Cruz | Thays Souza",
@@ -36,7 +36,7 @@ app.get("/", (req, res) => {
   res.send("Bem-Vindo(a) à API do SNS | JMAI !");
 });
 
-app.use("/api/users", usersRoutes);
-app.use("/api/auth", authRoutes);
+app.use("/api/utilizadores", usersRoutes);
+app.use("/api/autenticacao", authRoutes);
 
 app.listen(port, () => console.log(`Servidor ativo na porta: ${port}`));

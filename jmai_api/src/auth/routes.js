@@ -3,8 +3,6 @@ const controller = require("./controller");
 
 const router = Router();
 
-router.post("/login", controller.Login);
-
-router.delete("/logout", controller.Logout);
+router.post("/login-utilizador", controller.LoginUtilizador);
 
 module.exports = router;

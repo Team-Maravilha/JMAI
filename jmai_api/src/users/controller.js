@@ -1,3 +1,4 @@
+const pool = require("../../db");
 // Definir as tags da Documentação
 /**
  * @swagger
@@ -5,22 +6,26 @@
  *   name: Utilizadores
  *   description: Gestão de Utilizadores
  */
-/**
- * @swagger
- * /api/users/user:
- *  get:
- *      tags: [Utilizadores]
- *      summary: Ver Nome do Utilizador
- *      description: Retorna o Nome do Utilizador
- *      responses:
- *          '200':
- *              description: Sucesso
- */
 
-const NameUser = ("/user", (req, res) => {
-    res.send("João Correia");
-  });
+const ListarUtilizadoresDataTable = (req, res) => {
+    const cargo = req.get("Cargo");
+    pool.query("SELECT * FROM listar_utilizadores(NULL, NULL, $1)", [cargo], (error, results) => {
+        if (error) {
+            res.status(400).json({
+                recordsTotal: 0,
+                recordsFiltered: 0,
+                data: [],
+            });
+            return;
+        }
+        res.status(200).json({
+            recordsTotal: results.rows.length,
+            recordsFiltered: results.rows.length,
+            data: results.rows,
+        });
+    });
+};
 
 module.exports = {
-  NameUser,
+    ListarUtilizadoresDataTable,
 };

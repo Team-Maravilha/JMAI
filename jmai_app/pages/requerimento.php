@@ -15,11 +15,11 @@
 
                                 <div id="kt_content_container" class="d-flex flex-column-fluid align-items-start  container-xxl ">
                                     <div class="content flex-row-fluid" id="kt_content">
-                                        <div class="card container-xxxl">
+                                        <div class="card container-xxl">
                                             <div class="card-body">
 
                                                 <div class="text-center mb-15">
-                                                    <h3 class="fs-2hx text-gray-900 mb-5">Faça já o seu Requerimento!</h3>
+                                                    <h3 class="fs-2hx text-gray-900 my-6">Faça já o seu Requerimento!</h3>
 
                                                     <div class="fs-5 text-muted fw-semibold">
                                                         Realize o seu pedido de forma devida, para que o <br> seu requerimento de avaliação de incapacidade possa ser avaliado. <br>
@@ -28,7 +28,7 @@
 
 
                                                 <form id="form-requerimento" class="form fv-plugins-bootstrap5 fv-plugins-framework" novalidate="novalidate">
-                                                    <div class="separator separator-content border-dark my-15"><span class="h3">Identificação</span></div>
+                                                    <div class="separator separator-content my-15"><span class="h3">Identificação</span></div>
                                                     <div class="row mb-6">
                                                         <div class="col-12 col-lg-6">
                                                             <label class="col-lg-12 col-form-label required fw-semibold fs-6">Nome Completo</label>
@@ -85,7 +85,7 @@
                                                             <div class="fv-plugins-message-container invalid-feedback"></div>
                                                         </div>
 
-                                                        <div class="separator separator-content border-dark my-15"><span class="h3">Naturalidade</span></div>
+                                                        <div class="separator separator-content border-4 my-15"><span class="h3">Naturalidade</span></div>
 
                                                         <div class="col-12 col-lg-4">
                                                             <label class="col-lg-12 col-form-label required fw-semibold fs-6">Data de Nascimento</label>
@@ -123,7 +123,7 @@
                                                             </select>
                                                         </div>
 
-                                                        <div class="separator separator-content my-15 border-5"><span class="h3">Residência</span></div>
+                                                        <div class="separator separator-content my-15"><span class="h3">Residência</span></div>
 
                                                         <div class="col-12 col-lg-6">
                                                             <label class="col-lg-12 col-form-label required fw-semibold fs-6">Rua</label>
@@ -202,13 +202,6 @@
                                                                 <input class="form-check-input" name="tipo_requerimento" type="radio" value="1" id="flexRadioDefault1" />
                                                                 <label class="form-check-label text-dark" for="flexRadioDefault1">
                                                                     Importação de veículo automóvel e outros (Lei nº 22-A/2007 de 29 de junho de 2007).
-                                                                </label>
-                                                            </div>
-
-                                                            <div class="form-check form-check-custom form-check-solid mt-5">
-                                                                <input class="form-check-input" name="tipo_requerimento" type="radio" value="2" id="flexRadioDefault2" />
-                                                                <label class="form-check-label text-dark" for="flexRadioDefault1">
-                                                                    Ambos
                                                                 </label>
                                                             </div>
                                                         </div>

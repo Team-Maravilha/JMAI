@@ -9,3 +9,5 @@ jmai_api/node_modules
 *.vs
 .vscode
 *.vscode
+*.env
+*.ENV

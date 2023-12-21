@@ -1,0 +1,132 @@
+--===========================--
+--==  POST  ==--
+--===========================--
+
+--== SUCESSO ==--
+{
+    "status": "success",
+    "data": {
+        "id": 1
+    }
+    "messages": [
+        "Utilizador registado com sucesso"
+    ]
+}
+
+--== ERRO ==--
+{
+    "status": "error",
+    "data": null,
+    "messages": [
+        "Ocorreu um erro ao registar o utilizador",
+        "O email já se encontra registado"
+    ]
+}
+
+--===========================--
+
+
+--===========================--
+--==  PUT  ==--
+--===========================--
+
+--== SUCESSO ==--
+{
+    "status": "success",
+    "data": {
+        "id": 1
+    }
+    "messages": [
+        "Utilizador atualizado com sucesso"
+    ]
+}
+
+--== ERRO ==--
+{
+    "status": "error",
+    "data": null,
+    "messages": [
+        "Ocorreu um erro ao atualizar o utilizador",
+        "O email já se encontra registado"
+    ]
+}
+
+--===========================--
+
+
+--===========================--
+--==  DELETE  ==--
+--===========================--
+
+--== SUCESSO ==--
+{
+    "status": "success",
+    "data": {
+        "id": 1
+    }
+    "messages": [
+        "Utilizador eliminado com sucesso"
+    ]
+}
+
+--== ERRO ==--
+{
+    "status": "error",
+    "data": null,
+    "messages": [
+        "Ocorreu um erro ao eliminar o utilizador"
+    ]
+}
+
+--===========================--
+
+
+--===========================--
+--==  GET  ==--
+--===========================--
+
+--== SUCESSO ==--
+{
+    "status": "success",
+    "data": {
+        "id": 1,
+        "name": "João",
+        "email": "
+        "created_at": "2020-01-01 00:00:00"
+    }
+    "messages": [
+        "Utilizador obtido com sucesso"
+    ]
+}
+
+--== SUCESSO DATATABLE ==--
+{
+    "recordsTotal": 1,
+    "recordsFiltered": 1,
+    "data": [
+        {
+            "id": 1,
+            "name": "João",
+            "email": "
+            "created_at": "2020-01-01 00:00:00"
+        }
+    ]
+}
+
+--== ERRO ==--
+{
+    "status": "error",
+    "data": null,
+    "messages": [
+        "Ocorreu um erro ao obter o utilizador"
+    ]
+}
+
+--== ERRO DATATABLE ==--
+{
+    "recordsTotal": 0,
+    "recordsFiltered": 0,
+    "data": []
+}
+
+--===========================--

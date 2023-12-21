@@ -25,8 +25,8 @@
                         <div class="menu-item here menu-lg-down-accordion menu-sub-lg-down-indention me-0 me-lg-2">
                             <span class="menu-link">
                                 <a href="<?php echo $link_home ?>pages/admin/">
-                                <span class="menu-title">Início</span>
-                                <span class="menu-arrow d-lg-none"></span>
+                                    <span class="menu-title">Início</span>
+                                    <span class="menu-arrow d-lg-none"></span>
                                 </a>
                             </span>
                         </div>
@@ -58,7 +58,7 @@
 
                                                 <div class="col-lg-6 mb-3">
                                                     <div class="menu-item p-0 m-0">
-                                                        <a href="" class="menu-link">
+                                                        <a href="<?php echo $link_home ?>pages/admin/parametrizacoes/rececionistas/lista" class="menu-link">
                                                             <span class="menu-custom-icon d-flex flex-center flex-shrink-0 rounded w-40px h-40px me-3">
                                                                 <i class="ki-solid ki-user-edit text-info fs-1"></i>
                                                             </span>
@@ -79,6 +79,23 @@
                                                             <span class="d-flex flex-column">
                                                                 <span class="fs-6 fw-bold text-gray-800">Equipas Médicas</span>
                                                                 <span class="fs-7 fw-semibold text-muted">Gerir Equipas Médicas</span>
+                                                            </span>
+                                                        </a>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-lg-6 mb-3">
+                                                    <div class="menu-item p-0 m-0">
+                                                        <a href="<?php echo $link_home ?>pages/admin/parametrizacoes/administradores/lista" class="menu-link">
+                                                            <span class="menu-custom-icon d-flex flex-center flex-shrink-0 rounded w-40px h-40px me-3">
+                                                                <i class="ki-duotone ki-shield text-danger fs-1">
+                                                                    <span class="path1"></span>
+                                                                    <span class="path2"></span>
+                                                                </i>
+                                                            </span>
+                                                            <span class="d-flex flex-column">
+                                                                <span class="fs-6 fw-bold text-gray-800">Administradores</span>
+                                                                <span class="fs-7 fw-semibold text-muted">Gerir Administradores</span>
                                                             </span>
                                                         </a>
                                                     </div>

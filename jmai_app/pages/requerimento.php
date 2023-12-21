@@ -15,19 +15,18 @@
 
                                 <div id="kt_content_container" class="d-flex flex-column-fluid align-items-start  container-xxl ">
                                     <div class="content flex-row-fluid" id="kt_content">
-                                        <div class="card container-xxl">
-                                            <div class="card-body">
+                                        <form id="form-requerimento" class="form fv-plugins-bootstrap5 fv-plugins-framework" novalidate="novalidate">
+                                            <div class="card">
+                                                <div class="card-body">
 
-                                                <div class="text-center mb-15">
-                                                    <h3 class="fs-2hx text-gray-900 my-6">Faça já o seu Requerimento!</h3>
+                                                    <div class="text-center mb-15">
+                                                        <h3 class="fs-2hx text-gray-900 my-6">Faça já o seu Requerimento!</h3>
 
-                                                    <div class="fs-5 text-muted fw-semibold">
-                                                        Realize o seu pedido de forma devida, para que o <br> seu requerimento de avaliação de incapacidade possa ser avaliado. <br>
+                                                        <div class="fs-5 text-muted fw-semibold">
+                                                            Realize o seu pedido de forma devida, para que o <br> seu requerimento de avaliação de incapacidade possa ser avaliado. <br>
+                                                        </div>
                                                     </div>
-                                                </div>
 
-
-                                                <form id="form-requerimento" class="form fv-plugins-bootstrap5 fv-plugins-framework" novalidate="novalidate">
                                                     <div class="separator separator-content my-15"><span class="h3">Identificação</span></div>
                                                     <div class="row mb-6">
                                                         <div class="col-12 col-lg-6">
@@ -232,15 +231,21 @@
                                                                 </div>
                                                             </div>
                                                         </div>
-
-                                                        <div class="card-footer d-flex justify-content-end py-6 px-9 g-5">
-                                                            <button type="reset" class="btn btn-light btn-active-light-primary me-2">Cancelar</button>
-                                                            <button type="submit" class="btn btn-primary" id="send_request">Submeter</button>
-                                                        </div>
-                                                </form>
-
+                                                    </div>
+                                                </div>
+                                                <div class="card-footer d-flex justify-content-end py-6 px-9 g-5">
+                                                    <button type="reset" class="btn btn-light btn-active-light-primary me-2">Cancelar</button>
+                                                    <button type="submit" class="btn btn-primary" data-element="submit">
+                                                        <span class="indicator-label">
+                                                            Submeter
+                                                        </span>
+                                                        <span class="indicator-progress">
+                                                            Por favor Aguarde... <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                                                        </span>
+                                                    </button>
+                                                </div>
                                             </div>
-                                        </div>
+                                        </form>
                                     </div>
                                 </div>
 
@@ -349,8 +354,6 @@
             showMaskOnHover: true,
             showMaskOnFocus: true,
         }).mask(codigo_postal);
-
-
     </script>
 
 </body>

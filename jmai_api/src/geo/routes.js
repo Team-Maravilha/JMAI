@@ -12,4 +12,12 @@ router.get("/paises/:id_pais/distritos/lista", authMiddleware, controller.Listar
 
 router.get("/paises/:id_pais/distritos/:id_distrito", authMiddleware, controller.ListarInformacaoDistrito);
 
+router.get("/distritos/:id_distrito/concelhos/lista", authMiddleware, controller.ListarConcelhosDistrito);
+
+router.get("/distritos/:id_distrito/concelhos/:id_concelho", authMiddleware, controller.ListarInformacaoConcelho);
+
+router.get("/concelhos/:id_concelho/freguesias/lista", authMiddleware, controller.ListarFreguesiasConcelho);
+
+router.get("/concelhos/:id_concelho/freguesias/:id_freguesia", authMiddleware, controller.ListarInformacaoFreguesia);
+
 module.exports = router;

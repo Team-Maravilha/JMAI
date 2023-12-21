@@ -96,11 +96,9 @@ $$ LANGUAGE plpgsql;
     * @param {Number} id_distrito_param - O identificador do distrito.
     * @param {String} nome_param - O nome do distrito.
     * @param {Number} id_pais_param - O identificador do país.
-    * @param {Number} offset_val - O offset da listagem.
-    * @param {Number} limit_val - O limite da listagem.
     * @returns {Table} Retorna uma tabela com os paises.
  */ 
-CREATE OR REPLACE FUNCTION listar_distritos(id_distrito_param bigint DEFAULT NULL, nome_param varchar(255) DEFAULT NULL, id_pais_param bigint DEFAULT NULL, offset_val bigint DEFAULT 0, limit_val bigint DEFAULT 10)
+CREATE OR REPLACE FUNCTION listar_distritos(id_distrito_param bigint DEFAULT NULL, nome_param varchar(255) DEFAULT NULL, id_pais_param bigint DEFAULT NULL)
 RETURNS TABLE(id_distrito bigint, nome varchar(255), id_pais bigint) AS $$
 BEGIN
 
@@ -116,25 +114,11 @@ BEGIN
         RAISE EXCEPTION 'Não existe um país com o identificador %.', id_pais_param;
     END IF;
 
-    IF offset_val < 0 THEN
-        RAISE EXCEPTION 'O offset não pode ser negativo.';
-    ELSEIF id_distrito_param IS NOT NULL AND offset_val > 0 THEN
-        RAISE EXCEPTION 'O offset não pode ser maior que 0 quando o identificador do distrito é especificado.';
-    ELSEIF offset_val >= (SELECT COUNT(*) FROM distrito) THEN
-        RAISE EXCEPTION 'O offset inserido é maior que o permitido.';
-    END IF;
-
-    IF limit_val < 0 THEN
-        RAISE EXCEPTION 'O limite não pode ser negativo.';
-    END IF;
-
     RETURN QUERY
     SELECT distrito.id_distrito, distrito.nome, distrito.id_pais FROM distrito
     WHERE (distrito.id_distrito = listar_distritos.id_distrito_param OR listar_distritos.id_distrito_param IS NULL)
     AND (distrito.nome LIKE listar_distritos.nome_param OR listar_distritos.nome_param IS NULL)
     AND (distrito.id_pais = listar_distritos.id_pais_param OR listar_distritos.id_pais_param IS NULL)
-    ORDER BY distrito.nome ASC
-    OFFSET listar_distritos.offset_val
-    LIMIT listar_distritos.limit_val;
+    ORDER BY distrito.nome ASC;
 END;
 $$ LANGUAGE plpgsql;

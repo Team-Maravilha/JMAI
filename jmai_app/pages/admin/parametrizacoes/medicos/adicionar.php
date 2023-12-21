@@ -112,6 +112,10 @@
 
             const requestOptions = {
                 method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": "<?php echo $_SESSION['token'] ?>"
+                },
                 body: JSON.stringify(data),
             };
 

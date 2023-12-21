@@ -4,16 +4,24 @@ module.exports = (req, res, next) => {
   const token = req.headers.authorization;
 
   if (!token) {
-    return res
+    /* return res
       .status(401)
-      .json({ auth: false, message: "Token não encontrado." });
+      .json({ auth: false, message: "Token não encontrado." }); */
+      return res.status(401).json({ 
+        status: 'error',
+        messages: ['Token não encontrado.']
+      });
   }
   
   jwt.verify(token, process.env.SECRET, function (err, user) {
     if (err) {
-      return res
+      /* return res
         .status(500)
-        .json({ auth: false, message: "Falha na autenticação do Token." });
+        .json({ auth: false, message: "Falha na autenticação do Token." }); */
+        return res.status(500).json({ 
+          status: 'error',
+          messages: ['Falha na autenticação do Token.']
+        });
     }
     req.user = user;
     next();

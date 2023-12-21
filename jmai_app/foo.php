@@ -7,6 +7,7 @@
 
 <script>
     var hostUrl = "assets/";
+    var api_base_url = "http://localhost:8888/api/";
 </script>
 
 <script src="<?php echo $link_home; ?>assets/plugins/global/plugins.bundle.js"></script>

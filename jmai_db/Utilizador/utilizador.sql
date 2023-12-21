@@ -43,7 +43,7 @@ $$ LANGUAGE plpgsql;
     * @param {Number} cargo - O cargo do utilizador.
     * @returns {Table} Retorna o utilizador criado.
     */
-CREATE OR REPLACE FUNCTION inserir_utilizador(nome varchar(255), email varchar(255), palavra_passe varchar(255), cargo integer)
+CREATE OR REPLACE FUNCTION inserir_utilizador(nome varchar(255), email varchar(255), palavra_passe varchar(255), cargo integer, estado integer DEFAULT 1)
 RETURNS TABLE (hashed_id varchar(255)) AS $$
 BEGIN
     
@@ -77,7 +77,11 @@ BEGIN
         RAISE EXCEPTION 'O cargo do utilizador não é válido.';
     END IF;
 
-    INSERT INTO utilizador (nome, email, palavra_passe, cargo, estado) VALUES (inserir_utilizador.nome, inserir_utilizador.email, crypt(inserir_utilizador.palavra_passe, gen_salt('bf')), inserir_utilizador.cargo, 1);
+    IF estado IS NULL OR estado < 0 OR estado > 1 THEN
+        RAISE EXCEPTION 'O estado do utilizador não é válido.';
+    END IF;
+
+    INSERT INTO utilizador (nome, email, palavra_passe, cargo, estado) VALUES (inserir_utilizador.nome, inserir_utilizador.email, crypt(inserir_utilizador.palavra_passe, gen_salt('bf')), inserir_utilizador.cargo, inserir_utilizador.estado);
     
     RETURN QUERY SELECT utilizador.hashed_id FROM utilizador WHERE utilizador.email = inserir_utilizador.email;
 END;
@@ -98,7 +102,7 @@ CREATE TRIGGER add_uuid BEFORE INSERT ON utilizador FOR EACH ROW EXECUTE PROCEDU
     * @param {Number} cargo - O cargo do utilizador.
     * @returns {Table} Retorna o utilizador editado.
     */ 
-CREATE OR REPLACE FUNCTION editar_utilizador(hashed_id_param varchar(255), nome varchar(255), email varchar(255), cargo integer)
+CREATE OR REPLACE FUNCTION editar_utilizador(hashed_id_param varchar(255), nome varchar(255), email varchar(255), cargo integer, estado integer DEFAULT 1)
 RETURNS TABLE (hashed_id varchar(255)) AS $$
 BEGIN
     IF hashed_id_param IS NULL THEN
@@ -123,7 +127,11 @@ BEGIN
         RAISE EXCEPTION 'O cargo do utilizador não é válido.';
     END IF;
 
-    UPDATE utilizador SET nome = editar_utilizador.nome, email = editar_utilizador.email, cargo = editar_utilizador.cargo WHERE utilizador.hashed_id = editar_utilizador.hashed_id_param;
+    IF estado IS NULL OR estado < 0 OR estado > 1 THEN
+        RAISE EXCEPTION 'O estado do utilizador não é válido.';
+    END IF;
+
+    UPDATE utilizador SET nome = editar_utilizador.nome, email = editar_utilizador.email, cargo = editar_utilizador.cargo, estado = editar_utilizador.estado WHERE utilizador.hashed_id = editar_utilizador.hashed_id_param;
     
     RETURN QUERY SELECT utilizador.hashed_id FROM utilizador WHERE utilizador.hashed_id = editar_utilizador.hashed_id_param;
 END;

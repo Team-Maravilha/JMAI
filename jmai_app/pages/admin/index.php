@@ -12,7 +12,7 @@
 							<?php require_once($_SERVER["DOCUMENT_ROOT"] . "/toolbar.php") ?>
 							<div id="kt_app_content" class="app-content">
 								<!-- Conteudo AQUI! -->
-								
+									<?php echo "<pre>"; print_r($_SESSION); echo "</pre>"; ?>
 								<!-- Fecha Conteudo AQUI! -->
 							</div>
 						</div>

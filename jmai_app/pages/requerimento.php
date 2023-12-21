@@ -356,4 +356,75 @@
         }).mask(codigo_postal);
     </script>
 
+    <script>
+        const inputPais = $('[name="pais"]'); // ? Input Paises Naturalidade
+        const inputDistrito = $('[name="distrito_naturalidade"]'); // ? Input Distritos Naturalidade
+        const inputConcelho = $('[name="concelho_naturadidade"]'); // ? Input Concelhos Naturalidade
+        const inputFreguesia = $('[name="freguesia_naturadidade"]'); // ? Input Freguesias Naturalidade
+
+        const carregarPaisesNaturalidade = async () => {
+            fetch(`${api_base_url}geo/paises/lista?${new URLSearchParams({})}`, {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": "<?php echo $_SESSION['token']; ?>"
+                    }
+                })
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.status === 'error') {
+                        toastr.error(data.messages[0]);
+                    } else if (data.status === 'success') {
+                        data.data.forEach((pais) => {
+                            let option = document.createElement("option");
+                            option.value = pais.id_pais;
+                            option.text = pais.nome;
+                            $(inputPais).append(option);
+                        });
+                        //REINICIALIZAR SELECT2
+                        $(inputPais).select2();
+                    }
+                });
+        };
+
+        const carregarDistritosNaturalidade = async (id_pais) => {
+            fetch(`${api_base_url}geo/paises/${id_pais}/distritos/lista?${new URLSearchParams()}`, {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": "<?php echo $_SESSION['token']; ?>"
+                    }
+                })
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.status === 'error') {
+                        toastr.error(data.messages[0]);
+                    } else if (data.status === 'success') {
+                        data.data.forEach((distrito) => {
+                            let option = document.createElement("option");
+                            option.value = distrito.id_distrito;
+                            option.text = distrito.nome;
+                            $(inputDistrito).append(option);
+                        });
+                        //REINICIALIZAR SELECT2
+                        $(inputDistrito).select2();
+                    }
+                });
+        };
+
+        window.addEventListener("DOMContentLoaded", () => {
+            carregarPaisesNaturalidade();
+            $(inputPais).change(function() {
+                $(inputDistrito).empty();
+                $(inputDistrito).append('<option></option>');
+                $(inputConcelho).empty();
+                $(inputConcelho).append('<option></option>');
+                $(inputFreguesia).empty();
+                $(inputFreguesia).append('<option></option>');
+                carregarDistritosNaturalidade($(this).val());
+            });
+
+        });
+    </script>
+
 </body>

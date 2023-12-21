@@ -91,7 +91,6 @@ const RegistarRececionista = (req, res) => {
 
 const InformacaoUtilizador = (req, res) => {
     const hashed_id = req.params.hashed_id;
-    console.log(hashed_id);
     pool.query("SELECT * FROM listar_utilizadores($1)", [hashed_id], (error, results) => {
         if (error) {
             res.status(400).json({
@@ -112,6 +111,7 @@ const InformacaoUtilizador = (req, res) => {
 const EditarUtilizador = (req, res) => {
     const hashed_id = req.params.hashed_id;
     const { nome, email, cargo, estado } = req.body;
+    console.log(hashed_id, nome, email, cargo, estado);
     pool.query("SELECT editar_utilizador($1, $2, $3, $4, $5)", [hashed_id, nome, email, cargo, estado], (error, results) => {
         if (error) {
             res.status(400).json({
@@ -121,7 +121,7 @@ const EditarUtilizador = (req, res) => {
             });
             return;
         }
-        switch (cargo) {
+        switch (parseInt(cargo)) {
             case 0:
                 res.status(200).json({
                     status: 'success',

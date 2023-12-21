@@ -28,7 +28,7 @@
 													<i class="ki-outline ki-arrows-circle fs-2"></i>
 												</button>
 
-												<a href="add" class="btn btn-light-primary d-flex align-items-center lh-1">
+												<a href="adicionar" class="btn btn-light-primary d-flex align-items-center lh-1">
 													<i class="ki-outline ki-plus fs-2"></i>Adicionar
 												</a>
 											</div>

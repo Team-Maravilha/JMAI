@@ -39,7 +39,6 @@ END;
 $$ LANGUAGE plpgsql;
 
 
-
 /**
     * Esta função permite editar um distrito na base de dados.
     * @param {Number} id_distrito - O identificador do distrito a ser editado.

@@ -2,7 +2,7 @@
 $id = isset($_GET['id']) ? $_GET['id'] : null;
 ?>
 <?php require_once($_SERVER["DOCUMENT_ROOT"] . "/head.php") ?>
-<?php $page_name = "Editar - Rececionista" ?>
+<?php $page_name = "Editar Utilizador - Rececionista" ?>
 
 <body id="kt_app_body" data-kt-app-header-fixed="true" data-kt-app-header-fixed-mobile="true" data-kt-app-sidebar-enabled="false" data-kt-app-sidebar-fixed="false" data-kt-app-sidebar-push-toolbar="true" data-kt-app-sidebar-push-footer="true" data-kt-app-toolbar-enabled="true" class="app-default">
     <div class="d-flex flex-column flex-root app-root" id="kt_app_root">
@@ -99,6 +99,8 @@ $id = isset($_GET['id']) ? $_GET['id'] : null;
                         const {nome, email, estado} = data.data;
                         form.querySelector("[name='nome']").value = nome;
                         form.querySelector("[name='email']").value = email;
+                        document.querySelector('.page-heading').innerHTML = `Editar Utilizador - ${nome}`;
+                        
                         $('[name="estado"]').val(estado).trigger('change');
                         submitButton.removeAttribute("data-kt-indicator");
                         submitButton.disabled = false;

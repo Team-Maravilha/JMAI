@@ -2,7 +2,7 @@
 $id = isset($_GET['id']) ? $_GET['id'] : null;
 ?>
 <?php require_once($_SERVER["DOCUMENT_ROOT"] . "/head.php") ?>
-<?php $page_name = "Editar - Médico" ?>
+<?php $page_name = "Editar - Rececionista" ?>
 
 <body id="kt_app_body" data-kt-app-header-fixed="true" data-kt-app-header-fixed-mobile="true" data-kt-app-sidebar-enabled="false" data-kt-app-sidebar-fixed="false" data-kt-app-sidebar-push-toolbar="true" data-kt-app-sidebar-push-footer="true" data-kt-app-toolbar-enabled="true" class="app-default">
     <div class="d-flex flex-column flex-root app-root" id="kt_app_root">
@@ -19,7 +19,7 @@ $id = isset($_GET['id']) ? $_GET['id'] : null;
 
                                 <div id="kt_content_container" class="d-flex flex-column-fluid align-items-start  container-xxl ">
                                     <div class="content flex-row-fluid" id="kt_content">
-                                        <form id="form-editar-medico" class="form fv-plugins-bootstrap5 fv-plugins-framework" novalidate="novalidate">
+                                        <form id="form-editar-rececionista" class="form fv-plugins-bootstrap5 fv-plugins-framework" novalidate="novalidate">
                                             <div class="card">
                                                 <div class="card-body">
                                                     <div class="row mb-6">
@@ -75,7 +75,7 @@ $id = isset($_GET['id']) ? $_GET['id'] : null;
     </div>
     <?php require_once($_SERVER["DOCUMENT_ROOT"] . "/foo.php") ?>
     <script>
-        const form = document.getElementById("form-editar-medico");
+        const form = document.getElementById("form-editar-rececionista");
         const submitButton = form.querySelector("[data-element='submit']");
 
         function handleCarregarInformacao() {
@@ -93,6 +93,7 @@ $id = isset($_GET['id']) ? $_GET['id'] : null;
             fetch(`${api_base_url}utilizadores/informacao/<?php echo $id; ?>`, requestOptions)
                 .then((response) => response.json())
                 .then((data) => {
+                    console.log(data);
 
                     if (data.status === "success") {
                         const {nome, email, estado} = data.data;
@@ -120,9 +121,9 @@ $id = isset($_GET['id']) ? $_GET['id'] : null;
             submitButton.setAttribute("data-kt-indicator", "on");
             submitButton.disabled = true;
 
-            var form = document.getElementById("form-editar-medico");
+            var form = document.getElementById("form-editar-rececionista");
             const formData = new FormData(form);
-            formData.append("cargo", 1);
+            formData.append("cargo", 2);
 
             const data = {};
             for (const [key, value] of formData.entries()) {
@@ -163,4 +164,4 @@ $id = isset($_GET['id']) ? $_GET['id'] : null;
     </script>
 
 
-</body>
+</body> 

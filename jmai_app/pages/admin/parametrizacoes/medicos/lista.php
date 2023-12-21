@@ -181,7 +181,7 @@
 								return `
                             <div>
                                 <a href="editar?id=${row.hashed_id}" class="btn btn-icon btn-bg-light btn-color-primary btn-active-light-primary rounded w-35px h-35px me-1"><i class="ki-outline ki-notepad-edit fs-2"></i></a>
-                                <!-- <button type="button" data-id="${row.hashed_id}" data-name="${row.nome}" data-datatable-action="delete-row" class="btn btn-icon btn-bg-light btn-color-danger btn-active-light-danger rounded w-35px h-35px"><i class="ki-outline ki-trash fs-2"></i></button> -->
+                                <button type="button" data-id="${row.hashed_id}" data-name="${row.nome}" data-datatable-action="delete-row" class="btn btn-icon btn-bg-light btn-color-danger btn-active-light-danger rounded w-35px h-35px"><i class="ki-outline ki-trash fs-2"></i></button>
                             </div>
                         `
 							},

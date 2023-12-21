@@ -13,5 +13,9 @@ router.get('/informacao/:hashed_id', authMiddleware, controller.InformacaoUtiliz
 
 router.put('/editar/:hashed_id', authMiddleware, controller.EditarUtilizador);
 
+router.put('/desativar/:hashed_id', authMiddleware, controller.DesativarUtilizador);
+router.put('/ativar/:hashed_id', authMiddleware, controller.AtivarUtilizador);
+
+
 
 module.exports = router;

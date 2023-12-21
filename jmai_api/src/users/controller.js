@@ -111,7 +111,6 @@ const InformacaoUtilizador = (req, res) => {
 const EditarUtilizador = (req, res) => {
     const hashed_id = req.params.hashed_id;
     const { nome, email, cargo, estado } = req.body;
-    console.log(hashed_id, nome, email, cargo, estado);
     pool.query("SELECT editar_utilizador($1, $2, $3, $4, $5)", [hashed_id, nome, email, cargo, estado], (error, results) => {
         if (error) {
             res.status(400).json({
@@ -143,10 +142,106 @@ const EditarUtilizador = (req, res) => {
                     messages: ["Rececionista editado com sucesso!"],
                 });
                 break;
+            default:
+                res.status(200).json({
+                    status: 'success',
+                    data: null,
+                    messages: ["Utilizador editado com sucesso!"],
+                });
+                break;
         }
     });
 }
 
+const DesativarUtilizador = (req, res) => {
+    const hashed_id = req.params.hashed_id;
+    const { cargo } = req.body;
+    pool.query("SELECT inativar_utilizador($1)", [hashed_id], (error, results) => {
+        if (error) {
+            res.status(400).json({
+                status: 'error',
+                data: null,
+                messages: [error.message]
+            });
+            return;
+        }
+        switch (parseInt(cargo)) {
+            case 0:
+                res.status(200).json({
+                    status: 'success',
+                    data: null,
+                    messages: ["Administrador eliminado com sucesso!"],
+                });
+                break;
+            case 1:
+                res.status(200).json({
+                    status: 'success',
+                    data: null,
+                    messages: ["Médico eliminado com sucesso!"],
+                });
+                break;
+            case 2:
+                res.status(200).json({
+                    status: 'success',
+                    data: null,
+                    messages: ["Rececionista eliminado com sucesso!"],
+                });
+                break;
+            default:
+                res.status(200).json({
+                    status: 'success',
+                    data: null,
+                    messages: ["Utilizador eliminado com sucesso!"],
+                });
+                break;
+        }
+    });
+}
+
+const AtivarUtilizador = (req, res) => {
+    const hashed_id = req.params.hashed_id;
+    const { cargo } = req.body;
+    pool.query("SELECT ativar_utilizador($1)", [hashed_id], (error, results) => {
+        if (error) {
+            res.status(400).json({
+                status: 'error',
+                data: null,
+                messages: [error.message]
+            });
+            return;
+        }
+        switch (parseInt(cargo)) {
+            case 0:
+                res.status(200).json({
+                    status: 'success',
+                    data: null,
+                    messages: ["Administrador ativado com sucesso!"],
+                });
+                break;
+            case 1:
+                res.status(200).json({
+                    status: 'success',
+                    data: null,
+                    messages: ["Médico ativado com sucesso!"],
+                });
+                break;
+            case 2:
+                res.status(200).json({
+                    status: 'success',
+                    data: null,
+                    messages: ["Rececionista ativado com sucesso!"],
+                });
+                break;
+            default:
+                res.status(200).json({
+                    status: 'success',
+                    data: null,
+                    messages: ["Utilizador ativado com sucesso!"],
+                });
+                break;
+        }
+    });
+}
 
 module.exports = {
     ListarUtilizadoresDataTable,
@@ -154,6 +249,8 @@ module.exports = {
     RegistarMedico,
     RegistarRececionista,
     InformacaoUtilizador,
-    EditarUtilizador
+    EditarUtilizador,
+    DesativarUtilizador,
+    AtivarUtilizador
     
 };

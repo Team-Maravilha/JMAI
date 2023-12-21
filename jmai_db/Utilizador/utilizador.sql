@@ -226,6 +226,51 @@ END;
 $$ LANGUAGE plpgsql;
 
 
+/**
+    * Esta função permite Inativar um utilizador.
+    * @param {String} hashed_id - O HashedID do utilizador.
+    * @returns {Table} Retorna o utilizador editado.
+    */
+CREATE OR REPLACE FUNCTION inativar_utilizador(hashed_id_param varchar(255))
+RETURNS TABLE (hashed_id varchar(255)) AS $$
+BEGIN
+    IF hashed_id_param IS NULL THEN
+        RAISE EXCEPTION 'O utilizador não é válido.';
+    ELSIF NOT EXISTS (SELECT * FROM utilizador WHERE utilizador.hashed_id = inativar_utilizador.hashed_id_param) THEN
+        RAISE EXCEPTION 'O utilizador não é válido.';
+    ELSIF EXISTS (SELECT * FROM utilizador WHERE utilizador.hashed_id = inativar_utilizador.hashed_id_param AND utilizador.estado = 0) THEN
+        RAISE EXCEPTION 'O utilizador já se encontra inativo.';
+    END IF;
+
+    UPDATE utilizador SET estado = 0 WHERE utilizador.hashed_id = inativar_utilizador.hashed_id_param;
+    
+    RETURN QUERY SELECT utilizador.hashed_id FROM utilizador WHERE utilizador.hashed_id = inativar_utilizador.hashed_id_param;
+END;
+$$ LANGUAGE plpgsql;
+
+
+/**
+    * Esta função permite Ativar um utilizador.
+    * @param {String} hashed_id - O HashedID do utilizador.
+    * @returns {Table} Retorna o utilizador editado.
+    */
+CREATE OR REPLACE FUNCTION ativar_utilizador(hashed_id_param varchar(255))
+RETURNS TABLE (hashed_id varchar(255)) AS $$
+BEGIN
+    IF hashed_id_param IS NULL THEN
+        RAISE EXCEPTION 'O utilizador não é válido.';
+    ELSIF NOT EXISTS (SELECT * FROM utilizador WHERE utilizador.hashed_id = ativar_utilizador.hashed_id_param) THEN
+        RAISE EXCEPTION 'O utilizador não é válido.';
+    ELSIF EXISTS (SELECT * FROM utilizador WHERE utilizador.hashed_id = ativar_utilizador.hashed_id_param AND utilizador.estado = 1) THEN
+        RAISE EXCEPTION 'O utilizador já se encontra ativo.';
+    END IF;
+
+    UPDATE utilizador SET estado = 1 WHERE utilizador.hashed_id = ativar_utilizador.hashed_id_param;
+    
+    RETURN QUERY SELECT utilizador.hashed_id FROM utilizador WHERE utilizador.hashed_id = ativar_utilizador.hashed_id_param;
+END;
+$$ LANGUAGE plpgsql;
+
 
     
 

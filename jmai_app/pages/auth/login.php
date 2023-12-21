@@ -56,11 +56,11 @@
                                 <input type="text" placeholder="Email" name="email" autocomplete="off" class="form-control bg-transparent" />
                             </div>
                             <div class="fv-row mb-3">
-                                <input type="password" placeholder="Palavra-Passe" name="password" autocomplete="off" class="form-control bg-transparent" />
+                                <input type="password" placeholder="Palavra-Passe" name="palavra_passe" autocomplete="off" class="form-control bg-transparent" />
                             </div>
                             <div class="d-flex flex-stack flex-wrap gap-3 fs-base fw-semibold mb-8">
                                 <div></div>
-                                <a href="authentication/layouts/creative/reset-password.html" class="link-primary">Recuperar Palavra-Passe?</a>
+                                <a href="" class="link-primary">Recuperar Palavra-Passe?</a>
                             </div>
                             <div class="d-grid mb-10">
                                 <button type="submit" id="kt_sign_in_submit" class="btn btn-primary">
@@ -79,5 +79,14 @@
         </div>
     </div>
     <?php require_once($_SERVER["DOCUMENT_ROOT"] . "/foo.php") ?>
+
+    <script src="<?php echo $link_home ?>api/auth.js"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const form = document.getElementById("login-form");
+        form.addEventListener("submit", handleLoginUtente);
+    });
+</script>
 </body>
 </html>

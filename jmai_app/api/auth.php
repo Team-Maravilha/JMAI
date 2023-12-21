@@ -43,7 +43,37 @@ if (isset($_SERVER["REQUEST_METHOD"])) {
                     }
                   
                     echo json_encode($verify_user_login["response"]);
-                    break;
+                break;
+
+                case "loginUtente":
+                    $email = $_POST["email"];
+                    $palavra_passe = $_POST["palavra_passe"];
+
+                    require_once($_SERVER["DOCUMENT_ROOT"] . "/api/api.php");
+
+                    $api = new Api();
+                    $verify_user_login = $api->post("autenticacao/login-utente", ["email" => $email, "palavra_passe" => $palavra_passe]);
+
+                    if ($verify_user_login["status"]) {
+                        if ($verify_user_login["response"]["status"] === "success") {
+                            if (session_status() !== PHP_SESSION_ACTIVE) session_start();
+                            $_SESSION["username"] = $verify_user_login["response"]["data"]["nome"];
+                            $_SESSION["email"] = $verify_user_login["response"]["data"]["email_autenticacao"];
+                            $_SESSION["role"] = $verify_user_login["response"]["data"]["cargo"];
+                            $_SESSION["role_name"] = $verify_user_login["response"]["data"]["texto_cargo"];
+                            $_SESSION["token"] = $verify_user_login["response"]["data"]["token"];
+
+                            if($_SESSION["role"] === 3){
+                                $redirect = "/pages/index";
+                            } else {
+                                $redirect = "/pages/auth/login";
+                            }
+                            $verify_user_login["response"]["redirect"] = $redirect;
+                        }
+                    }
+                  
+                    echo json_encode($verify_user_login["response"]);
+                break;
             }
 
             break;

@@ -27,6 +27,10 @@
 
 }
 
+.form-check-input:checked {
+  background-color: #49beb7 !important;
+}
+
 .text-dark-blue{
   color: #085f63 !important;
 }

@@ -179,11 +179,15 @@
 							className: "text-sm-end",
 							render: (data, type, row) => {
 								return `
-                            <div>
-                                <a href="editar?id=${row.hashed_id}" class="btn btn-icon btn-bg-light btn-color-primary btn-active-light-primary rounded w-35px h-35px me-1"><i class="ki-outline ki-notepad-edit fs-2"></i></a>
-                                <button type="button" data-id="${row.hashed_id}" data-name="${row.nome}" data-datatable-action="delete-row" class="btn btn-icon btn-bg-light btn-color-danger btn-active-light-danger rounded w-35px h-35px"><i class="ki-outline ki-trash fs-2"></i></button>
-                            </div>
-                        `
+									<div>
+										<a href="editar?id=${row.hashed_id}" class="btn btn-icon btn-bg-light btn-color-primary btn-active-light-primary rounded w-35px h-35px me-1"><i class="ki-outline ki-notepad-edit fs-2"></i></a>
+										${row.estado === 1 ? `
+											<button type="button" data-id="${row.hashed_id}" data-name="${row.nome}" data-datatable-action="delete-row" class="btn btn-icon btn-bg-light btn-color-danger btn-active-light-danger rounded w-35px h-35px"><i class="ki-outline ki-trash fs-2"></i></button>
+										` : `
+											<button type="button" data-id="${row.hashed_id}" data-name="${row.nome}" data-datatable-action="activate-row" class="btn btn-icon btn-bg-light btn-color-success btn-active-light-success rounded w-35px h-35px"><i class="ki-duotone ki-check-circle fs-2"><span class="path1"></span><span class="path2"></span></i></button>
+										`}
+									</div>
+								`
 							},
 						},
 					],
@@ -223,8 +227,8 @@
 
 					Swal.fire({
 						icon: "warning",
-						title: "Desativar Prescrição - Exame",
-						text: "Tem a certeza que deseja desativar a Prescrição - Exame (" + name + ") ?",
+						title: "Desativar Rececionista - " + name,
+						text: "Tem a certeza que deseja desativar o Rececionista - " + name + "?",
 						showCancelButton: true,
 						buttonsStyling: false,
 						cancelButtonText: "Não, cancelar",
@@ -237,41 +241,45 @@
 						},
 					}).then((result) => {
 						if (result.isConfirmed) {
-							const id = button.getAttribute("data-id")
-
-							const data = {
-								hashed_id: id,
-							}
+							const id = button.getAttribute("data-id");
 
 							const options = {
-								method: "POST",
-								body: JSON.stringify(data),
+								method: "PUT",
 								headers: {
 									"Content-Type": "application/json",
+									"Authorization": "<?php echo $_SESSION["token"] ?>",
 								},
+								body: JSON.stringify({
+									"cargo": 2
+								})
 							}
 
-							fetch("http://localhost:3000/api/exams/deactivate", options)
-								.then((response) => {
-									response.text().then((json) => {
-										json = JSON.parse(json)
-
-										toastr.options = {
-											positionClass: "toastr-top-right",
-											preventDuplicates: true,
-										}
-
-										if (response.status === 201) {
-											if (json.status === true) {
-												toastr.success(json.message)
-												dt.ajax.reload()
-											}
-										} else if (response.status === 401) {
-											toastr.error("Algo Errado Aconteceu! Tente Novamente!")
-										} else {
-											toastr.error("Algo Errado Aconteceu! Tente Novamente!")
-										}
-									})
+							fetch(`${api_base_url}utilizadores/desativar/${id}`, options)
+								.then((response) => response.json())
+								.then((data) => {
+									if (data.status === "success") {
+										Swal.fire({
+											text: data.messages[0],
+											icon: "success",
+											buttonsStyling: false,
+											confirmButtonText: "Ok, fechar",
+											customClass: {
+												confirmButton: "btn fw-bold btn-primary",
+											},
+										}).then(() => {
+											dt.ajax.reload()
+										})
+									} else {
+										Swal.fire({
+											text: data.messages[0],
+											icon: "error",
+											buttonsStyling: false,
+											confirmButtonText: "Ok, fechar",
+											customClass: {
+												confirmButton: "btn fw-bold btn-primary",
+											},
+										})
+									}
 								})
 								.catch((error) => {
 									console.error(error)
@@ -281,12 +289,85 @@
 				})
 			}
 
+			var handleActivateRows = () => {
+				const activateButtons = document.querySelectorAll(`[data-datatable-action="activate-row"]`)
+
+				$("#datatable").on("click", "[data-datatable-action='activate-row']", (e) => {
+					e.preventDefault()
+					const button = e.currentTarget
+					const parent = button.closest("tr")
+					const name = button.getAttribute("data-name")
+
+					Swal.fire({
+						icon: "warning",
+						title: "Ativar Rececionista - " + name,
+						text: "Tem a certeza que deseja ativar o Rececionista - " + name + "?",
+						showCancelButton: true,
+						buttonsStyling: false,
+						cancelButtonText: "Não, cancelar",
+						confirmButtonText: "Sim, ativar!",
+						reverseButtons: true,
+						allowOutsideClick: false,
+						customClass: {
+							confirmButton: "btn fw-bold btn-success",
+							cancelButton: "btn fw-bold btn-active-light-warning",
+						},
+					}).then((result) => {
+						if (result.isConfirmed) {
+							const id = button.getAttribute("data-id");
+
+							const options = {
+								method: "PUT",
+								headers: {
+									"Content-Type": "application/json",
+									"Authorization": "<?php echo $_SESSION["token"] ?>",
+								},
+								body: JSON.stringify({
+									"cargo": 2
+								})
+							}
+
+							fetch(`${api_base_url}utilizadores/ativar/${id}`, options)
+								.then((response) => response.json())
+								.then((data) => {
+									if (data.status === "success") {
+										Swal.fire({
+											text: data.messages[0],
+											icon: "success",
+											buttonsStyling: false,
+											confirmButtonText: "Ok, fechar",
+											customClass: {
+												confirmButton: "btn fw-bold btn-primary",
+											},
+										}).then(() => {
+											dt.ajax.reload()
+										})
+									} else {
+										Swal.fire({
+											text: data.messages[0],
+											icon: "error",
+											buttonsStyling: false,
+											confirmButtonText: "Ok, fechar",
+											customClass: {
+												confirmButton: "btn fw-bold btn-primary",
+											},
+										})
+									}
+								})
+								.catch((error) => {
+									console.error(error)
+								})
+						}
+					})
+				})
+			}
 			return {
 				init: () => {
 					initDatatable()
 					handleSyncDatatable()
 					handleSearchDatatable()
 					handleDeleteRows()
+					handleActivateRows()
 				},
 			}
 		})()

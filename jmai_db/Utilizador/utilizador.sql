@@ -196,7 +196,7 @@ DECLARE
 BEGIN
 
     IF hashed_id_par IS NOT NULL THEN
-        _where := _where || ' WHERE utilizador.hashed_id = ' || hashed_id_par;
+        _where := _where || ' WHERE utilizador.hashed_id = ''' || hashed_id_par || '''';
     ELSEIF nome_param IS NOT NULL THEN
         _where := _where || ' WHERE utilizador.nome ILIKE ''%' || nome_param || '%''';
     ELSEIF cargo_param IS NOT NULL THEN

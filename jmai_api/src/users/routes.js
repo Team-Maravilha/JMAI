@@ -12,5 +12,7 @@ router.post('/registar/rececionista', authMiddleware, controller.RegistarRececio
 
 router.get('/informacao/:hashed_id', authMiddleware, controller.InformacaoUtilizador);
 
+router.put('/editar/:hashed_id', authMiddleware, controller.EditarUtilizador);
+
 
 module.exports = router;

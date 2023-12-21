@@ -84,7 +84,7 @@ const RegistarRececionista = (req, res) => {
             data: {
                 hashed_id: results.rows[0].inserir_utilizador
             },
-            messages: ["Rececionista registado com sucesso!"],
+            messages: ["Rececionista registada com sucesso!"],
         });
     });
 }
@@ -139,7 +139,7 @@ const EditarUtilizador = (req, res) => {
                 res.status(200).json({
                     status: 'success',
                     data: null,
-                    messages: ["Rececionista editado com sucesso!"],
+                    messages: ["Rececionista editada com sucesso!"],
                 });
                 break;
             default:
@@ -170,28 +170,28 @@ const DesativarUtilizador = (req, res) => {
                 res.status(200).json({
                     status: 'success',
                     data: null,
-                    messages: ["Administrador eliminado com sucesso!"],
+                    messages: ["Administrador desativado com sucesso!"],
                 });
                 break;
             case 1:
                 res.status(200).json({
                     status: 'success',
                     data: null,
-                    messages: ["Médico eliminado com sucesso!"],
+                    messages: ["Médico desativado com sucesso!"],
                 });
                 break;
             case 2:
                 res.status(200).json({
                     status: 'success',
                     data: null,
-                    messages: ["Rececionista eliminado com sucesso!"],
+                    messages: ["Rececionista desativada com sucesso!"],
                 });
                 break;
             default:
                 res.status(200).json({
                     status: 'success',
                     data: null,
-                    messages: ["Utilizador eliminado com sucesso!"],
+                    messages: ["Utilizador desativado com sucesso!"],
                 });
                 break;
         }
@@ -229,7 +229,7 @@ const AtivarUtilizador = (req, res) => {
                 res.status(200).json({
                     status: 'success',
                     data: null,
-                    messages: ["Rececionista ativado com sucesso!"],
+                    messages: ["Rececionista ativada com sucesso!"],
                 });
                 break;
             default:

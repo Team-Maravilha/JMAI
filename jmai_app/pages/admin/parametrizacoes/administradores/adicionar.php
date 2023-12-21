@@ -1,5 +1,5 @@
 <?php require_once($_SERVER["DOCUMENT_ROOT"] . "/head.php") ?>
-<?php $page_name = "Adicionar - Administrador" ?>
+<?php $page_name = "Adicionar Novo Utilizador - Administrador" ?>
 
 <body id="kt_app_body" data-kt-app-header-fixed="true" data-kt-app-header-fixed-mobile="true" data-kt-app-sidebar-enabled="false" data-kt-app-sidebar-fixed="false" data-kt-app-sidebar-push-toolbar="true" data-kt-app-sidebar-push-footer="true" data-kt-app-toolbar-enabled="true" class="app-default">
     <div class="d-flex flex-column flex-root app-root" id="kt_app_root">

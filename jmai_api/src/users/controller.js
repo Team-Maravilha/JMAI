@@ -109,6 +109,43 @@ const InformacaoUtilizador = (req, res) => {
     });
 }
 
+const EditarUtilizador = (req, res) => {
+    const hashed_id = req.params.hashed_id;
+    const { nome, email, cargo, estado } = req.body;
+    pool.query("SELECT editar_utilizador($1, $2, $3, $4, $5)", [hashed_id, nome, email, cargo, estado], (error, results) => {
+        if (error) {
+            res.status(400).json({
+                status: 'error',
+                data: null,
+                messages: [error.message]
+            });
+            return;
+        }
+        switch (cargo) {
+            case 0:
+                res.status(200).json({
+                    status: 'success',
+                    data: null,
+                    messages: ["Administrador editado com sucesso!"],
+                });
+                break;
+            case 1:
+                res.status(200).json({
+                    status: 'success',
+                    data: null,
+                    messages: ["Médico editado com sucesso!"],
+                });
+                break;
+            case 2:
+                res.status(200).json({
+                    status: 'success',
+                    data: null,
+                    messages: ["Rececionista editado com sucesso!"],
+                });
+                break;
+        }
+    });
+}
 
 
 module.exports = {
@@ -116,6 +153,7 @@ module.exports = {
     RegistarAdministrador,
     RegistarMedico,
     RegistarRececionista,
-    InformacaoUtilizador
+    InformacaoUtilizador,
+    EditarUtilizador
     
 };

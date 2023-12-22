@@ -25,13 +25,26 @@
 <script src="https://cdn.amcharts.com/lib/5/geodata/usaLow.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/geodata/worldTimeZonesLow.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/geodata/worldTimeZoneAreasLow.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.5/dist/js.cookie.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/i18n/pt.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/l10n/pt.min.js"></script>
 <script src="<?php echo $link_home; ?>assets/plugins/custom/datatables/datatables.bundle.js"></script>
+
 
 <script src="<?php echo $link_home; ?>assets/js/widgets.bundle.js"></script>
 <script src="<?php echo $link_home; ?>assets/js/custom/widgets.js"></script>
 <script src="<?php echo $link_home; ?>assets/js/custom/apps/chat/chat.js"></script>
 <script src="<?php echo $link_home; ?>assets/js/custom/utilities/modals/upgrade-plan.js"></script>
 <script src="<?php echo $link_home; ?>assets/js/custom/utilities/modals/users-search.js"></script>
+
+<script>
+    $.fn.select2.defaults.set('language', 'pt-PT');
+    flatpickr.localize(flatpickr.l10ns.pt);
+    flatpickr.setDefaults({
+        dateFormat: "d/m/Y",
+    });
+    const token = Cookies.get("token") || "";
+</script>
 
 <script>
     var defaultThemeMode = "light";

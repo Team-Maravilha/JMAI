@@ -25,25 +25,28 @@ if (isset($_SERVER["REQUEST_METHOD"])) {
                     if ($verify_user_login["status"]) {
                         if ($verify_user_login["response"]["status"] === "success") {
                             if (session_status() !== PHP_SESSION_ACTIVE) session_start();
+                            $_SESSION["hashed_id"] = $verify_user_login["response"]["data"]["hashed_id"];
                             $_SESSION["username"] = $verify_user_login["response"]["data"]["nome"];
                             $_SESSION["email"] = $verify_user_login["response"]["data"]["email"];
                             $_SESSION["role"] = $verify_user_login["response"]["data"]["cargo"];
                             $_SESSION["role_name"] = $verify_user_login["response"]["data"]["texto_cargo"];
                             $_SESSION["token"] = $verify_user_login["response"]["data"]["token"];
+                            // Enviar o Token para as Cookies
+                            setcookie("token", $verify_user_login["response"]["data"]["token"], time() + (86400 * 8), "/");
 
-                            if($_SESSION["role"] === 0){
+                            if ($_SESSION["role"] === 0) {
                                 $redirect = "/pages/admin/index";
-                            } else if ($_SESSION["role"] === 1){
+                            } else if ($_SESSION["role"] === 1) {
                                 $redirect = "/pages/medico/index";
-                            } else if ($_SESSION["role"] === 2){
+                            } else if ($_SESSION["role"] === 2) {
                                 $redirect = "/pages/rececionista/index";
                             }
                             $verify_user_login["response"]["redirect"] = $redirect;
                         }
                     }
-                  
+
                     echo json_encode($verify_user_login["response"]);
-                break;
+                    break;
 
                 case "loginUtente":
                     $email = $_POST["email"];
@@ -57,13 +60,17 @@ if (isset($_SERVER["REQUEST_METHOD"])) {
                     if ($verify_user_login["status"]) {
                         if ($verify_user_login["response"]["status"] === "success") {
                             if (session_status() !== PHP_SESSION_ACTIVE) session_start();
+                            $_SESSION["hashed_id"] = $verify_user_login["response"]["data"]["hashed_id"];
                             $_SESSION["username"] = $verify_user_login["response"]["data"]["nome"];
                             $_SESSION["email"] = $verify_user_login["response"]["data"]["email_autenticacao"];
                             $_SESSION["role"] = $verify_user_login["response"]["data"]["cargo"];
                             $_SESSION["role_name"] = $verify_user_login["response"]["data"]["texto_cargo"];
                             $_SESSION["token"] = $verify_user_login["response"]["data"]["token"];
+                            // Enviar o Token para as Cookies
+                            setcookie("token", $verify_user_login["response"]["data"]["token"], time() + (86400 * 8), "/");
 
-                            if($_SESSION["role"] === 3){
+
+                            if ($_SESSION["role"] === 3) {
                                 $redirect = "/pages/index";
                             } else {
                                 $redirect = "/pages/auth/login";
@@ -71,9 +78,9 @@ if (isset($_SERVER["REQUEST_METHOD"])) {
                             $verify_user_login["response"]["redirect"] = $redirect;
                         }
                     }
-                  
+
                     echo json_encode($verify_user_login["response"]);
-                break;
+                    break;
             }
 
             break;

@@ -116,6 +116,71 @@
             <?php } ?>
             <?php if ($_SESSION["role"] === 2) { ?>
             <?php } ?>
+            <?php if ($_SESSION["role"] === 3) { ?>
+                <div class="app-header-menu app-header-mobile-drawer align-items-stretch" data-kt-drawer="true" data-kt-drawer-name="app-header-menu" data-kt-drawer-activate="{default: true, lg: false}" data-kt-drawer-overlay="true" data-kt-drawer-width="250px" data-kt-drawer-direction="start" data-kt-drawer-toggle="#kt_app_header_menu_toggle" data-kt-swapper="true" data-kt-swapper-mode="{default: 'append', lg: 'prepend'}" data-kt-swapper-parent="{default: '#kt_app_body', lg: '#kt_app_header_wrapper'}">
+                    <div class="menu menu-rounded menu-active-bg menu-state-primary menu-column menu-lg-row menu-title-gray-700 menu-icon-gray-500 menu-arrow-gray-500 menu-bullet-gray-500 my-5 my-lg-0 align-items-stretch fw-semibold px-2 px-lg-0" id="kt_app_header_menu" data-kt-menu="true">
+
+                        <div class="menu-item here menu-lg-down-accordion menu-sub-lg-down-indention me-0 me-lg-2">
+                            <span class="menu-link">
+                                <a href="<?php echo $link_home ?>pages/">
+                                    <span class="menu-title">Início</span>
+                                    <span class="menu-arrow d-lg-none"></span>
+                                </a>
+                            </span>
+                        </div>
+
+                        <div data-kt-menu-trigger="{default: 'click', lg: 'hover'}" data-kt-menu-placement="bottom-start" class="menu-item here show menu-here-bg menu-lg-down-accordion me-0 me-lg-2">
+                            <span class="menu-link">
+                                <span class="menu-title">Requerimentos</span>
+                                <span class="menu-arrow d-lg-none"></span>
+                            </span>
+                            <div class="menu-sub menu-sub-lg-down-accordion menu-sub-lg-dropdown p-0 w-100 w-lg-850px">
+                                <div class="menu-state-bg menu-extended overflow-hidden overflow-lg-visible" data-kt-menu-dismiss="true">
+                                    <div class="row">
+                                        <div class="col-lg-12 mb-3 mb-lg-0 py-3 px-3 py-lg-6 px-lg-6">
+                                            <div class="row">
+
+                                                <div class="col-lg-6 mb-3">
+                                                    <div class="menu-item p-0 m-0">
+                                                        <a href="<?php echo $link_home ?>pages/requerimento" class="menu-link">
+                                                            <span class="d-flex flex-center flex-shrink-0 rounded w-40px h-40px me-3">
+                                                            <i class="ki-solid ki-file-added text-primary fs-1"></i>
+                                                            </span>
+                                                            <span class="d-flex flex-column">
+                                                                <span class="fs-6 fw-bold text-gray-800">Novo Requerimento</span>
+                                                                <span class="fs-7 fw-semibold text-muted">Fazer novo requerimento.</span>
+                                                            </span>
+                                                        </a>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-lg-6 mb-3">
+                                                    <div class="menu-item p-0 m-0">
+                                                        <a href="<?php echo $link_home ?>pages/" class="menu-link">
+                                                            <span class="d-flex flex-center flex-shrink-0 rounded w-40px h-40px me-3">
+                                                            <i class="ki-solid ki-search-list text-primary fs-1"></i>
+                                                            </span>
+                                                            <span class="d-flex flex-column">
+                                                                <span class="fs-6 fw-bold text-gray-800">Ver Requerimentos</span>
+                                                                <span class="fs-7 fw-semibold text-muted">Veja todos os seus requerimentos.</span>
+                                                            </span>
+                                                        </a>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            <?php } ?>
 
             <div class="app-navbar flex-shrink-0">
                 <div class="app-navbar-item ms-5" id="kt_header_user_menu_toggle">

@@ -91,7 +91,112 @@ const ListarRequerimentosDataTable = (req, res) => {
   });
 };
 
+const InformacaoRequerimento = (req, res) => {
+  const { hashed_id } = req.params;
+
+  pool.query("SELECT * FROM listar_requerimentos($1)", [hashed_id], (error, results) => {
+    if (error) {
+      res.status(400).json({
+        status: "error",
+        data: null,
+        messages: [error.message],
+      });
+      return;
+    }
+    res.status(200).json({
+      status: "success",
+      data: results.rows[0],
+      messages: [],
+    });
+  });
+}
+
+const RegistarAcesso = (req, res) => {
+  const { hashed_id_requerimento, hashed_id_utilizador } = req.body;
+
+  pool.query("SELECT * FROM inserir_log_acesso_requerimento($1, $2)", [hashed_id_requerimento, hashed_id_utilizador], (error, results) => {
+    if (error) {
+      res.status(400).json({
+        status: "error",
+        data: null,
+        messages: [error.message],
+      });
+      return;
+    }
+    res.status(201).json({
+      status: "success",
+      data: results.rows[0],
+      messages: ["Acesso registado com Sucesso!"],
+    });
+  });
+}
+
+const ListarAcessosRequerimento = (req, res) => {
+  const { hashed_id_requerimento, cargo_utilizador } = req.query;
+
+  pool.query("SELECT * FROM listar_log_acesso_requerimento($1, $2)", [hashed_id_requerimento, cargo_utilizador], (error, results) => {
+    if (error) {
+      res.status(400).json({
+        recordsTotal: 0,
+        recordsFiltered: 0,
+        data: [],
+      });
+      return;
+    }
+    res.status(200).json({
+      recordsTotal: results.rows.length,
+      recordsFiltered: results.rows.length,
+      data: results.rows,
+    });
+  });
+}
+
+const ValidarRequerimento = (req, res) => {
+  const { hashed_id_requerimento, hashed_id_utilizador } = req.body;
+
+  pool.query("SELECT * FROM alterar_estado_requerimento($1, $2, $3)", [hashed_id_requerimento, hashed_id_utilizador, 1], (error, results) => {
+    if (error) {
+      res.status(400).json({
+        status: "error",
+        data: null,
+        messages: [error.message],
+      });
+      return;
+    }
+    res.status(201).json({
+      status: "success",
+      data: results.rows[0],
+      messages: ["Requerimento validado com Sucesso!"],
+    });
+  });
+}
+
+const InvalidarRequerimento = (req, res) => {
+  const { hashed_id_requerimento, hashed_id_utilizador } = req.body;
+
+  pool.query("SELECT * FROM alterar_estado_requerimento($1, $2, $3)", [hashed_id_requerimento, hashed_id_utilizador, 5], (error, results) => {
+    if (error) {
+      res.status(400).json({
+        status: "error",
+        data: null,
+        messages: [error.message],
+      });
+      return;
+    }
+    res.status(201).json({
+      status: "success",
+      data: results.rows[0],
+      messages: ["Requerimento invalidado com Sucesso!"],
+    });
+  });
+}
+
 module.exports = {
   RegistarRequerimento,
   ListarRequerimentosDataTable,
+  InformacaoRequerimento,
+  RegistarAcesso,
+  ListarAcessosRequerimento,
+  ValidarRequerimento,
+  InvalidarRequerimento,
 };

@@ -92,6 +92,7 @@ CREATE TABLE
         hashed_id varchar(255) UNIQUE
     );
 ALTER TABLE documentos_requerimento ALTER COLUMN data_criacao SET DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE documentos_requerimento ADD nome_documento varchar(255) NOT NULL;
 
 
 CREATE SEQUENCE sequencia_utilizador

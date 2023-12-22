@@ -27,8 +27,8 @@ const ListarUtilizadoresDataTable = (req, res) => {
 };
 
 const ListarUtilizadores = (req, res) => {
-    const { cargo } = req.query;
-    pool.query("SELECT * FROM listar_utilizadores(NULL, NULL, $1)", [cargo], (error, results) => {
+    const { cargo, estado } = req.query;
+    pool.query("SELECT * FROM listar_utilizadores(NULL, NULL, $1, $2)", [cargo, estado], (error, results) => {
         if (error) {
             res.status(400).json({
                 status: 'error',

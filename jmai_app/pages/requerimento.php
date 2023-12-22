@@ -59,7 +59,7 @@
                                                         <div class="col-12 col-lg-4" id="div_data_emissao_documento">
                                                             <label class="col-lg-12 col-form-label required required fw-semibold fs-6">Data de Emissão do Documento</label>
                                                             <div class="col-lg-12 fv-row fv-plugins-icon-container">
-                                                                <input class="form-control form-control-solid" name="data_emissao_documento" placeholder="Selecione uma Data de Emissão" id="data" />
+                                                                <input class="form-control form-control-solid" name="data_emissao_documento" autocomplete="off" placeholder="Selecione uma Data de Emissão" id="data_emissao_documento" />
                                                                 <div class="fv-plugins-message-container invalid-feedback"></div>
                                                             </div>
                                                         </div>
@@ -73,7 +73,7 @@
                                                         <div class="col-12 col-lg-4">
                                                             <label class="col-lg-12 col-form-label required required fw-semibold fs-6">Data de Validade do Documento</label>
                                                             <div class="col-lg-12 fv-row fv-plugins-icon-container">
-                                                                <input class="form-control form-control-solid" name="data_validade_documento" placeholder="Selecione uma Data de Validade" id="data_validade_documento" />
+                                                                <input class="form-control form-control-solid" name="data_validade_documento" autocomplete="off" placeholder="Selecione uma Data de Validade" id="data_validade_documento" />
                                                                 <div class="fv-plugins-message-container invalid-feedback"></div>
                                                             </div>
                                                         </div>
@@ -89,7 +89,7 @@
                                                         <div class="col-12 col-lg-4">
                                                             <label class="col-lg-12 col-form-label required fw-semibold fs-6">Data de Nascimento</label>
                                                             <div class="col-lg-12 fv-row fv-plugins-icon-container">
-                                                                <input class="form-control form-control-solid" name="data_nascimento" placeholder="Selecione uma Data" id="data_nascimento" />
+                                                                <input class="form-control form-control-solid" name="data_nascimento" autocomplete="off" placeholder="Selecione uma Data" id="data_nascimento" />
                                                                 <div class="fv-plugins-message-container invalid-feedback"></div>
                                                             </div>
                                                         </div>
@@ -110,14 +110,14 @@
 
                                                         <div class="col-12 col-lg-4">
                                                             <label class="col-lg-12 col-form-label required fw-semibold fs-6">Concelho</label>
-                                                            <select class="form-select form-select-solid" name="concelho_naturadidade" data-control="select2" data-hide-search="true" data-placeholder="Selecione um Concelho">
+                                                            <select class="form-select form-select-solid" name="concelho_naturalidade" data-control="select2" data-hide-search="true" data-placeholder="Selecione um Concelho">
                                                                 <option></option>
                                                             </select>
                                                         </div>
 
                                                         <div class="col-12 col-lg-4">
                                                             <label class="col-lg-12 col-form-label required fw-semibold fs-6">Freguesia</label>
-                                                            <select class="form-select form-select-solid" name="freguesia_naturadidade" data-control="select2" data-hide-search="true" data-placeholder="Selecione uma Freguesia">
+                                                            <select class="form-select form-select-solid" name="freguesia_naturalidade" data-control="select2" data-hide-search="true" data-placeholder="Selecione uma Freguesia">
                                                                 <option></option>
                                                             </select>
                                                         </div>
@@ -180,7 +180,7 @@
                                                         <div class="col-12 col-lg-4">
                                                             <label class="col-lg-12 col-form-label fw-semibold fs-6">Contacto Email</label>
                                                             <div class="col-lg-12 fv-row fv-plugins-icon-container">
-                                                                <input type="email" name="email" class="form-control form-control-lg form-control-solid" placeholder="Email para Contacto" value="">
+                                                                <input type="email" name="email_preferencial" class="form-control form-control-lg form-control-solid" placeholder="Email para Contacto" value="">
                                                                 <div class="fv-plugins-message-container invalid-feedback"></div>
                                                             </div>
                                                         </div>
@@ -226,7 +226,7 @@
                                                             <div class="col-12 col-lg-4" id="div_data_submissao_anterior">
                                                                 <label class="col-lg-12 col-form-label required fw-semibold fs-6">Data da Última Submissão</label>
                                                                 <div class="col-lg-12 fv-row fv-plugins-icon-container">
-                                                                    <input class="form-control form-control-solid" name="data_submissao_anterior" placeholder="Selecione uma Data" id="data_submissao_anterior" />
+                                                                    <input class="form-control form-control-solid" name="data_submissao_anterior" autocomplete="off" placeholder="Selecione uma Data" id="data_submissao_anterior" />
                                                                     <div class="fv-plugins-message-container invalid-feedback"></div>
                                                                 </div>
                                                             </div>
@@ -234,28 +234,17 @@
                                                         <div class="separator border-5 my-6"></div>
 
 
-                                                        <!--begin::Input group-->
                                                         <div class="form-group row col-12">
-                                                            <!--begin::Label-->
-                                                            <label class="col-lg-6 col-form-label text-lg-right">Anexe os documentos que achar necessário para a avaliação do seu requerimento:</label>
-                                                            <!--end::Label-->
+                                                            <label class="col-12 col-form-label text-lg-right">Anexe os documentos que achar necessário para a avaliação do seu requerimento:</label>
 
-                                                            <!--begin::Col-->
-                                                            <div class="col-lg-10">
-                                                                <!--begin::Dropzone-->
+                                                            <div class="col-12">
                                                                 <div class="dropzone dropzone-queue mb-2" id="kt_dropzonejs_example_3">
-                                                                    <!--begin::Controls-->
                                                                     <div class="dropzone-panel mb-lg-0 mb-2">
                                                                         <a class="dropzone-select btn btn-sm btn-primary me-2">Anexar Documentos</a>
-                                                                        <a class="dropzone-upload btn btn-sm btn-light-primary me-2">Carregar Todos</a>
-                                                                        <a class="dropzone-remove-all btn btn-sm btn-light-primary">Remover Todos</a>
                                                                     </div>
-                                                                    <!--end::Controls-->
 
-                                                                    <!--begin::Items-->
                                                                     <div class="dropzone-items wm-200px">
                                                                         <div class="dropzone-item" style="display:none">
-                                                                            <!--begin::File-->
                                                                             <div class="dropzone-file">
                                                                                 <div class="dropzone-filename" title="some_image_file_name.jpg">
                                                                                     <span data-dz-name>some_image_file_name.jpg</span>
@@ -264,49 +253,43 @@
 
                                                                                 <div class="dropzone-error" data-dz-errormessage></div>
                                                                             </div>
-                                                                            <!--end::File-->
 
-                                                                            <!--begin::Progress-->
                                                                             <div class="dropzone-progress">
                                                                                 <div class="progress">
                                                                                     <div class="progress-bar bg-primary" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" data-dz-uploadprogress>
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
-                                                                            <!--end::Progress-->
 
-                                                                            <!--begin::Toolbar-->
                                                                             <div class="dropzone-toolbar">
                                                                                 <span class="dropzone-delete" data-dz-remove><i class="bi bi-x fs-1"></i></span>
                                                                             </div>
-                                                                            <!--end::Toolbar-->
                                                                         </div>
                                                                     </div>
-                                                                    <!--end::Items-->
+
+
                                                                 </div>
-                                                                <!--end::Dropzone-->
 
-                                                                <!--begin::Hint-->
                                                                 <span class="form-text text-muted">O tamanho máximo do ficheiro é de 1MB e o número máximo de ficheiros é de 5.</span>
-                                                                <!--end::Hint-->
+
                                                             </div>
-                                                            <!--end::Col-->
                                                         </div>
-                                                        <!--end::Input group-->
 
-
-                                                        <div class="card-footer d-flex justify-content-end py-6 px-9 g-5">
-                                                            <button type="reset" class="btn btn-light btn-active-light-primary me-2">Cancelar</button>
-                                                            <button type="submit" class="btn btn-primary" data-element="submit">
-                                                                <span class="indicator-label">
-                                                                    Submeter
-                                                                </span>
-                                                                <span class="indicator-progress">
-                                                                    Por favor Aguarde... <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
-                                                                </span>
-                                                            </button>
-                                                        </div>
                                                     </div>
+                                                </div>
+
+                                                <div class="card-footer d-flex justify-content-end py-6 px-9 g-5">
+                                                    <button type="reset" class="btn btn-light btn-active-light-primary me-2">Cancelar</button>
+                                                    <button type="submit" class="btn btn-primary" data-element="submit">
+                                                        <span class="indicator-label">
+                                                            Submeter
+                                                        </span>
+                                                        <span class="indicator-progress">
+                                                            Por favor Aguarde... <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                                                        </span>
+                                                    </button>
+                                                </div>
+                                            </div>
                                         </form>
                                     </div>
                                 </div>
@@ -321,6 +304,9 @@
         </div>
     </div>
     <?php require_once($_SERVER["DOCUMENT_ROOT"] . "/foo.php") ?>
+    <script src="https://www.gstatic.com/firebasejs/6.0.2/firebase.js"></script>
+    <script src="<?php echo $link_home ?>js/firebase_upload.js"></script>
+
     <script>
         function verificar_tipo_documento() {
             var tipo_documento = $('[name="tipo_documento"]').val();
@@ -355,22 +341,21 @@
         });
 
         flatpickr("#data_validade_documento", {
-            dateFormat: "Y-m-d",
-            locale: "pt",
             allowInput: true,
             minDate: "today",
         });
 
+        flatpickr("#data_emissao_documento", {
+            allowInput: true,
+            maxDate: "today",
+        })
+
         flatpickr("#data_nascimento", {
-            dateFormat: "Y-m-d",
-            locale: "pt",
             allowInput: true,
             maxDate: "today",
         });
 
         flatpickr("#data_submissao_anterior", {
-            dateFormat: "Y-m-d",
-            locale: "pt",
             allowInput: true,
             maxDate: "today",
         });
@@ -418,76 +403,7 @@
         }).mask(codigo_postal);
     </script>
 
-    <script>
-        const inputPais = $('[name="pais"]'); // ? Input Paises Naturalidade
-        const inputDistrito = $('[name="distrito_naturalidade"]'); // ? Input Distritos Naturalidade
-        const inputConcelho = $('[name="concelho_naturadidade"]'); // ? Input Concelhos Naturalidade
-        const inputFreguesia = $('[name="freguesia_naturadidade"]'); // ? Input Freguesias Naturalidade
-
-        const carregarPaisesNaturalidade = async () => {
-            fetch(`${api_base_url}geo/paises/lista?${new URLSearchParams({})}`, {
-                    method: "GET",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Authorization": "<?php echo $_SESSION['token']; ?>"
-                    }
-                })
-                .then((response) => response.json())
-                .then((data) => {
-                    if (data.status === 'error') {
-                        toastr.error(data.messages[0]);
-                    } else if (data.status === 'success') {
-                        data.data.forEach((pais) => {
-                            let option = document.createElement("option");
-                            option.value = pais.id_pais;
-                            option.text = pais.nome;
-                            $(inputPais).append(option);
-                        });
-                        //REINICIALIZAR SELECT2
-                        $(inputPais).select2();
-                    }
-                });
-        };
-
-        const carregarDistritosNaturalidade = async (id_pais) => {
-            fetch(`${api_base_url}geo/paises/${id_pais}/distritos/lista?${new URLSearchParams()}`, {
-                    method: "GET",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Authorization": "<?php echo $_SESSION['token']; ?>"
-                    }
-                })
-                .then((response) => response.json())
-                .then((data) => {
-                    if (data.status === 'error') {
-                        toastr.error(data.messages[0]);
-                    } else if (data.status === 'success') {
-                        data.data.forEach((distrito) => {
-                            let option = document.createElement("option");
-                            option.value = distrito.id_distrito;
-                            option.text = distrito.nome;
-                            $(inputDistrito).append(option);
-                        });
-                        //REINICIALIZAR SELECT2
-                        $(inputDistrito).select2();
-                    }
-                });
-        };
-
-        window.addEventListener("DOMContentLoaded", () => {
-            carregarPaisesNaturalidade();
-            $(inputPais).change(function() {
-                $(inputDistrito).empty();
-                $(inputDistrito).append('<option></option>');
-                $(inputConcelho).empty();
-                $(inputConcelho).append('<option></option>');
-                $(inputFreguesia).empty();
-                $(inputFreguesia).append('<option></option>');
-                carregarDistritosNaturalidade($(this).val());
-            });
-
-        });
-    </script>
+    <script src="<?php echo $link_home ?>js/geo.js"></script>
 
     <script>
         // set the dropzone container id
@@ -500,19 +416,18 @@
         var previewTemplate = previewNode.parentNode.innerHTML;
         previewNode.parentNode.removeChild(previewNode);
 
-        var myDropzone = new Dropzone(id, { // Make the whole body a dropzone
-            url: "https://keenthemes.com/scripts/void.php", // Set the url for your upload script location
+        var myDropzone = new Dropzone(id, {
+            url: '<?php echo $link_home ?>',
             parallelUploads: 20,
             maxFiles: 5,
-            maxFilesize: 1, // Max filesize in MB
+            maxFilesize: 1,
             previewTemplate: previewTemplate,
-            previewsContainer: id + " .dropzone-items", // Define the container to display the previews
-            clickable: id + " .dropzone-select", // Define the element that should be used as click trigger to select files.
+            previewsContainer: id + " .dropzone-items",
+            clickable: id + " .dropzone-select",
             //LOCALE
             dictFileTooBig: "O ficheiro é demasiado grande ({{filesize}}MiB). Tamanho máximo: {{maxFilesize}}MiB.",
             dictInvalidFileType: "Não pode carregar ficheiros deste tipo.",
             dictResponseError: "O servidor respondeu com o código {{statusCode}}.",
-
         });
 
         myDropzone.on("addedfile", function(file) {
@@ -521,6 +436,10 @@
             dropzoneItems.forEach(dropzoneItem => {
                 dropzoneItem.style.display = '';
             });
+        });
+
+        myDropzone.on("removedfile", function(file) {
+            removeFileFromFirebase(file.name);
         });
 
         // Update the total progress bar
@@ -534,6 +453,7 @@
         myDropzone.on("sending", function(file) {
             // Show the total progress bar when upload starts
             const progressBars = dropzone.querySelectorAll('.progress-bar');
+            uploadFileToFirebase(file);
             progressBars.forEach(progressBar => {
                 progressBar.style.opacity = "1";
             });
@@ -550,6 +470,92 @@
                 });
             }, 300);
         });
+    </script>
+
+    <script>
+        const form = document.getElementById("form-requerimento");
+        const submitButton = form.querySelector("[data-element='submit']");
+
+        function handleRegistar(event) {
+            event.preventDefault();
+            submitButton.setAttribute("data-kt-indicator", "on");
+            submitButton.disabled = true;
+
+            var form = document.getElementById("form-requerimento");
+            const formData = new FormData(form);
+
+            const data = {};
+            formData.append("id_utente", '<?php echo $id_user ?>');
+            formData.append("documentos", JSON.stringify(documentos));
+            for (const [key, value] of formData.entries()) {
+                data[key] = value;
+            }
+
+            const requestOptions = {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": token
+                },
+                body: JSON.stringify(data),
+            };
+
+            fetch(`${api_base_url}requerimentos/registar`, requestOptions)
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.status === "success") {
+                        Swal.fire({
+                            icon: "success",
+                            title: "Sucesso!",
+                            text: data.messages[0],
+                            buttonsStyling: false,
+                            allowOutsideClick: false,
+                            showConfirmButton: true,
+                            confirmButtonText: 'Confirmar!',
+                            didOpen: () => {
+                                const confirmButton = Swal.getConfirmButton();
+                                confirmButton.blur();
+                            },
+                            customClass: {
+                                confirmButton: "btn fw-bold btn-primary",
+                            },
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                // location.reload();
+                            }
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: "warning",
+                            title: "Atenção!",
+                            text: data.messages[0],
+                            confirmButtonText: "Voltar a Edição",
+                            buttonsStyling: false,
+                            customClass: {
+                                confirmButton: "btn btn-warning",
+                            },
+                        });
+                    }
+                })
+                .catch((error) => {
+                    Swal.fire({
+                        icon: "error",
+                        title: "Ocorreu um Erro!",
+                        text: data.error,
+                        confirmButtonText: "Voltar a Edição",
+                        buttonsStyling: false,
+                        customClass: {
+                            confirmButton: "btn btn-danger",
+                        },
+                    });
+                })
+                .finally(() => {
+                    submitButton.removeAttribute("data-kt-indicator");
+                    submitButton.disabled = false;
+                });
+        }
+
+        form.addEventListener("submit", handleRegistar);
     </script>
 
 </body>

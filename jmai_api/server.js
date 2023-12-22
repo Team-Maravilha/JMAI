@@ -9,6 +9,8 @@ const usersRoutes = require("./src/users/routes");
 const authRoutes = require("./src/auth/routes");
 const patientsRoutes = require("./src/patients/routes");
 const geoRoutes = require("./src/geo/routes");
+const reqRoutes = require("./src/req/routes");
+
 
 const app = express();
 const port = 8888;
@@ -42,5 +44,6 @@ app.use("/api/utilizadores", usersRoutes);
 app.use("/api/autenticacao", authRoutes);
 app.use("/api/utentes", patientsRoutes);
 app.use("/api/geo", geoRoutes);
+app.use("/api/requerimentos", reqRoutes);
 
 app.listen(port, () => console.log(`Servidor ativo na porta: ${port}`));

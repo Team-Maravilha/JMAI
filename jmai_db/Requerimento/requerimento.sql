@@ -733,3 +733,68 @@ END;
 $$ LANGUAGE plpgsql;
         
 
+/**
+    * Esta função permite alterar o estado de um requerimento.
+    * @param {String} hashed_id_requerimento - O identificador do requerimento a ser alterado.
+    * @param {Number} estado_param - O estado do requerimento a ser alterado.
+    * @returns {Boolean} True se o estado do requerimento for alterado, false caso contrário.
+*/
+CREATE OR REPLACE FUNCTION alterar_estado_requerimento(
+    hashed_id_requerimento varchar(255),
+    hashed_id_utilizador varchar(255),
+    estado_param integer
+)
+RETURNS boolean AS $$
+DECLARE
+    id_requerimento_aux integer;
+    id_utilizador_aux integer;
+    estado_aux integer;
+BEGIN
+    
+        IF hashed_id_requerimento IS NULL OR hashed_id_requerimento = '' THEN
+            RAISE EXCEPTION 'O identificador do requerimento não é válido.';
+        ELSIF NOT EXISTS(SELECT * FROM requerimento WHERE requerimento.hashed_id = hashed_id_requerimento) THEN
+            RAISE EXCEPTION 'Ocorreu um erro ao verificar o requerimento.';
+        ELSE
+            SELECT requerimento.id_requerimento INTO id_requerimento_aux FROM requerimento WHERE requerimento.hashed_id = hashed_id_requerimento;
+        END IF;
+
+        IF hashed_id_utilizador IS NULL OR hashed_id_utilizador = '' THEN
+            RAISE EXCEPTION 'O identificador do utilizador não é válido.';
+        ELSIF NOT EXISTS(SELECT * FROM utilizador WHERE utilizador.hashed_id = hashed_id_utilizador) THEN
+            RAISE EXCEPTION 'Ocorreu um erro ao verificar o utilizador.';
+        ELSE
+            SELECT utilizador.id_utlizador INTO id_utilizador_aux FROM utilizador WHERE utilizador.hashed_id = hashed_id_utilizador;
+        END IF;
+
+        IF estado_param IS NULL THEN
+            RAISE EXCEPTION 'O estado do requerimento não é válido.';
+        ELSIF estado_param < 0 OR estado_param > 6 THEN
+            RAISE EXCEPTION 'O estado do requerimento não é válido.';
+        END IF;
+
+        SELECT requerimento.estado INTO estado_aux FROM requerimento WHERE requerimento.id_requerimento = id_requerimento_aux;
+
+        IF estado_aux = estado_param THEN
+            RAISE EXCEPTION 'O estado do requerimento não pode ser alterado.';
+        END IF;
+
+        UPDATE requerimento SET estado = estado_param WHERE requerimento.id_requerimento = id_requerimento_aux;
+
+        INSERT INTO historico_estados (
+            id_requerimento,
+            id_utilizador,
+            estado_anterior,
+            estado_novo
+        ) VALUES (
+            id_requerimento_aux,
+            id_utilizador_aux,
+            estado_aux,
+            estado_param
+        );
+
+        RETURN TRUE;
+    
+    END;
+$$ LANGUAGE plpgsql;
+

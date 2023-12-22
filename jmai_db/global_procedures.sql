@@ -57,14 +57,14 @@ $$ LANGUAGE plpgsql;
  * @param {Date} data - A data a ser convertida.
  * @returns {Date} Retorna a data convertida.
  */
-CREATE OR REPLACE FUNCTION converter_from_pt_to_iso(data date)
+CREATE OR REPLACE FUNCTION converter_from_pt_to_iso(data_text text)
 RETURNS date AS $$
 BEGIN
-    IF data IS NULL THEN
-        RETURN NULL; -- Retorna NULL quando a entrada é NULL
+    IF data_text IS NULL THEN
+        RETURN NULL;
     END IF;
 
-    RETURN to_date(data::text, 'DD/MM/YYYY');
+    RETURN to_date(data_text, 'DD/MM/YYYY');
 END;
 $$ LANGUAGE plpgsql;
 

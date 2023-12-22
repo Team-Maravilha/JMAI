@@ -71,7 +71,7 @@ if (isset($_SERVER["REQUEST_METHOD"])) {
 
 
                             if ($_SESSION["role"] === 3) {
-                                $redirect = "/pages/index";
+                                $redirect = "/pages/utente/index";
                             } else {
                                 $redirect = "/pages/auth/login";
                             }

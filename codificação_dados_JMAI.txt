@@ -24,7 +24,7 @@
 --===========================--
 -- 0 - Multiuso
 -- 1 - Importação de Veículo
--- 2 - Multiuso e Importação de Veículo
+-- 2 - Multiuso e Importação de Veículo (NÃO USAR)
 --===========================--
 
 

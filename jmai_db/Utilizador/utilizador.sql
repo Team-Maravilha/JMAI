@@ -47,11 +47,11 @@ CREATE OR REPLACE FUNCTION inserir_utilizador(nome varchar(255), email varchar(2
 RETURNS TABLE (hashed_id varchar(255)) AS $$
 BEGIN
     
-    IF nome IS NULL THEN
+    IF nome IS NULL OR nome = '' THEN
         RAISE EXCEPTION 'O nome do utilizador não é válido.';
     END IF;
 
-    IF email IS NULL THEN
+    IF email IS NULL OR email = '' THEN
         RAISE EXCEPTION 'O email do utilizador não é válido.';
     ELSIF EXISTS (SELECT * FROM utilizador WHERE utilizador.email = inserir_utilizador.email) THEN
         RAISE EXCEPTION 'Já existe um utilizador com o email %.', inserir_utilizador.email;
@@ -111,11 +111,11 @@ BEGIN
         RAISE EXCEPTION 'O utilizador não é válido.';
     END IF;
 
-    IF nome IS NULL THEN
+    IF nome IS NULL OR nome = '' THEN
         RAISE EXCEPTION 'O nome do utilizador não é válido.';
     END IF;
 
-    IF email IS NULL THEN
+    IF email IS NULL OR email = '' THEN
         RAISE EXCEPTION 'O email do utilizador não é válido.';
     ELSIF EXISTS (SELECT * FROM utilizador WHERE utilizador.email = editar_utilizador.email AND utilizador.hashed_id != editar_utilizador.hashed_id_param) THEN
         RAISE EXCEPTION 'Já existe um utilizador com o email %.', editar_utilizador.email;

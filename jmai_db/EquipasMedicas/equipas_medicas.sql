@@ -58,4 +58,24 @@ SELECT * FROM inserir_equipa_medica('equipa1', 'cor1', '[{"hashed_id": "7f707912
 CREATE TRIGGER add_uuid BEFORE INSERT ON equipa_medica FOR EACH ROW EXECUTE PROCEDURE add_uuid();
 
 
+/**
+    * Esta função permite obter todas as equipas médicas.
+    * @param {String} hashed_id_param - O hashed_id da equipa médica.
+    * @returns {Set} Retorna um conjunto de equipas médicas.
+ */
+CREATE OR REPLACE FUNCTION listar_equipas_medicas(hashed_id_param varchar(255) DEFAULT NULL)
+RETURNS TABLE (hashed_id varchar(255), nome varchar(255), cor varchar(255), medicos json) AS $$
+BEGIN
+    
+    IF hashed_id_param IS NOT NULL THEN
+        IF NOT EXISTS (SELECT * FROM equipa_medica WHERE equipa_medica.hashed_id = hashed_id_param) THEN
+            RAISE EXCEPTION 'Não existe nenhuma equipa médica com o identificador.';
+        END IF;
+    END IF; 
+
+    RETURN QUERY SELECT equipa_medica.hashed_id, equipa_medica.nome, equipa_medica.cor, (SELECT json_agg(json_build_object('hashed_id', utilizador.hashed_id, 'nome', utilizador.nome)) FROM equipa_medica_medicos INNER JOIN utilizador ON equipa_medica_medicos.id_utilizador = utilizador.id_utlizador WHERE equipa_medica_medicos.id_equipa_medica = equipa_medica.id_equipa_medica) FROM equipa_medica WHERE 1 = 1 AND (hashed_id_param IS NULL OR equipa_medica.hashed_id = hashed_id_param);
+END;
+$$ LANGUAGE plpgsql;
+
+
     

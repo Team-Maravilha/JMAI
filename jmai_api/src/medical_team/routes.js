@@ -5,4 +5,6 @@ const router = Router();
 
 router.post("/registar", controller.RegistarEquipaMedica);
 
+router.get("/listar", controller.ListarEquipasMedicas);
+
 module.exports = router;

@@ -18,4 +18,7 @@ router.post("/validar", authMiddleware, controller.ValidarRequerimento);
 
 router.post("/invalidar", authMiddleware, controller.InvalidarRequerimento);
 
+router.post("/avaliar", authMiddleware, controller.AvaliarRequerimento);
+
+
 module.exports = router;

@@ -8,7 +8,7 @@ router.post("/registar", authMiddleware, controller.RegistarRequerimento);
 
 router.post("/listar", authMiddleware, controller.ListarRequerimentosDataTable);
 
-router.get("/informacao/:hashed_id", authMiddleware, controller.InformacaoRequerimento);
+router.get("/ver/:hashed_id", authMiddleware, controller.VerInformacaoRequerimentoByHashedID)
 
 router.post("/acessos/registar", authMiddleware, controller.RegistarAcesso);
 

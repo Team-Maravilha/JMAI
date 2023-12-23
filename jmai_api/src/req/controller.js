@@ -479,9 +479,30 @@ const SendEmail = (to, subject, text, html) => {
 	});
 };
 
+const VerInformacaoRequerimentoByHashedID = (req, res) => {
+  const { hashed_id } = req.params;
+
+  pool.query("SELECT * FROM listar_requerimentos($1)", [hashed_id], (error, results) => {
+    if (error) {
+      res.status(400).json({
+        status: "error",
+        data: null,
+        messages: [error.message],
+      });
+      return;
+    }
+    res.status(200).json({
+      status: "success",
+      data: results.rows[0],
+      messages: ["Informação do Requerimento obtida com Sucesso!"],
+    });
+  });
+};
+
 module.exports = {
 	RegistarRequerimento,
 	ListarRequerimentosDataTable,
+  VerInformacaoRequerimentoByHashedID,
 	InformacaoRequerimento,
 	RegistarAcesso,
 	ListarAcessosRequerimento,

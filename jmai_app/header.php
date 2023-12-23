@@ -72,7 +72,7 @@
 
                                                 <div class="col-lg-6 mb-3">
                                                     <div class="menu-item p-0 m-0">
-                                                        <a href="" class="menu-link">
+                                                        <a href="<?php echo $link_home ?>pages/admin/parametrizacoes/equipas_medicas/lista" class="menu-link">
                                                             <span class="menu-custom-icon d-flex flex-center flex-shrink-0 rounded w-40px h-40px me-3">
                                                                 <i class="ki-solid ki-profile-user text-warning fs-1"></i>
                                                             </span>

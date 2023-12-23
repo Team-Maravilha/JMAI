@@ -92,6 +92,7 @@ CREATE TABLE
         hashed_id varchar(255) UNIQUE
     );
 ALTER TABLE documentos_requerimento ALTER COLUMN data_criacao SET DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE documentos_requerimento ADD nome_documento varchar(255) NOT NULL;
 
 
 CREATE SEQUENCE sequencia_utilizador
@@ -145,6 +146,10 @@ CREATE TABLE
         grau_avalicao float NOT NULL,
         data_avaliacao timestamp NOT NULL
     );
+ALTER TABLE avaliacao_requerimento ALTER COLUMN data_avaliacao SET DEFAULT CURRENT_TIMESTAMP;
+--CHANGE COLUMN NAME
+ALTER TABLE avaliacao_requerimento RENAME COLUMN grau_avalicao TO grau_avaliacao;
+
 
 
 CREATE TABLE
@@ -196,6 +201,8 @@ CREATE TABLE
         hashed_id varchar(255) UNIQUE
     );
 ALTER TABLE grupos_medicos ALTER COLUMN data_criacao SET DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE grupos_medicos RENAME TO equipa_medica;
+ALTER TABLE equipa_medica RENAME COLUMN id_grupo_medico TO id_equipa_medica;
 
 
 CREATE TABLE
@@ -204,6 +211,9 @@ CREATE TABLE
         id_grupos_medicos bigint NOT NULL
     );
 
+--RENAME TABLE
+ALTER TABLE medico_grupo RENAME TO equipa_medica_medicos;
+ALTER TABLE equipa_medica_medicos RENAME COLUMN id_grupos_medicos TO id_equipa_medica;
 
 CREATE SEQUENCE sequencia_agendamento_consulta
     INCREMENT 1

@@ -26,6 +26,25 @@ const ListarUtilizadoresDataTable = (req, res) => {
     });
 };
 
+const ListarUtilizadores = (req, res) => {
+    const { cargo, estado } = req.query;
+    pool.query("SELECT * FROM listar_utilizadores(NULL, NULL, $1, $2)", [cargo, estado], (error, results) => {
+        if (error) {
+            res.status(400).json({
+                status: 'error',
+                data: null,
+                messages: [error.message],
+            });
+            return;
+        }
+        res.status(200).json({
+            status: 'success',
+            data: results.rows,
+            messages: [],
+        });
+    });
+};
+
 const RegistarAdministrador = (req, res) => {
     const { nome, email, palavra_passe, estado } = req.body;
     pool.query("SELECT inserir_utilizador($1, $2, $3, $4, $5)", [nome, email, palavra_passe, 0, estado], (error, results) => {
@@ -245,6 +264,7 @@ const AtivarUtilizador = (req, res) => {
 
 module.exports = {
     ListarUtilizadoresDataTable,
+    ListarUtilizadores,
     RegistarAdministrador,
     RegistarMedico,
     RegistarRececionista,

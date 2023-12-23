@@ -185,41 +185,42 @@ $$ LANGUAGE plpgsql;
     * @param {Array} order_param - O array de ordenação.
     * @returns {Table} Retorna o utilizador editado.
     */
-CREATE OR REPLACE FUNCTION listar_utilizadores(hashed_id_par varchar(255) DEFAULT NULL, nome_param varchar(255) DEFAULT NULL, cargo_param integer DEFAULT NULL, offset_val integer DEFAULT NULL, limit_val integer DEFAULT NULL, search_param varchar(255) DEFAULT NULL, order_param varchar(255)[] DEFAULT NULL)
+CREATE OR REPLACE FUNCTION listar_utilizadores(hashed_id_par varchar(255) DEFAULT NULL, nome_param varchar(255) DEFAULT NULL, cargo_param integer DEFAULT NULL, estado_param integer DEFAULT NULL)
 RETURNS TABLE (hashed_id varchar(255), nome varchar(255), email varchar(255), cargo integer, texto_cargo text, data_criacao timestamp, estado integer, texto_estado text) AS $$
 DECLARE
     _query text := 'SELECT utilizador.hashed_id, utilizador.nome, utilizador.email, utilizador.cargo, (CASE WHEN utilizador.cargo = 0 THEN ''Administrador'' WHEN utilizador.cargo = 1 THEN ''Médico'' ELSE ''Rececionista'' END), utilizador.data_criacao, utilizador.estado, (CASE WHEN utilizador.estado = 0 THEN ''Inativo'' ELSE ''Ativo'' END) FROM utilizador';
     _where text := '';
-    _order text := '';
-    _limit text := '';
-    _offset text := '';
 BEGIN
 
     IF hashed_id_par IS NOT NULL THEN
         _where := _where || ' WHERE utilizador.hashed_id = ''' || hashed_id_par || '''';
-    ELSEIF nome_param IS NOT NULL THEN
-        _where := _where || ' WHERE utilizador.nome ILIKE ''%' || nome_param || '%''';
-    ELSEIF cargo_param IS NOT NULL THEN
-        _where := _where || ' WHERE utilizador.cargo = ' || cargo_param;
     END IF;
 
-    IF search_param IS NOT NULL THEN
+    IF nome_param IS NOT NULL THEN
         IF _where = '' THEN
-            _where := _where || ' WHERE (utilizador.hashed_id ILIKE ''%' || search_param || '%'' OR utilizador.nome ILIKE ''%' || search_param || '%'' OR utilizador.email ILIKE ''%' || search_param || '%'' OR (CASE WHEN utilizador.cargo = 0 THEN ''Administrador'' WHEN utilizador.cargo = 1 THEN ''Médico'' ELSE ''Rececionista'' END) ILIKE ''%' || search_param || '%'' OR (CASE WHEN utilizador.estado = 0 THEN ''Inativo'' ELSE ''Ativo'' END) ILIKE ''%' || search_param || '%'')';
+            _where := _where || ' WHERE utilizador.nome ILIKE ''%' || nome_param || '%''';
         ELSE
-            _where := _where || ' AND (utilizador.hashed_id ILIKE ''%' || search_param || '%'' OR utilizador.nome ILIKE ''%' || search_param || '%'' OR utilizador.email ILIKE ''%' || search_param || '%'' OR (CASE WHEN utilizador.cargo = 0 THEN ''Administrador'' WHEN utilizador.cargo = 1 THEN ''Médico'' ELSE ''Rececionista'' END) ILIKE ''%' || search_param || '%'' OR (CASE WHEN utilizador.estado = 0 THEN ''Inativo'' ELSE ''Ativo'' END) ILIKE ''%' || search_param || '%'')';
+            _where := _where || ' AND utilizador.nome ILIKE ''%' || nome_param || '%''';
         END IF;
     END IF;
 
-    IF limit_val IS NOT NULL THEN
-        _limit := _limit || ' LIMIT ' || limit_val;
+    IF cargo_param IS NOT NULL THEN
+        IF _where = '' THEN
+            _where := _where || ' WHERE utilizador.cargo =' || cargo_param;
+        ELSE
+            _where := _where || ' AND utilizador.cargo =' || cargo_param;
+        END IF;
     END IF;
 
-    IF offset_val IS NOT NULL THEN
-        _offset := _offset || ' OFFSET ' || offset_val;
+    IF estado_param IS NOT NULL THEN
+        IF _where = '' THEN
+            _where := _where || ' WHERE utilizador.estado =' || estado_param;
+        ELSE
+            _where := _where || ' AND utilizador.estado =' || estado_param;
+        END IF;
     END IF;
 
-    _query := _query || _where || _order || _limit || _offset;
+    _query := _query || _where || ' ORDER BY utilizador.nome ASC';
 
     RETURN QUERY EXECUTE _query;
 END;

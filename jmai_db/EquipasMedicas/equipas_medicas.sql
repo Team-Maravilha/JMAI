@@ -3,7 +3,7 @@
     * @param {String} nome_param - O nome da equipa médica.
     * @param {String} cor_param - A cor da equipa médica.
     * @param {JSON} membros_param - Os membros da equipa médica.
-    * @returns {Boolean} Retorna verdadeiro se o distrito for inserido com sucesso.
+    * @returns {Table} Retorna o hashed_id da equipa médica.
  */
 CREATE OR REPLACE FUNCTION inserir_equipa_medica(nome_param varchar(255), cor_param varchar(255), membros_param json)
 RETURNS TABLE (hashed_id varchar(255)) AS $$
@@ -61,7 +61,7 @@ CREATE TRIGGER add_uuid BEFORE INSERT ON equipa_medica FOR EACH ROW EXECUTE PROC
 /**
     * Esta função permite obter todas as equipas médicas.
     * @param {String} hashed_id_param - O hashed_id da equipa médica.
-    * @returns {Set} Retorna um conjunto de equipas médicas.
+    * @returns {Table} Retorna um conjunto de equipas médicas.
  */
 CREATE OR REPLACE FUNCTION listar_equipas_medicas(hashed_id_param varchar(255) DEFAULT NULL)
 RETURNS TABLE (hashed_id varchar(255), nome varchar(255), cor varchar(255), medicos json, total_medicos bigint, data_criacao text) AS $$

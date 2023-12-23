@@ -64,7 +64,7 @@ CREATE TRIGGER add_uuid BEFORE INSERT ON equipa_medica FOR EACH ROW EXECUTE PROC
     * @returns {Set} Retorna um conjunto de equipas médicas.
  */
 CREATE OR REPLACE FUNCTION listar_equipas_medicas(hashed_id_param varchar(255) DEFAULT NULL)
-RETURNS TABLE (hashed_id varchar(255), nome varchar(255), cor varchar(255), medicos json) AS $$
+RETURNS TABLE (hashed_id varchar(255), nome varchar(255), cor varchar(255), medicos json, total_medicos bigint, data_criacao text) AS $$
 BEGIN
     
     IF hashed_id_param IS NOT NULL THEN
@@ -73,7 +73,17 @@ BEGIN
         END IF;
     END IF; 
 
-    RETURN QUERY SELECT equipa_medica.hashed_id, equipa_medica.nome, equipa_medica.cor, (SELECT json_agg(json_build_object('hashed_id', utilizador.hashed_id, 'nome', utilizador.nome)) FROM equipa_medica_medicos INNER JOIN utilizador ON equipa_medica_medicos.id_utilizador = utilizador.id_utlizador WHERE equipa_medica_medicos.id_equipa_medica = equipa_medica.id_equipa_medica) FROM equipa_medica WHERE 1 = 1 AND (hashed_id_param IS NULL OR equipa_medica.hashed_id = hashed_id_param);
+    RETURN QUERY SELECT 
+        equipa_medica.hashed_id, 
+        equipa_medica.nome, 
+        equipa_medica.cor, 
+        (SELECT json_agg(json_build_object('hashed_id', utilizador.hashed_id, 'nome', utilizador.nome))
+            FROM equipa_medica_medicos INNER JOIN utilizador ON equipa_medica_medicos.id_utilizador = utilizador.id_utlizador
+            WHERE equipa_medica_medicos.id_equipa_medica = equipa_medica.id_equipa_medica) AS medicos,
+        (SELECT COUNT(*) FROM equipa_medica_medicos WHERE equipa_medica_medicos.id_equipa_medica = equipa_medica.id_equipa_medica) AS total_medicos,
+        to_char(equipa_medica.data_criacao, 'DD-MM-YYYY HH24:MI:SS') AS data_criacao
+    FROM equipa_medica
+    WHERE equipa_medica.hashed_id = hashed_id_param OR hashed_id_param IS NULL;
 END;
 $$ LANGUAGE plpgsql;
 

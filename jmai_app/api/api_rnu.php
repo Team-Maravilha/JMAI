@@ -1,9 +1,9 @@
 <?php
 
-class Api
+class ApiRNU
 {
 
-    public $url = 'http://localhost:8888/api';
+    public $url = 'http://localhost:4000/api';
 
     public $curl;
     public $response;
@@ -26,8 +26,7 @@ class Api
     public function CreateHeaders()
     {
         $this->responseHeaders = array(
-            'Content-Type: application/json',
-            'Authorization:' . $_SESSION["token"]
+            'Content-Type: application/json'
         );
     }
 

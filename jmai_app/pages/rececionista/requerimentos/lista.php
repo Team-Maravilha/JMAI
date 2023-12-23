@@ -36,10 +36,11 @@
                                                     <tr class="fw-bold text-muted bg-light">
                                                         <th class="ps-4 fs-6 min-w-80px rounded-start" data-priority="1">Número Requerimento</th>
                                                         <th class="ps-4 fs-6 min-w-200px" data-priority="2">Nome Utente</th>
-                                                        <th class="ps-4 fs-6 min-w-200px" data-priority="3">Número Utente</th>
-                                                        <th class="ps-4 fs-6 min-w-200px" data-priority="4">Estado</th>
-                                                        <th class="ps-4 fs-6 min-w-100px" data-priority="5">Data Pedido</th>
-                                                        <th class="pe-4 fs-6 min-w-100px text-sm-end rounded-end" data-priority="6">Ações</th>
+                                                        <th class="ps-4 fs-6 min-w-100px" data-priority="3">Número Utente</th>
+                                                        <th class="ps-4 fs-6 min-w-150px" data-priority="4">Tipo Requerimento</th>
+                                                        <th class="ps-4 fs-6 min-w-100px" data-priority="5">Estado</th>
+                                                        <th class="ps-4 fs-6 min-w-100px" data-priority="6">Data Pedido</th>
+                                                        <th class="pe-4 fs-6 min-w-25px text-sm-end rounded-end" data-priority="7">Ações</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody></tbody>
@@ -96,6 +97,9 @@
                             data: "informacao_utente.numero_utente"
                         },
                         {
+                            data: "texto_tipo_requerimento"
+                        },
+                        {
                             data: "texto_estado"
                         },
                         {
@@ -120,7 +124,7 @@
                         },
                         {
                             targets: 1,
-                            orderable: true,
+                            orderable: false,
                             render: (data, type, row) => {
                                 return `
 									<div class="d-inline-flex align-items-center">                                
@@ -133,7 +137,7 @@
                         },
                         {
                             targets: 2,
-                            orderable: true,
+                            orderable: false,
                             render: (data, type, row) => {
                                 return `
 									<div class="d-inline-flex align-items-center">                                
@@ -146,6 +150,19 @@
                         },
                         {
                             targets: 3,
+                            orderable: false,
+                            render: (data, type, row) => {
+                                return `
+									<div class="d-inline-flex align-items-center">                                
+                                <div class="d-flex justify-content-center flex-column">
+                                    <span class="text-dark fw-bold text-hover-primary mb-1 fs-6 lh-sm">${row.texto_tipo_requerimento}</span>
+                                </div>
+                            </div>
+                        `
+                            }
+                        },
+                        {
+                            targets: 4,
                             orderable: true,
                             render: (data, type, row) => {
                                 if (row.estado === 0) {
@@ -208,7 +225,7 @@
                             },
                         },
                         {
-                            targets: 4,
+                            targets: 5,
                             orderable: true,
                             render: (data, type, row) => {
                                 return `
@@ -227,12 +244,7 @@
                             render: (data, type, row) => {
                                 return `
 									<div>
-										<a href="editar?id=${row.hashed_id}" class="btn btn-icon btn-bg-light btn-color-primary btn-active-light-primary rounded w-35px h-35px me-1"><i class="ki-outline ki-notepad-edit fs-2"></i></a>
-										${row.estado === 1 ? `
-											<button type="button" data-id="${row.hashed_id}" data-name="${row.nome}" data-datatable-action="delete-row" class="btn btn-icon btn-bg-light btn-color-danger btn-active-light-danger rounded w-35px h-35px"><i class="ki-outline ki-cross-circle fs-2"></i></button>
-										` : `
-											<button type="button" data-id="${row.hashed_id}" data-name="${row.nome}" data-datatable-action="activate-row" class="btn btn-icon btn-bg-light btn-color-success btn-active-light-success rounded w-35px h-35px"><i class="ki-duotone ki-check-circle fs-2"><span class="path1"></span><span class="path2"></span></i></button>
-										`}
+										<a href="ver?id=${row.hashed_id}" class="btn btn-icon btn-bg-light btn-color-warning btn-active-light-warning rounded w-35px h-35px me-1"><i class="ki-outline ki-eye fs-2"></i></a>
 									</div>
 								`
                             },

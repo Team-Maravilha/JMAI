@@ -749,6 +749,7 @@ DECLARE
     id_requerimento_aux integer;
     id_utilizador_aux integer;
     estado_aux integer;
+    texto_estado_aux text;
 BEGIN
     
         IF hashed_id_requerimento IS NULL OR hashed_id_requerimento = '' THEN
@@ -779,6 +780,40 @@ BEGIN
             RAISE EXCEPTION 'O estado do requerimento não pode ser alterado.';
         END IF;
 
+        IF estado_aux > estado_param THEN
+            RAISE EXCEPTION 'O estado do requerimento não pode ser alterado.';
+        END IF;
+
+        IF estado_aux = 0 THEN
+            texto_estado_aux := 'Pendente';
+        ELSIF estado_aux = 1 THEN
+            texto_estado_aux := 'Aguarda Avaliação';
+        ELSIF estado_aux = 2 THEN
+            texto_estado_aux := 'Avaliado';
+        ELSIF estado_aux = 3 THEN
+            texto_estado_aux := 'A Agendar';
+        ELSIF estado_aux = 4 THEN
+            texto_estado_aux := 'Agendado';
+        ELSIF estado_aux = 5 THEN
+            texto_estado_aux := 'Inválido';
+        ELSIF estado_aux = 6 THEN
+            texto_estado_aux := 'Cancelado';
+        END IF;
+
+        IF estado_param = 1 AND estado_aux <> 0 THEN
+            RAISE EXCEPTION 'O estado do requerimento não pode ser alterado de % para Aguarda Avaliação.', texto_estado_aux;
+        ELSIF estado_param = 2 AND estado_aux <> 1 THEN
+            RAISE EXCEPTION 'O estado do requerimento não pode ser alterado de % para Avaliado.', texto_estado_aux;
+        ELSIF estado_param = 3 AND estado_aux <> 2 THEN
+            RAISE EXCEPTION 'O estado do requerimento não pode ser alterado de % para A Agendar.', texto_estado_aux;
+        ELSIF estado_param = 4 AND estado_aux <> 3 THEN
+            RAISE EXCEPTION 'O estado do requerimento não pode ser alterado de % para Agendado.', texto_estado_aux;
+        ELSIF estado_param = 5 AND estado_aux <> 0 THEN
+            RAISE EXCEPTION 'O estado do requerimento não pode ser alterado de % para Inválido.', texto_estado_aux;
+        ELSIF estado_param = 6 AND estado_aux <> 2 THEN
+            RAISE EXCEPTION 'O estado do requerimento não pode ser alterado de % para Cancelado.', texto_estado_aux;
+        END IF;
+
         UPDATE requerimento SET estado = estado_param WHERE requerimento.id_requerimento = id_requerimento_aux;
 
         INSERT INTO historico_estados (
@@ -797,4 +832,92 @@ BEGIN
     
     END;
 $$ LANGUAGE plpgsql;
+
+
+/**
+    * Esta função permite avaliar um requerimento.
+    * @param {String} hashed_id_requerimento - O identificador do requerimento a ser avaliado.
+    * @param {String} hashed_id_utilizador - O identificador do utilizador a ser avaliado.
+    * @param {Number} grau_avaliacao - O grau de avaliação a ser avaliado.
+    * @returns {Boolean} True se o requerimento for avaliado, false caso contrário.
+*/
+CREATE OR REPLACE FUNCTION avaliar_requerimento(
+    hashed_id_requerimento varchar(255),
+    hashed_id_utilizador varchar(255),
+    grau_avaliacao float
+)
+RETURNS TABLE (
+    status boolean,
+	nome varchar(255),
+    email_preferencial varchar(255)
+) AS $$
+DECLARE
+    id_requerimento_aux integer;
+    id_utilizador_aux integer;
+    estado_aux integer;
+    email_preferencial_aux varchar(255) DEFAULT NULL;
+    nome_aux varchar(255);
+BEGIN 
+
+    IF hashed_id_requerimento IS NULL OR hashed_id_requerimento = '' THEN
+        RAISE EXCEPTION 'O identificador do requerimento não é válido.';
+    ELSIF NOT EXISTS(SELECT * FROM requerimento WHERE requerimento.hashed_id = hashed_id_requerimento) THEN
+        RAISE EXCEPTION 'Ocorreu um erro ao verificar o requerimento.';
+    ELSE
+        SELECT requerimento.id_requerimento INTO id_requerimento_aux FROM requerimento WHERE requerimento.hashed_id = hashed_id_requerimento;
+    END IF;
+
+    IF hashed_id_utilizador IS NULL OR hashed_id_utilizador = '' THEN
+        RAISE EXCEPTION 'O identificador do utilizador não é válido.';
+    ELSIF NOT EXISTS(SELECT * FROM utilizador WHERE utilizador.hashed_id = hashed_id_utilizador) THEN
+        RAISE EXCEPTION 'Ocorreu um erro ao verificar o utilizador.';
+    ELSE
+        SELECT utilizador.id_utlizador INTO id_utilizador_aux FROM utilizador WHERE utilizador.hashed_id = hashed_id_utilizador;
+    END IF;
+
+    IF grau_avaliacao IS NULL THEN
+        RAISE EXCEPTION 'O grau de avaliação não é válido.';
+    ELSIF grau_avaliacao < 0 OR grau_avaliacao > 100 THEN
+        RAISE EXCEPTION 'O grau de avaliação não é válido.';
+    END IF;
+
+    -- CHECK IF REQUERIMENTO IS IN AGUARDA AVALIAÇÃO
+    SELECT requerimento.estado INTO estado_aux FROM requerimento WHERE requerimento.id_requerimento = id_requerimento_aux;
+    IF estado_aux <> 1 THEN
+        RAISE EXCEPTION 'O requerimento não está no estado Aguarda Avaliação.';
+    END IF;
+
+    PERFORM alterar_estado_requerimento(hashed_id_requerimento, hashed_id_utilizador, 2);
+
+    SELECT requerimento.email_preferencial INTO email_preferencial_aux FROM requerimento WHERE requerimento.id_requerimento = id_requerimento_aux;
+
+    IF email_preferencial_aux IS NULL OR email_preferencial_aux = '' THEN
+        email_preferencial_aux := (
+            SELECT utente.email_autenticacao FROM utente WHERE utente.id_utente = (
+                SELECT requerimento.id_utente FROM requerimento WHERE requerimento.id_requerimento = id_requerimento_aux
+            )
+        );
+    END IF;
+
+    SELECT utente.nome INTO nome_aux FROM utente WHERE utente.id_utente = (
+        SELECT requerimento.id_utente FROM requerimento WHERE requerimento.id_requerimento = id_requerimento_aux
+    );
+
+    INSERT INTO avaliacao_requerimento (
+        id_requerimento,
+        id_utilizador,
+        grau_avaliacao
+    ) VALUES (
+        id_requerimento_aux,
+        id_utilizador_aux,
+        grau_avaliacao
+    );
+
+    RETURN QUERY SELECT TRUE, nome_aux, email_preferencial_aux;
+
+END;
+$$ LANGUAGE plpgsql;
+
+
+
 

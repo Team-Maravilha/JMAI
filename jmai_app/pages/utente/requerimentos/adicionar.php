@@ -309,6 +309,42 @@
     <script src="<?php echo $link_home ?>js/firebase_upload.js"></script>
 
     <script>
+        /* Carregar */
+        function handleCarregarInformacao() {
+            const requestOptions = {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": token
+                },
+            };
+
+            fetch(`${api_base_url}utentes/ver/<?php echo $id_user; ?>`, requestOptions)
+                .then((response) => response.json())
+                .then((data) => {
+                    console.log(data);
+                    if (data.status === "success") {
+                        const { nome, numero_utente } = data.data;
+                        document.querySelector(`[name="nome"]`).value = nome;
+                        document.querySelector(`[name="nome"]`).readOnly = true;
+                        document.querySelector(`[name="numero_utente"]`).value = numero_utente;
+                        document.querySelector(`[name="numero_utente"]`).readOnly = true;
+                    } else {
+                        toastr.error(data.messages[0], "Erro!");
+                    }
+                })
+                .catch((error) => {
+                    toastr.error(error, "Erro!");
+                })
+                .finally(() => {
+
+                });
+        }
+
+        window.addEventListener("DOMContentLoaded", handleCarregarInformacao);
+    </script>
+
+    <script>
         function verificar_tipo_documento() {
             var tipo_documento = $('[name="tipo_documento"]').val();
             if (tipo_documento == 0) {

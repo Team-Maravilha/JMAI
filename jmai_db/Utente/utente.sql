@@ -99,3 +99,21 @@ SELECT * FROM inserir_utente('João', 1, 'joao@gmail.ocm', '12345678', 'M', '123
     * Adicionar o HashedID a um utilizador.
     */
 CREATE TRIGGER add_uuid BEFORE INSERT ON utente FOR EACH ROW EXECUTE PROCEDURE add_uuid();
+
+
+/**
+    * Esta função permite obter uma listagem de todos os utentes.
+    * @param {String} hashed_id - O hashed_id do utente.
+    * @returns {Table} - Retorna os dados do utente.
+    */
+CREATE OR REPLACE FUNCTION listar_utentes(p_hashed_id varchar(255) DEFAULT NULL)
+RETURNS TABLE (hashed_id varchar(255), nome varchar(255), email_autenticacao varchar(255), genero varchar(1), numero_utente integer, data_criacao timestamp, cargo integer, texto_cargo text) AS $$
+BEGIN
+    IF p_hashed_id IS NULL OR p_hashed_id = '' THEN
+        RETURN QUERY SELECT utente.hashed_id, utente.nome, utente.email_autenticacao, utente.genero, utente.numero_utente, utente.data_criacao, 3, 'Utente' FROM utente;
+    ELSE
+        RETURN QUERY SELECT utente.hashed_id, utente.nome, utente.email_autenticacao, utente.genero, utente.numero_utente, utente.data_criacao, 3, 'Utente' FROM utente WHERE utente.hashed_id = p_hashed_id;
+    END IF;
+END;
+$$ LANGUAGE plpgsql;
+

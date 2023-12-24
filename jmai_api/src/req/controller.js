@@ -451,6 +451,40 @@ const VerInformacaoRequerimentoByHashedID = (req, res) => {
 	);
 };
 
+const HistoricoEstadosRequerimento = (req, res) => {
+	const { hashed_id } = req.params;
+
+	pool.query(
+		"SELECT * FROM listar_alteracoes_estado_requerimento($1)",
+		[hashed_id],
+		(error, results) => {
+			if (error) {
+				res.status(400).json({
+					status: "error",
+					data: null,
+					messages: [error.message],
+				});
+				return;
+			}
+			res.status(200).json({
+				status: "success",
+				data: results.rows,
+				messages: [
+					"Informação do Requerimento obtida com Sucesso!",
+				],
+			});
+		}
+	);
+}
+
+
+
+
+
+
+
+
+
 const SendEmail = (to, subject, text, html) => {
 	/* Configuração do Nodemailer */
 	let config = {
@@ -525,4 +559,5 @@ module.exports = {
 	ValidarRequerimento,
 	InvalidarRequerimento,
 	AvaliarRequerimento,
+	HistoricoEstadosRequerimento
 };

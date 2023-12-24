@@ -20,5 +20,7 @@ router.post("/invalidar", authMiddleware, controller.InvalidarRequerimento);
 
 router.post("/avaliar", authMiddleware, controller.AvaliarRequerimento);
 
+router.get("/historico_estados/:hashed_id", authMiddleware, controller.HistoricoEstadosRequerimento);
+
 
 module.exports = router;

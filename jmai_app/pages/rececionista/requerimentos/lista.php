@@ -85,6 +85,11 @@
                         beforeSend: function(xhr) {
                             xhr.setRequestHeader('Authorization', token);
                         },
+                        data: () => {
+                            return JSON.stringify({
+                                'estado': 0
+                            });
+                        },
                         type: "POST",
                     },
                     columns: [{
@@ -185,7 +190,7 @@
                                     return `
                                     <div class="d-inline-flex align-items-center">                                
 										<div class="d-flex justify-content-center flex-column">
-											<span class="badge badge-light-sucess">Avaliado</span>
+											<span class="badge badge-light-primary">Avaliado</span>
 										</div>
 									</div>
 								`

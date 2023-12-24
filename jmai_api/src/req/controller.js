@@ -109,29 +109,6 @@ const ListarRequerimentosDataTable = (req, res) => {
 	);
 };
 
-const InformacaoRequerimento = (req, res) => {
-	const { hashed_id } = req.params;
-
-	pool.query(
-		"SELECT * FROM listar_requerimentos($1)",
-		[hashed_id],
-		(error, results) => {
-			if (error) {
-				res.status(400).json({
-					status: "error",
-					data: null,
-					messages: [error.message],
-				});
-				return;
-			}
-			res.status(200).json({
-				status: "success",
-				data: results.rows[0],
-				messages: [],
-			});
-		}
-	);
-};
 
 const RegistarAcesso = (req, res) => {
 	const { hashed_id_requerimento, hashed_id_utilizador } = req.body;
@@ -223,7 +200,7 @@ const InvalidarRequerimento = (req, res) => {
 			res.status(201).json({
 				status: "success",
 				data: results.rows[0],
-				messages: ["Requerimento invalidado com Sucesso!"],
+				messages: ["Requerimento recusado com Sucesso!"],
 			});
 		}
 	);
@@ -540,10 +517,9 @@ const SendSMS = async (to, text) => {
 };
 
 module.exports = {
-	RegistarRequerimento,
-	ListarRequerimentosDataTable,
-	VerInformacaoRequerimentoByHashedID,
-	InformacaoRequerimento,
+ 	RegistarRequerimento,
+  	ListarRequerimentosDataTable,
+  	VerInformacaoRequerimentoByHashedID,
 	RegistarAcesso,
 	ListarAcessosRequerimento,
 	ValidarRequerimento,

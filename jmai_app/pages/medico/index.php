@@ -11,7 +11,8 @@
 							<?php require_once($_SERVER["DOCUMENT_ROOT"] . "/toolbar.php") ?>
 							<div id="kt_app_content" class="app-content">
 								<!-- Conteudo AQUI! -->
-								
+								<h1>12312</h1>
+								<div id="kt_charts_widget_24" class="min-h-auto" style="height: 400px"></div>
 								<!-- Fecha Conteudo AQUI! -->
 							</div>
 						</div>
@@ -22,4 +23,5 @@
 		</div>
 	</div>
 	<?php require_once($_SERVER["DOCUMENT_ROOT"] . "/foo.php") ?>
+
 </body>

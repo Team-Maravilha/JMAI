@@ -97,8 +97,7 @@ $get_tab = isset($_GET["tab"]) ? $_GET["tab"] : "requerimento_tab_2";
 
                                                     <div class="d-flex my-4">
 
-                                                        <a class="btn btn-sm btn-success me-3" onclick="acceptRequest()">Validar Requerimento</a>
-                                                        <a class="btn btn-sm btn-danger me-3" onclick="rejectRequest()">Recusar Requerimento</a>
+                                                        <a class="btn btn-sm btn-warning me-3" data-bs-toggle="modal" data-bs-target="#avaliar-requerimento">Avaliar Requerimento</a>
 
                                                     </div>
 
@@ -137,205 +136,145 @@ $get_tab = isset($_GET["tab"]) ? $_GET["tab"] : "requerimento_tab_2";
             </div>
         </div>
     </div>
+
+    <!-- Modal para fazer Avaliação do Requerimento (Valor Avaliação e Notas) -->
+    <div class="modal fade" id="avaliar-requerimento" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false" aria-modal="true" role="dialog">
+        <div class="modal-dialog modal-dialog-centered mw-650px">
+            <div class="modal-content">
+                <div class="modal-header" id="modal-avaliar-requerimento-header">
+                    <h2 class="fw-bold">Avaliar Requerimento - <?php echo $info_requerimento["numero_requerimento"] ?></h2>
+                    <div class="btn btn-icon btn-sm btn-active-icon-primary" data-bs-dismiss="modal" aria-label="Close">
+                        <i class="las la-times fs-1"></i>
+                    </div>
+                </div>
+
+                <div class="modal-body mx-5 mx-xl-15 my-7">
+                    <form id="modal-avaliar-requerimento-form" class="form" action="#">
+                        <div class="d-flex flex-column me-n7 pe-7" id="modal-avaliar-requerimento-form-scroll" data-kt-scroll="true" data-kt-scroll-activate="{default: false, lg: true}" data-kt-scroll-max-height="auto" data-kt-scroll-dependencies="#modal-avaliar-requerimento-header" data-kt-scroll-wrappers="#modal-avaliar-requerimento-form-scroll" data-kt-scroll-offset="350px" style="max-height: 91px;">
+                            <div class="row g-6">
+
+                                <div class="col-12">
+                                    <div class="fv-row">
+                                        <label for="grau_avaliacao" class="required fw-semibold fs-6 mb-2 required">Grau Avaliação (Ex: 26.32)</label>
+                                        <input type="text" oninput="validarFloat(this)" name="grau_avaliacao" id="grau_avaliacao" class="form-control form-control-solid mb-3 mb-lg-0" value="" placeholder="Grau Avaliação do Requerimento">
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label">Notas / Observações</label>
+                                    <textarea class="form-control form-control-solid" name="notas" rows="5" placeholder="Notas / Observações"></textarea>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="text-center pt-15">
+                            <button type="reset" class="btn btn-light me-3" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-primary" data-modal-action="submit">
+                                <span class="indicator-label">Avaliar</span>
+                                <span class="indicator-progress">Aguarde...
+                                    <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                                </span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <?php require_once($_SERVER["DOCUMENT_ROOT"] . "/foo.php") ?>
 
     <script>
-        // Swalfire to accept the request and send a fetch for the api
-        const api_url = "http://localhost:8888/api/";
-        const path = "requerimentos/";
+        function validarFloat(input) {
+            var value = input.value;
+            // Permitir números e, no máximo, um ponto
+            var novoValor = value.replace(/[^0-9.]/g, '');
 
-        var acceptRequest = () => {
-            Swal.fire({
-                title: 'Validar Requerimento',
-                text: "Tem a certeza que pretende validar o Requerimento?",
-                icon: 'success',
-                showCancelButton: true,
-                showConfirmButton: true,
-                confirmButtonText: 'Sim, validar!',
-                cancelButtonText: 'Não, cancelar!',
-                reverseButtons: true,
-                buttonsStyling: false,
-                allowOutsideClick: false,
-                didOpen: () => {
-                    const confirmButton = Swal.getConfirmButton();
-                    confirmButton.blur();
-                },
-                customClass: {
-                    confirmButton: "btn fw-bold btn-success",
-                    cancelButton: "btn fw-bold btn-active-light-warning",
-                },
-            }).then((result) => {
-                if (result.isConfirmed) {
+            // Se houver mais de um ponto, mantenha apenas o primeiro e ignore os seguintes
+            var primeiroPonto = novoValor.indexOf('.');
+            if (primeiroPonto !== -1) {
+                novoValor = novoValor.substring(0, primeiroPonto + 1) + novoValor.substring(primeiroPonto + 1).replace(/\./g, '');
+            }
+
+            input.value = novoValor;
+        }
+    </script>
+
+    <script>
+        const form = document.querySelector("#modal-avaliar-requerimento-form");
+        const submitButton = document.querySelector("#modal-avaliar-requerimento-form [data-modal-action=submit]");
+
+        form.addEventListener("submit", (e) => {
+            e.preventDefault();
+            submitButton.setAttribute("disabled", true);
+
+            const formData = new FormData(form);
+
+            formData.append("hashed_id_utilizador", "<?php echo $id_user ?>");
+            formData.append("hashed_id_requerimento", "<?php echo $hashed_id_requerimento ?>");
+
+            const data = {};
+            for (const [key, value] of formData.entries()) {
+                data[key] = value;
+            }
+          
+            fetch("http://localhost:8888/api/requerimentos/avaliar", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": token,
+                    },
+                    body: JSON.stringify(data),
+                })
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.status == "success") {
+                        Swal.fire({
+                            icon: "success",
+                            title: "Sucesso!",
+                            text: data.messages[0],
+                            buttonsStyling: false,
+                            allowOutsideClick: false,
+                            showConfirmButton: true,
+                            confirmButtonText: 'Confirmar!',
+                            didOpen: () => {
+                                const confirmButton = Swal.getConfirmButton();
+                                confirmButton.blur();
+                            },
+                            customClass: {
+                                confirmButton: "btn fw-bold btn-primary",
+                            },
+                        }).then(() => {
+                            window.location.href = "<?php echo $link_home ?>pages/medico/requerimentos/lista";
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: "error",
+                            title: "Erro!",
+                            text: data.messages[0],
+                            confirmButtonText: "Voltar",
+                            buttonsStyling: false,
+                            customClass: {
+                                confirmButton: "btn btn-danger",
+                            },
+                        });
+                    }
+                })
+                .catch((error) => {
                     Swal.fire({
-                        title: 'A validar o pedido!',
-                        text: 'Por favor aguarde...',
-                        icon: 'info',
-                        allowOutsideClick: false,
-                        showConfirmButton: false,
-                        willOpen: () => {
-                            Swal.showLoading()
+                        icon: "error",
+                        title: "Erro!",
+                        text: "Ocorreu um erro ao Registar!",
+                        confirmButtonText: "Voltar",
+                        buttonsStyling: false,
+                        customClass: {
+                            confirmButton: "btn btn-danger",
                         },
                     });
-                    fetch(api_url + path + "validar", {
-                            method: "POST",
-                            headers: {
-                                "Content-Type": "application/json",
-                                "Authorization": token,
-                            },
-                            body: JSON.stringify({
-                                hashed_id_requerimento: "<?php echo $hashed_id_requerimento ?>",
-                                hashed_id_utilizador: "<?php echo $id_user ?>"
-                            }),
-                        })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.status === "success") {
-                                Swal.fire({
-                                    title: data.messages[0],
-                                    text: 'A redirecionar para a lista de requerimentos...',
-                                    icon: 'success',
-                                    allowOutsideClick: false,
-                                    showConfirmButton: false,
-                                    willOpen: () => {
-                                        Swal.showLoading()
-                                    },
-                                });
-                                setTimeout(() => {
-                                    window.location = "<?php echo $link_home ?>pages/rececionista/requerimentos/lista";
-                                }, 1500);
-                            } else {
-                                Swal.fire({
-                                    title: 'Erro ao validar o pedido!',
-                                    text: data.messages[0],
-                                    icon: 'error',
-                                    allowOutsideClick: false,
-                                    showConfirmButton: false,
-                                    willOpen: () => {
-                                        Swal.showLoading()
-                                    },
-                                });
-                                setTimeout(() => {
-                                    window.location = "<?php echo $link_home ?>pages/rececionista/requerimentos/lista";
-                                }, 1500);
-                            }
-                        })
-                        .catch(error => {
-                            Swal.fire({
-                                title: 'Erro ao validar o requerimento!',
-                                text: 'Por favor tente novamente...',
-                                icon: 'error',
-                                allowOutsideClick: false,
-                                showConfirmButton: false,
-                                willOpen: () => {
-                                    Swal.showLoading()
-                                },
-                            });
-                            setTimeout(() => {
-                                    window.location.href = "<?php echo $link_home ?>pages/rececionista/requerimentos/lista";
-                                },
-                                1500);
-                        });
-                } else if (result.dismiss === Swal.DismissReason.cancel) {
-                    toastr.warning('Cancelou a operação que realizava!', 'Cancelado!');
-                }
-            })
-        }
-
-        var rejectRequest = () => {
-            Swal.fire({
-                title: 'Recusar Requerimento',
-                text: "Tem a certeza que pretende recusar o Requerimento?",
-                icon: 'error',
-                showCancelButton: true,
-                showConfirmButton: true,
-                confirmButtonText: 'Sim, recusar!',
-                cancelButtonText: 'Não, cancelar!',
-                reverseButtons: true,
-                buttonsStyling: false,
-                allowOutsideClick: false,
-                didOpen: () => {
-                    const confirmButton = Swal.getConfirmButton();
-                    confirmButton.blur();
-                },
-                customClass: {
-                    confirmButton: "btn fw-bold btn-danger",
-                    cancelButton: "btn fw-bold btn-active-light-warning",
-                },
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    Swal.fire({
-                        title: 'A recusar o requerimento!',
-                        text: 'Por favor aguarde...',
-                        icon: 'info',
-                        allowOutsideClick: false,
-                        showConfirmButton: false,
-                        willOpen: () => {
-                            Swal.showLoading()
-                        },
-                    });
-                    fetch(api_url + path + "invalidar", {
-                            method: "POST",
-                            headers: {
-                                "Content-Type": "application/json",
-                                "Authorization": token,
-                            },
-                            body: JSON.stringify({
-                                hashed_id_requerimento: "<?php echo $hashed_id_requerimento ?>",
-                                hashed_id_utilizador: "<?php echo $id_user ?>"
-                            }),
-                        })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.status === "success") {
-                                Swal.fire({
-                                    title: data.messages[0],
-                                    text: 'A redirecionar para a lista de requerimentos...',
-                                    icon: 'success',
-                                    allowOutsideClick: false,
-                                    showConfirmButton: false,
-                                    willOpen: () => {
-                                        Swal.showLoading()
-                                    },
-                                });
-                                setTimeout(() => {
-                                    window.location = "<?php echo $link_home ?>pages/rececionista/requerimentos/lista";
-                                }, 1500);
-                            } else {
-                                Swal.fire({
-                                    title: 'Erro ao recusar o requerimento!',
-                                    text: data.messages[0],
-                                    icon: 'error',
-                                    allowOutsideClick: false,
-                                    showConfirmButton: false,
-                                    willOpen: () => {
-                                        Swal.showLoading()
-                                    },
-                                });
-                                setTimeout(() => {
-                                    window.location = "<?php echo $link_home ?>pages/rececionista/requerimentos/lista";
-                                }, 1500);
-                            }
-                        })
-                        .catch(error => {
-                            Swal.fire({
-                                title: 'Erro ao recusar o requerimento!',
-                                text: 'Por favor tente novamente...',
-                                icon: 'error',
-                                allowOutsideClick: false,
-                                showConfirmButton: false,
-                                willOpen: () => {
-                                    Swal.showLoading()
-                                },
-                            });
-                            setTimeout(() => {
-                                    window.location.href = "<?php echo $link_home ?>pages/rececionista/requerimentos/lista";
-                                },
-                                1500);
-                        });
-                } else if (result.dismiss === Swal.DismissReason.cancel) {
-                    toastr.warning('Cancelou a operação que realizava!', 'Cancelado!');
-                }
-            })
-        }
+                })
+                .finally(() => {
+                    submitButton.removeAttribute("disabled");
+                });
+        });
     </script>
 </body>

@@ -211,14 +211,14 @@
 
                                                         <div>
                                                             <div class="form-check form-check-custom form-check-solid mt-5">
-                                                                <input class="form-check-input" name="primeira_submissao" type="radio" value="0" id="flexRadioDefault3" />
+                                                                <input class="form-check-input" name="primeira_submissao" type="radio" value="1" id="flexRadioDefault3" />
                                                                 <label class="form-check-label text-dark" for="flexRadioDefault3">
                                                                     Nunca foi submetido a Junta Médica de avaliação do grau de incapacidade.
                                                                 </label>
                                                             </div>
 
                                                             <div class="form-check form-check-custom form-check-solid mt-5">
-                                                                <input class="form-check-input" name="primeira_submissao" type="radio" value="1" id="flexRadioDefault4" />
+                                                                <input class="form-check-input" name="primeira_submissao" type="radio" value="0" id="flexRadioDefault4" />
                                                                 <label class="form-check-label text-dark" for="flexRadioDefault4">
                                                                     Já foi submetido, pretendendo uma reavaliação.
                                                                 </label>
@@ -328,7 +328,7 @@
 
         function verificar_submissao_anterior() {
             var primeira_submissao = $('[name="primeira_submissao"]:checked').val();
-            if (primeira_submissao == 1) {
+            if (primeira_submissao == 0) {
                 document.getElementById("div_data_submissao_anterior").classList.remove("d-none");
             } else {
                 document.getElementById("div_data_submissao_anterior").classList.add("d-none");

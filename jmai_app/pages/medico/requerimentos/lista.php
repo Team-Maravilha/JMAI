@@ -1,5 +1,5 @@
 <?php require_once($_SERVER["DOCUMENT_ROOT"] . "/head.php") ?>
-<?php $page_name = "Os Meus Requerimentos" ?>
+<?php $page_name = "Requerimentos para Avaliação" ?>
 
 <body id="kt_app_body" data-kt-app-header-fixed="true" data-kt-app-header-fixed-mobile="true" data-kt-app-sidebar-enabled="false" data-kt-app-sidebar-fixed="false" data-kt-app-sidebar-push-toolbar="true" data-kt-app-sidebar-push-footer="true" data-kt-app-toolbar-enabled="true" class="app-default">
     <div class="d-flex flex-column flex-root app-root" id="kt_app_root">
@@ -27,10 +27,6 @@
                                                 <button type="button" class="btn btn-icon btn-active-light-primary lh-1" data-datatable-action="sync" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-dismiss="click" title="Sincronizar tabela">
                                                     <i class="ki-outline ki-arrows-circle fs-2"></i>
                                                 </button>
-
-                                                <a href="adicionar" class="btn btn-light-primary d-flex align-items-center lh-1">
-                                                    <i class="ki-outline ki-plus fs-2"></i>Novo Requerimento
-                                                </a>
                                             </div>
                                         </div>
 
@@ -39,11 +35,12 @@
                                                 <thead>
                                                     <tr class="fw-bold text-muted bg-light">
                                                         <th class="ps-4 fs-6 min-w-80px rounded-start" data-priority="1">Número Requerimento</th>
-                                                        <th class="ps-4 fs-6 min-w-200px" data-priority="2">Tipo Requerimento</th>
-                                                        <th class="ps-4 fs-6 min-w-200px" data-priority="3">Email Associado</th>
-                                                        <th class="ps-4 fs-6 min-w-200px" data-priority="3">Telemóvel Associado</th>
-                                                        <th class="ps-4 fs-6 min-w-100px" data-priority="4">Estado</th>
-                                                        <th class="pe-4 fs-6 min-w-100px text-sm-end rounded-end" data-priority="5">Data Pedido</th>
+                                                        <th class="ps-4 fs-6 min-w-200px" data-priority="2">Nome Utente</th>
+                                                        <th class="ps-4 fs-6 min-w-100px" data-priority="3">Número Utente</th>
+                                                        <th class="ps-4 fs-6 min-w-150px" data-priority="4">Tipo Requerimento</th>
+                                                        <th class="ps-4 fs-6 min-w-100px" data-priority="5">Estado</th>
+                                                        <th class="ps-4 fs-6 min-w-100px" data-priority="6">Data Pedido</th>
+                                                        <th class="pe-4 fs-6 min-w-25px text-sm-end rounded-end" data-priority="7">Ações</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody></tbody>
@@ -90,7 +87,7 @@
                         },
                         data: () => {
                             return JSON.stringify({
-                                'hashed_id_utente': '<?php echo $id_user ?>'
+                                'estado': 1
                             });
                         },
                         type: "POST",
@@ -99,13 +96,13 @@
                             data: "numero_requerimento"
                         },
                         {
+                            data: "informacao_utente.nome"
+                        },
+                        {
+                            data: "informacao_utente.numero_utente"
+                        },
+                        {
                             data: "texto_tipo_requerimento"
-                        },
-                        {
-                            data: "email_preferencial"
-                        },
-                        {
-                            data: "numero_telemovel"
                         },
                         {
                             data: "texto_estado"
@@ -113,6 +110,9 @@
                         {
                             data: "data_criacao"
                         },
+                        {
+                            data: null
+                        }
                     ],
                     columnDefs: [{
                             targets: 0,
@@ -121,7 +121,7 @@
                                 return `
                             <div class="d-inline-flex align-items-center ms-4">                                
                                 <div class="d-flex justify-content-center flex-column">
-                                    <span class="text-dark fw-bold mb-1 fs-6 lh-sm">${row.numero_requerimento}</span>
+                                    <span class="text-dark fw-bold text-hover-primary mb-1 fs-6 lh-sm">${row.numero_requerimento}</span>
                                 </div>
                             </div>
                         `
@@ -134,7 +134,7 @@
                                 return `
 									<div class="d-inline-flex align-items-center">                                
                                 <div class="d-flex justify-content-center flex-column">
-                                    <span class="text-dark fw-bold mb-1 fs-6 lh-sm">${row.texto_tipo_requerimento}</span>
+                                    <span class="text-dark fw-bold text-hover-primary mb-1 fs-6 lh-sm">${row.informacao_utente.nome}</span>
                                 </div>
                             </div>
                         `
@@ -144,23 +144,13 @@
                             targets: 2,
                             orderable: false,
                             render: (data, type, row) => {
-                                if (row.email_preferencial == null) {
-                                    return `
-                                    <div class="d-inline-flex align-items-center">                                
-                                <div class="d-flex justify-content-center flex-column">
-                                    <span class="text-dark fw-bold mb-1 fs-6 lh-sm">${row.informacao_utente.email_autenticacao}</span>
-                                </div>
-                            </div>
-                        `
-                                } else {
-                                    return `
+                                return `
 									<div class="d-inline-flex align-items-center">                                
                                 <div class="d-flex justify-content-center flex-column">
-                                    <span class="text-dark fw-bold mb-1 fs-6 lh-sm">${row.email_preferencial}</span>
+                                    <span class="text-dark fw-bold text-hover-primary mb-1 fs-6 lh-sm">${row.informacao_utente.numero_utente}</span>
                                 </div>
                             </div>
                         `
-                                }
                             }
                         },
                         {
@@ -168,9 +158,9 @@
                             orderable: false,
                             render: (data, type, row) => {
                                 return `
-                                    <div class="d-inline-flex align-items-center">                                
+									<div class="d-inline-flex align-items-center">                                
                                 <div class="d-flex justify-content-center flex-column">
-                                    <span class="text-dark fw-bold mb-1 fs-6 lh-sm">${row.numero_telemovel}</span>
+                                    <span class="text-dark fw-bold text-hover-primary mb-1 fs-6 lh-sm">${row.texto_tipo_requerimento}</span>
                                 </div>
                             </div>
                         `
@@ -244,14 +234,26 @@
                             orderable: true,
                             render: (data, type, row) => {
                                 return `
-									<div class="text-sm-end me-4">                                
+									<div class="d-inline-flex align-items-center">                                
 										<div class="d-flex justify-content-center flex-column">
-											<span class="text-dark fw-bold mb-1 fs-6 lh-sm">${row.data_criacao}</span>
+											<span class="text-dark fw-bold text-hover-primary mb-1 fs-6 lh-sm">${row.data_criacao}</span>
 										</div>
 									</div>
 								`;
                             },
-                        }
+                        },
+                        {
+                            targets: -1,
+                            orderable: false,
+                            className: "text-sm-end",
+                            render: (data, type, row) => {
+                                return `
+									<div>
+										<a href="ver?id=${row.hashed_id}" class="btn btn-icon btn-bg-light btn-color-warning btn-active-light-warning rounded w-35px h-35px me-1"><i class="ki-outline ki-note-2 fs-2"></i></a>
+									</div>
+								`
+                            },
+                        },
                     ],
                 })
 

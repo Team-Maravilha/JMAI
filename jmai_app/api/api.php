@@ -27,7 +27,7 @@ class Api
     {
         $this->responseHeaders = array(
             'Content-Type: application/json',
-            'Authorization:' . $_SESSION["token"]
+            'Authorization:' . (isset($_SESSION) && isset($_SESSION["token"]) ? $_SESSION["token"] : ''),
         );
     }
 

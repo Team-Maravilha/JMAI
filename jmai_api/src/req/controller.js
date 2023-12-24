@@ -200,7 +200,7 @@ const InvalidarRequerimento = (req, res) => {
 			res.status(201).json({
 				status: "success",
 				data: results.rows[0],
-				messages: ["Requerimento invalidado com Sucesso!"],
+				messages: ["Requerimento recusado com Sucesso!"],
 			});
 		}
 	);

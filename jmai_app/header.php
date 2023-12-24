@@ -31,6 +31,15 @@
                             </span>
                         </div>
 
+                        <div class="menu-item here menu-lg-down-accordion menu-sub-lg-down-indention me-0 me-lg-2">
+                            <span class="menu-link">
+                                <a href="<?php echo $link_home ?>pages/admin/requerimentos/lista">
+                                    <span class="menu-title">Requerimentos</span>
+                                    <span class="menu-arrow d-lg-none"></span>
+                                </a>
+                            </span>
+                        </div>
+
                         <div data-kt-menu-trigger="{default: 'click', lg: 'hover'}" data-kt-menu-placement="bottom-start" class="menu-item here show menu-here-bg menu-lg-down-accordion me-0 me-lg-2">
                             <span class="menu-link">
                                 <span class="menu-title">Parametrizações</span>
@@ -153,7 +162,16 @@
                         <div class="menu-item here menu-lg-down-accordion menu-sub-lg-down-indention me-0 me-lg-2">
                             <span class="menu-link">
                                 <a href="<?php echo $link_home ?>pages/rececionista/requerimentos/lista">
-                                    <span class="menu-title">Requerimentos</span>
+                                    <span class="menu-title">Validar Requerimentos</span>
+                                    <span class="menu-arrow d-lg-none"></span>
+                                </a>
+                            </span>
+                        </div>
+
+                        <div class="menu-item here menu-lg-down-accordion menu-sub-lg-down-indention me-0 me-lg-2">
+                            <span class="menu-link">
+                                <a href="<?php echo $link_home ?>pages/rececionista/agendar_requerimentos/lista">
+                                    <span class="menu-title">Agendar Junta Médica</span>
                                     <span class="menu-arrow d-lg-none"></span>
                                 </a>
                             </span>

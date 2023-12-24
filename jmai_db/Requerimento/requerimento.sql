@@ -925,5 +925,68 @@ END;
 $$ LANGUAGE plpgsql;
 
 
+/**
+    * Esta função permite obter uma listagem de alterações de estado de um requerimento.
+    * @param {String} hashed_id_requerimento - O identificador do requerimento a ser obtido.
+    * @returns {JSON} Os dados da avaliação obtida.
+*/
+CREATE OR REPLACE FUNCTION listar_alteracoes_estado_requerimento(
+    hashed_id_requerimento varchar(255)
+)
+RETURNS TABLE (
+    nome_utilizador varchar(255),
+    estado_anterior integer,
+    texto_estado_anterior text,
+    estado_novo integer,
+    texto_estado_novo text,
+    data_hora_alteracao text
+) AS $$
+BEGIN
+
+    IF hashed_id_requerimento IS NULL OR hashed_id_requerimento = '' THEN
+        RAISE EXCEPTION 'O identificador do requerimento não é válido.';
+    ELSIF NOT EXISTS(SELECT * FROM requerimento WHERE requerimento.hashed_id = hashed_id_requerimento) THEN
+        RAISE EXCEPTION 'Ocorreu um erro ao verificar o requerimento.';
+    END IF;
+
+    RETURN QUERY SELECT
+        (
+            SELECT utilizador.nome FROM utilizador WHERE utilizador.id_utlizador = historico_estados.id_utilizador
+        ),
+        historico_estados.estado_anterior,
+        (
+            CASE
+                WHEN historico_estados.estado_anterior = 0 THEN 'Pendente'
+                WHEN historico_estados.estado_anterior = 1 THEN 'Aguarda Avaliação'
+                WHEN historico_estados.estado_anterior = 2 THEN 'Avaliado'
+                WHEN historico_estados.estado_anterior = 3 THEN 'A Agendar'
+                WHEN historico_estados.estado_anterior = 4 THEN 'Agendado'
+                WHEN historico_estados.estado_anterior = 5 THEN 'Inválido'
+                WHEN historico_estados.estado_anterior = 6 THEN 'Cancelado'
+            END
+        ),
+        historico_estados.estado_novo,
+        (
+            CASE
+                WHEN historico_estados.estado_novo = 0 THEN 'Pendente'
+                WHEN historico_estados.estado_novo = 1 THEN 'Aguarda Avaliação'
+                WHEN historico_estados.estado_novo = 2 THEN 'Avaliado'
+                WHEN historico_estados.estado_novo = 3 THEN 'A Agendar'
+                WHEN historico_estados.estado_novo = 4 THEN 'Agendado'
+                WHEN historico_estados.estado_novo = 5 THEN 'Inválido'
+                WHEN historico_estados.estado_novo = 6 THEN 'Cancelado'
+            END
+        ),
+        to_char(historico_estados.data_alteracao, 'DD/MM/YYYY HH24:MI:SS')
+    FROM historico_estados
+    WHERE historico_estados.id_requerimento = (
+        SELECT requerimento.id_requerimento FROM requerimento WHERE requerimento.hashed_id = hashed_id_requerimento
+    )
+    ORDER BY historico_estados.data_alteracao DESC;
+
+END;
+$$ LANGUAGE plpgsql;
+
+
 
 

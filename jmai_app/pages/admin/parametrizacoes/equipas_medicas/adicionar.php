@@ -90,7 +90,7 @@ $id = isset($_GET['id']) ? $_GET['id'] : null;
                 },
             };
 
-            fetch(`${api_base_url}utilizadores/listar/<?php echo $id; ?>?cargo=1&estado=1`, requestOptions)
+            fetch(`${api_base_url}utilizadores/listar?cargo=1&estado=1`, requestOptions)
                 .then((response) => response.json())
                 .then((data) => {
 

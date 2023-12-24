@@ -164,6 +164,8 @@
 							className: "text-sm-end",
 							render: (data, type, row) => {
 								return `
+								<a href="editar?id=${row.hashed_id}" class="btn btn-icon btn-bg-light btn-color-primary btn-active-light-primary rounded w-35px h-35px me-1"><i class="ki-outline ki-notepad-edit fs-2"></i></a>
+								<a href="editar?id=${row.hashed_id}" type="button" data-name="${row.nome}" data-datatable-action="delete-row" class="btn btn-icon btn-bg-light btn-color-danger btn-active-light-danger rounded w-35px h-35px me-1"><i class="ki-outline ki-trash fs-2"></i></a>
 								
 								`
 							},
@@ -205,12 +207,12 @@
 
 					Swal.fire({
 						icon: "warning",
-						title: "Desativar Administrador - " + name,
-						text: "Tem a certeza que deseja desativar o Administrador - " + name + "?",
+						title: "Remover Equipa - " + name,
+						text: "Tem a certeza que deseja remover a equipa - " + name + "?",
 						showCancelButton: true,
 						buttonsStyling: false,
 						cancelButtonText: "Não, cancelar",
-						confirmButtonText: "Sim, desativar!",
+						confirmButtonText: "Sim, remover!",
 						reverseButtons: true,
 						allowOutsideClick: false,
 						customClass: {
@@ -222,17 +224,14 @@
 							const id = button.getAttribute("data-id");
 
 							const options = {
-								method: "PUT",
+								method: "DELETE",
 								headers: {
 									"Content-Type": "application/json",
 									"Authorization": "<?php echo $_SESSION["token"] ?>",
 								},
-								body: JSON.stringify({
-									"cargo": 0
-								})
 							}
 
-							fetch(`${api_base_url}utilizadores/desativar/${id}`, options)
+							fetch(`${api_base_url}equipas_medicas/remover/${id}`, options)
 								.then((response) => response.json())
 								.then((data) => {
 									if (data.status === "success") {
@@ -267,78 +266,6 @@
 				})
 			}
 
-			var handleActivateRows = () => {
-				const activateButtons = document.querySelectorAll(`[data-datatable-action="activate-row"]`)
-
-				$("#datatable").on("click", "[data-datatable-action='activate-row']", (e) => {
-					e.preventDefault()
-					const button = e.currentTarget
-					const parent = button.closest("tr")
-					const name = button.getAttribute("data-name")
-
-					Swal.fire({
-						icon: "warning",
-						title: "Ativar Administrador - " + name,
-						text: "Tem a certeza que deseja ativar o Administrador - " + name + "?",
-						showCancelButton: true,
-						buttonsStyling: false,
-						cancelButtonText: "Não, cancelar",
-						confirmButtonText: "Sim, ativar!",
-						reverseButtons: true,
-						allowOutsideClick: false,
-						customClass: {
-							confirmButton: "btn fw-bold btn-success",
-							cancelButton: "btn fw-bold btn-active-light-warning",
-						},
-					}).then((result) => {
-						if (result.isConfirmed) {
-							const id = button.getAttribute("data-id");
-
-							const options = {
-								method: "PUT",
-								headers: {
-									"Content-Type": "application/json",
-									"Authorization": "<?php echo $_SESSION["token"] ?>",
-								},
-								body: JSON.stringify({
-									"cargo": 0
-								})
-							}
-
-							fetch(`${api_base_url}utilizadores/ativar/${id}`, options)
-								.then((response) => response.json())
-								.then((data) => {
-									if (data.status === "success") {
-										Swal.fire({
-											text: data.messages[0],
-											icon: "success",
-											buttonsStyling: false,
-											confirmButtonText: "Ok, fechar",
-											customClass: {
-												confirmButton: "btn fw-bold btn-primary",
-											},
-										}).then(() => {
-											dt.ajax.reload()
-										})
-									} else {
-										Swal.fire({
-											text: data.messages[0],
-											icon: "error",
-											buttonsStyling: false,
-											confirmButtonText: "Ok, fechar",
-											customClass: {
-												confirmButton: "btn fw-bold btn-primary",
-											},
-										})
-									}
-								})
-								.catch((error) => {
-									console.error(error)
-								})
-						}
-					})
-				})
-			}
 
 			return {
 				init: () => {
@@ -346,7 +273,6 @@
 					handleSyncDatatable()
 					handleSearchDatatable()
 					handleDeleteRows()
-					handleActivateRows()
 				},
 			}
 		})()

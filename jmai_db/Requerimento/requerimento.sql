@@ -257,7 +257,7 @@ BEGIN
         RAISE EXCEPTION 'A primeira submissão não é válida.';
     END IF;
 
-    IF primeira_submissao = 1 AND data_submissao_anterior IS NULL THEN
+    IF primeira_submissao = 0 AND data_submissao_anterior IS NULL THEN
         RAISE EXCEPTION 'A data de submissão anterior não é válida.';
     ELSE 
         data_submissao_anterior_aux = converter_from_pt_to_iso(data_submissao_anterior);
@@ -844,12 +844,14 @@ $$ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION avaliar_requerimento(
     hashed_id_requerimento varchar(255),
     hashed_id_utilizador varchar(255),
-    grau_avaliacao float
+    grau_avaliacao float,
+    notas_avaliacao varchar(255) DEFAULT NULL
 )
 RETURNS TABLE (
     status boolean,
 	nome varchar(255),
-    email_preferencial varchar(255)
+    email_preferencial varchar(255),
+    numero_telemovel integer
 ) AS $$
 DECLARE
     id_requerimento_aux integer;
@@ -857,6 +859,7 @@ DECLARE
     estado_aux integer;
     email_preferencial_aux varchar(255) DEFAULT NULL;
     nome_aux varchar(255);
+    numero_telemovel_aux integer;
 BEGIN 
 
     IF hashed_id_requerimento IS NULL OR hashed_id_requerimento = '' THEN
@@ -890,6 +893,7 @@ BEGIN
     PERFORM alterar_estado_requerimento(hashed_id_requerimento, hashed_id_utilizador, 2);
 
     SELECT requerimento.email_preferencial INTO email_preferencial_aux FROM requerimento WHERE requerimento.id_requerimento = id_requerimento_aux;
+    SELECT requerimento.numero_telemovel INTO numero_telemovel_aux FROM requerimento WHERE requerimento.id_requerimento = id_requerimento_aux;
 
     IF email_preferencial_aux IS NULL OR email_preferencial_aux = '' THEN
         email_preferencial_aux := (
@@ -906,14 +910,16 @@ BEGIN
     INSERT INTO avaliacao_requerimento (
         id_requerimento,
         id_utilizador,
-        grau_avaliacao
+        grau_avaliacao,
+        notas
     ) VALUES (
         id_requerimento_aux,
         id_utilizador_aux,
-        grau_avaliacao
+        grau_avaliacao,
+        notas_avaliacao
     );
 
-    RETURN QUERY SELECT TRUE, nome_aux, email_preferencial_aux;
+    RETURN QUERY SELECT TRUE, nome_aux, email_preferencial_aux, numero_telemovel_aux;
 
 END;
 $$ LANGUAGE plpgsql;

@@ -149,7 +149,8 @@ CREATE TABLE
 ALTER TABLE avaliacao_requerimento ALTER COLUMN data_avaliacao SET DEFAULT CURRENT_TIMESTAMP;
 --CHANGE COLUMN NAME
 ALTER TABLE avaliacao_requerimento RENAME COLUMN grau_avalicao TO grau_avaliacao;
-
+--ADD COLUMN notas
+ALTER TABLE avaliacao_requerimento ADD notas varchar(255);
 
 
 CREATE TABLE
@@ -203,6 +204,8 @@ CREATE TABLE
 ALTER TABLE grupos_medicos ALTER COLUMN data_criacao SET DEFAULT CURRENT_TIMESTAMP;
 ALTER TABLE grupos_medicos RENAME TO equipa_medica;
 ALTER TABLE equipa_medica RENAME COLUMN id_grupo_medico TO id_equipa_medica;
+ALTER TABLE equipa_medica ADD CONSTRAINT equipa_medica_nome_key UNIQUE (nome);
+ALTER TABLE equipa_medica ADD CONSTRAINT equipa_medica_cor_key UNIQUE (cor);
 
 
 CREATE TABLE

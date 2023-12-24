@@ -20,7 +20,7 @@
         color: #009ef7;
     }
 </style>
-<div id="#kt_app_body_content" style="background-color:#D5D9E2; font-family:Arial,Helvetica,sans-serif; line-height: 1.5; min-height: 100%; font-weight: normal; font-size: 15px; color: #2F3044; margin:0; padding:0; padding-top: 40px; width:100%;">
+<div id="#kt_app_body_content" style="background-color:#D5D9E2; font-family:Arial,Helvetica,sans-serif; line-height: 1.5; min-height: 100%; font-weight: normal; font-size: 15px; color: #2F3044; margin:0; padding:0; padding-top: 40px; padding-bottom: 40px; width:100%;">
     <div style="background-color:#ffffff; padding: 45px 0 34px 0; border-radius: 24px; margin:auto; max-width: 600px;">
         <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" height="auto" style="border-collapse:collapse">
             <tbody>
@@ -32,7 +32,7 @@
                             <!--begin:Logo-->
                             <div style="margin-bottom: 10px">
                                 <a href="" rel="noopener" target="_blank">
-                                    <img alt="Logo" src="https://firebasestorage.googleapis.com/v0/b/jmai-docs.appspot.com/o/imagens_templates_email%2Flogo.svg?alt=media&token=fbffb28b-de7c-42b9-9b6e-3b35b466b502" style="height: 35px">
+                                    <img alt="Logo" src="https://firebasestorage.googleapis.com/v0/b/jmai-docs.appspot.com/o/imagens_templates_email%2Flogo.png?alt=media&token=108e658e-4147-49ad-a362-a5f4fbc6caec" style="height: 35px">
                                 </a>
                             </div>
                             <!--end:Logo-->
@@ -52,7 +52,7 @@
                             <!--end:Text-->
 
                             <!--begin:Action-->
-                            <a href="/metronic8/demo1/../demo1/authentication/general/welcome.html" target="_blank" style="background-color:#50cd89; border-radius:6px;display:inline-block; padding:11px 19px; color: #FFFFFF; font-size: 14px; font-weight:500;">
+                            <a href="/metronic8/demo1/../demo1/authentication/general/welcome.html" target="_blank" style="background-color:#49beb7; border-radius:6px;display:inline-block; padding:11px 19px; color: #FFFFFF; font-size: 14px; font-weight:500;">
                                 Verificar
                             </a>
                             <!--begin:Action-->
@@ -72,12 +72,7 @@
                             <div style="display:flex">
                                 <!--begin::Media-->
                                 <div style="display: flex; justify-content: center; align-items: center; width:40px; height:40px; margin-right:13px">
-                                    <img alt="Logo" src="https://firebasestorage.googleapis.com/v0/b/jmai-docs.appspot.com/o/imagens_templates_email%2Ficon-polygon.svg?alt=media&token=5634a988-bffa-4c5f-bff2-343615d52504">
-
-
-                                    <span style="position: absolute; color:#50CD89; font-size: 16px; font-weight: 600;">
-                                        1 </span>
-
+                                    <img alt="Logo" src="https://firebasestorage.googleapis.com/v0/b/jmai-docs.appspot.com/o/imagens_templates_email%2F1.png?alt=media&token=91514ce3-69fb-4e69-bd6e-4e2cc27b0743" width="40px" height="40px">
                                 </div>
                                 <!--end::Media-->
 
@@ -107,12 +102,7 @@
                             <div style="display:flex">
                                 <!--begin::Media-->
                                 <div style="display: flex; justify-content: center; align-items: center; width:40px; height:40px; margin-right:13px">
-                                    <img alt="Logo" src="https://firebasestorage.googleapis.com/v0/b/jmai-docs.appspot.com/o/imagens_templates_email%2Ficon-polygon.svg?alt=media&token=5634a988-bffa-4c5f-bff2-343615d52504">
-
-
-                                    <span style="position: absolute; color:#50CD89; font-size: 16px; font-weight: 600;">
-                                        2 </span>
-
+                                    <img alt="Logo" src="https://firebasestorage.googleapis.com/v0/b/jmai-docs.appspot.com/o/imagens_templates_email%2F2.png?alt=media&token=741e8215-e060-4000-8488-3fef8030c532" width="40px" height="40px">
                                 </div>
                                 <!--end::Media-->
 
@@ -142,12 +132,7 @@
                             <div style="display:flex">
                                 <!--begin::Media-->
                                 <div style="display: flex; justify-content: center; align-items: center; width:40px; height:40px; margin-right:13px">
-                                    <img alt="Logo" src="https://firebasestorage.googleapis.com/v0/b/jmai-docs.appspot.com/o/imagens_templates_email%2Ficon-polygon.svg?alt=media&token=5634a988-bffa-4c5f-bff2-343615d52504">
-
-
-                                    <span style="position: absolute; color:#50CD89; font-size: 16px; font-weight: 600;">
-                                        3 </span>
-
+                                    <img alt="Logo" src="https://firebasestorage.googleapis.com/v0/b/jmai-docs.appspot.com/o/imagens_templates_email%2F3.png?alt=media&token=9ff6dea9-8f72-46c6-ac26-0adb295be863" width="40px" height="40px">
                                 </div>
                                 <!--end::Media-->
 

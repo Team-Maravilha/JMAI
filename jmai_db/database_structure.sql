@@ -163,6 +163,7 @@ CREATE TABLE
     );
 ALTER TABLE historico_estados ALTER COLUMN data_alteracao SET DEFAULT CURRENT_TIMESTAMP;
 
+ALTER TABLE historico_estados ALTER COLUMN id_utilizador DROP NOT NULL;
 
 CREATE SEQUENCE sequencia_notificacao
     INCREMENT 1
@@ -185,10 +186,11 @@ CREATE TABLE
     comunicar_utente (
         id_comunicacao bigint PRIMARY KEY NOT NULL DEFAULT NEXTVAL('sequencia_comunicacao'::regclass),
         id_notificacao bigint NOT NULL,
-        sms integer NOT NULL,
-        email integer NOT NULL
+        tipo integer NOT NULL,
+        assunto varchar(255) NOT NULL,
+        mensagem varchar(255) NOT NULL,
+        data_comunicacao timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
     );
-
 
 CREATE SEQUENCE sequencia_grupo_medico
     INCREMENT 1
@@ -233,6 +235,8 @@ CREATE TABLE
         hashed_id varchar(255) UNIQUE
     );
 ALTER TABLE agendamento_consulta ALTER COLUMN data_criacao SET DEFAULT CURRENT_TIMESTAMP;
+
+ALTER TABLE agendamento_consulta RENAME COLUMN id_grupo_medico TO id_equipa_medica;
 
 ALTER TABLE distrito
 ADD

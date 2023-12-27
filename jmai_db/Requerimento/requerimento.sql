@@ -416,7 +416,8 @@ RETURNS TABLE (
     estado integer,
     texto_estado text,
     data_criacao text,
-    documentos_requerimento JSON
+    documentos_requerimento JSON,
+    avaliacao JSON
 ) AS $$
 DECLARE data_criacao_aux date DEFAULT NULL;
 BEGIN
@@ -582,7 +583,18 @@ BEGIN
                     'nome_documento', documentos_requerimento.nome_documento
                 )
             ) FROM documentos_requerimento WHERE documentos_requerimento.id_requerimento = requerimento.id_requerimento
-        ) AS documentos_requerimento
+        ) AS documentos_requerimento,
+        (
+            SELECT json_build_object(
+                'id_utilizador', ar.id_utilizador,
+                'nome_utilizador', (
+                    SELECT utilizador.nome FROM utilizador WHERE utilizador.id_utlizador = ar.id_utilizador
+                ),
+                'data_avaliacao', to_char(ar.data_avaliacao, 'DD/MM/YYYY'),
+                'grau_avaliacao', ar.grau_avaliacao,
+                'notas', ar.notas
+            ) FROM avaliacao_requerimento ar WHERE ar.id_requerimento = requerimento.id_requerimento
+        ) AS avaliacao
     FROM requerimento
     WHERE
         (
@@ -851,7 +863,8 @@ RETURNS TABLE (
     status boolean,
 	nome varchar(255),
     email_preferencial varchar(255),
-    numero_telemovel integer
+    numero_telemovel integer,
+    id_notificacao integer
 ) AS $$
 DECLARE
     id_requerimento_aux integer;
@@ -860,6 +873,7 @@ DECLARE
     email_preferencial_aux varchar(255) DEFAULT NULL;
     nome_aux varchar(255);
     numero_telemovel_aux integer;
+    id_notificacao_aux integer;
 BEGIN 
 
     IF hashed_id_requerimento IS NULL OR hashed_id_requerimento = '' THEN
@@ -919,7 +933,12 @@ BEGIN
         notas_avaliacao
     );
 
-    RETURN QUERY SELECT TRUE, nome_aux, email_preferencial_aux, numero_telemovel_aux;
+    CREATE TEMP TABLE temp_notificacao ON COMMIT DROP AS
+        SELECT * FROM notificar_avaliacao_requerimento(hashed_id_requerimento);
+
+    SELECT temp_notificacao.id_notificacao INTO id_notificacao_aux FROM temp_notificacao;
+
+    RETURN QUERY SELECT TRUE, nome_aux, email_preferencial_aux, numero_telemovel_aux, id_notificacao_aux;
 
 END;
 $$ LANGUAGE plpgsql;
@@ -951,7 +970,20 @@ BEGIN
 
     RETURN QUERY SELECT
         (
-            SELECT utilizador.nome FROM utilizador WHERE utilizador.id_utlizador = historico_estados.id_utilizador
+            CASE WHEN historico_estados.id_utilizador IS NULL THEN 
+                CONCAT(
+                    (
+                        SELECT utente.nome FROM utente WHERE utente.id_utente = (
+                            SELECT requerimento.id_utente FROM requerimento WHERE requerimento.hashed_id = hashed_id_requerimento
+                        )
+                    ),
+                    ' (Utente)'
+                )
+            ELSE
+                (
+                    SELECT utilizador.nome FROM utilizador WHERE utilizador.id_utlizador = historico_estados.id_utilizador
+                )
+            END
         ),
         historico_estados.estado_anterior,
         (
@@ -987,6 +1019,346 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+/**
+    * Esta função permite notificar o utente de uma avaliação de um requerimento.
+    * @param {String} hashed_id_requerimento - O identificador do requerimento a ser notificado.
+    * @returns {Table} Os dados da avaliação obtida.
+*/
+CREATE OR REPLACE FUNCTION notificar_avaliacao_requerimento(
+    hashed_id_requerimento varchar(255)
+)
+RETURNS TABLE (
+    id_notificacao bigint
+) AS $$
+DECLARE
+    id_requerimento_aux integer;
+    id_notificacao bigint;
+BEGIN
+    
+        IF hashed_id_requerimento IS NULL OR hashed_id_requerimento = '' THEN
+            RAISE EXCEPTION 'O identificador do requerimento não é válido.';
+        ELSIF NOT EXISTS(SELECT * FROM requerimento WHERE requerimento.hashed_id = hashed_id_requerimento) THEN
+            RAISE EXCEPTION 'Ocorreu um erro ao verificar o requerimento.';
+        ELSE
+            SELECT requerimento.id_requerimento INTO id_requerimento_aux FROM requerimento WHERE requerimento.hashed_id = hashed_id_requerimento;
+        END IF;
+    
+        SELECT notificacar_utente.id_notificacao INTO id_notificacao FROM notificacar_utente WHERE notificacar_utente.id_requerimento = id_requerimento_aux;
+    
+        IF id_notificacao IS NULL THEN
+            INSERT INTO notificacar_utente (
+                id_requerimento
+            ) VALUES (
+                id_requerimento_aux
+            ) RETURNING notificacar_utente.id_notificacao INTO id_notificacao;
+        END IF;
+    
+        RETURN QUERY SELECT id_notificacao;
+    
+    END;
+$$ LANGUAGE plpgsql;
+
+
+/**
+    * Esta função permite associar uma via de comunicação a uma notificação.
+    * @param {Numeric} id_notificacao - O identificador da notificação a ser associada.
+    * @param {Numeric} tipo - O tipo de via de comunicação a ser associada.
+    * @param {String} assunto - O assunto da via de comunicação a ser associada.
+    * @param {String} mensagem - A mensagem da via de comunicação a ser associada.
+    * @returns {Boolean} True se a via de comunicação for associada, false caso contrário.
+*/
+CREATE OR REPLACE FUNCTION comunicar_utente(
+    id_notificacao bigint,
+    tipo integer,
+    assunto varchar(255),
+    mensagem varchar(255)
+)
+RETURNS boolean AS $$
+DECLARE
+    id_notificacao_aux bigint;
+BEGIN
+
+    IF id_notificacao IS NULL THEN
+        RAISE EXCEPTION 'O identificador da notificação não é válido.';
+    ELSIF NOT EXISTS(SELECT * FROM notificacar_utente WHERE notificacar_utente.id_notificacao = id_notificacao) THEN
+        RAISE EXCEPTION 'Ocorreu um erro ao verificar a notificação.';
+    ELSE
+        SELECT notificacar_utente.id_notificacao INTO id_notificacao_aux FROM notificacar_utente WHERE notificacar_utente.id_notificacao = id_notificacao;
+    END IF;
+
+    IF tipo IS NULL THEN
+        RAISE EXCEPTION 'O tipo de via de comunicação não é válido.';
+    ELSIF tipo < 0 OR tipo > 1 THEN
+        RAISE EXCEPTION 'O tipo de via de comunicação não é válido.';
+    END IF;
+
+    INSERT INTO comunicar_utente (
+        id_notificacao,
+        tipo,
+        assunto,
+        mensagem
+    ) VALUES (
+        id_notificacao_aux,
+        tipo,
+        assunto,
+        mensagem
+    );
+
+    RETURN TRUE;
+
+END;
+$$ LANGUAGE plpgsql;
+
+
+/**
+    * Esta função permite ao utente responder à comunicação de um requerimento.
+    * @param {String} hashed_id_requerimento - O identificador do requerimento a ser respondido.
+    * @param {Number} resposta - A resposta do utente.
+    * @returns {Boolean} True se a resposta for inserida, false caso contrário.
+*/
+CREATE OR REPLACE FUNCTION responder_comunicacao_utente(
+    hashed_id_requerimento varchar(255),
+    resposta integer
+)
+RETURNS boolean AS $$
+DECLARE
+    id_requerimento_aux integer;
+    id_notificacao_aux bigint;
+    id_comunicacao_utente_aux bigint;
+    estado_aux integer;
+BEGIN
+    
+        IF hashed_id_requerimento IS NULL OR hashed_id_requerimento = '' THEN
+            RAISE EXCEPTION 'O identificador do requerimento não é válido.';
+        ELSIF NOT EXISTS(SELECT * FROM requerimento WHERE requerimento.hashed_id = hashed_id_requerimento) THEN
+            RAISE EXCEPTION 'Ocorreu um erro ao verificar o requerimento.';
+        ELSE
+            SELECT requerimento.id_requerimento INTO id_requerimento_aux FROM requerimento WHERE requerimento.hashed_id = hashed_id_requerimento;
+            SELECT requerimento.estado INTO estado_aux FROM requerimento WHERE requerimento.hashed_id = hashed_id_requerimento;
+        END IF;
+
+        IF estado_aux <> 2 THEN
+            RAISE EXCEPTION 'O requerimento não está no estado Avaliado.';
+        END IF;
+    
+        SELECT notificacar_utente.id_notificacao INTO id_notificacao_aux FROM notificacar_utente WHERE notificacar_utente.id_requerimento = id_requerimento_aux;
+    
+        IF id_notificacao_aux IS NULL THEN
+            RAISE EXCEPTION 'Ocorreu um erro ao verificar a notificação.';
+        END IF;
+    
+        IF resposta IS NULL THEN
+            RAISE EXCEPTION 'A resposta não é válida.';
+        ELSIF resposta < 0 OR resposta > 1 THEN
+            RAISE EXCEPTION 'A resposta não é válida.';
+        END IF;
+    
+        UPDATE notificacar_utente SET resposta = responder_comunicacao_utente.resposta, data_resposta = CURRENT_TIMESTAMP WHERE notificacar_utente.id_notificacao = id_notificacao_aux;
+
+        IF resposta = 1 THEN
+            UPDATE requerimento SET estado = 3 WHERE id_requerimento = id_requerimento_aux;
+
+            INSERT INTO historico_estados (
+                id_requerimento,
+                id_utilizador,
+                estado_anterior,
+                estado_novo
+            ) VALUES (
+                id_requerimento_aux,
+                NULL,
+                2,
+                3
+            );
+        ELSIF resposta = 0 THEN
+            UPDATE requerimento SET estado = 6 WHERE id_requerimento = id_requerimento_aux;
+
+            INSERT INTO historico_estados (
+                id_requerimento,
+                id_utilizador,
+                estado_anterior,
+                estado_novo
+            ) VALUES (
+                id_requerimento_aux,
+                NULL,
+                2,
+                6
+            );
+        END IF;
+
+        RETURN TRUE;
+
+END;
+$$ LANGUAGE plpgsql;
+
+
+/**
+    * Esta função permite obter uma listagem de comunicações de um requerimento.
+    * @param {String} hashed_id_requerimento - O identificador do requerimento a ser obtido.
+    * @returns {JSON} Os dados da comunicação obtida.
+*/
+CREATE OR REPLACE FUNCTION listar_comunicacoes_requerimento(
+    hashed_id_requerimento varchar(255)
+)
+RETURNS TABLE (
+    tipo integer,
+    texto_tipo text,
+    assunto varchar(255),
+    mensagem varchar(255),
+    data_hora_comunicacao text
+) AS $$
+DECLARE
+    id_requerimento_aux integer;
+    id_notificacao_aux bigint;
+BEGIN
+
+    IF hashed_id_requerimento IS NULL OR hashed_id_requerimento = '' THEN
+        RAISE EXCEPTION 'O identificador do requerimento não é válido.';
+    ELSIF NOT EXISTS(SELECT * FROM requerimento WHERE requerimento.hashed_id = hashed_id_requerimento) THEN
+        RAISE EXCEPTION 'Ocorreu um erro ao verificar o requerimento';
+    END IF;
+
+    SELECT requerimento.id_requerimento INTO id_requerimento_aux FROM requerimento WHERE requerimento.hashed_id = hashed_id_requerimento;
+
+    SELECT notificacar_utente.id_notificacao INTO id_notificacao_aux FROM notificacar_utente WHERE notificacar_utente.id_requerimento = id_requerimento_aux;
+
+    IF id_notificacao_aux IS NULL THEN
+        RAISE EXCEPTION 'Não existem comunicações para o requerimento.';
+    END IF;
+
+    RETURN QUERY SELECT 
+        cu.tipo,
+        (
+            CASE
+                WHEN cu.tipo = 0 THEN 'Email'
+                WHEN cu.tipo = 1 THEN 'SMS'
+            END
+        ),
+        cu.assunto,
+        cu.mensagem,
+        to_char(cu.data_comunicacao, 'DD/MM/YYYY HH24:MI:SS')
+    FROM comunicar_utente AS cu
+    WHERE cu.id_notificacao = id_notificacao_aux
+    ORDER BY cu.data_comunicacao DESC;
+
+END;
+$$ LANGUAGE plpgsql;
+
+
+/**
+    * Esta função permite obter agendar um requerimento.
+    * @param {String} hashed_id_requerimento - O identificador do requerimento a ser agendado.
+    * @param {String} hashed_id_utilizador - O identificador do utilizador a ser agendado.
+    * @param {String} data_agendamento - A data do agendamento a ser agendado.
+    * @param {String} hora_agendamento - A hora do agendamento a ser agendado.
+    * @param {String} hashed_id_equipa_medica - O identificador da equipa médica a ser agendado.
+    * @returns {Table} O hashed_id do agendamento obtido.
+*/
+CREATE OR REPLACE FUNCTION agendar_consulta_requerimento(
+    hashed_id_requerimento_param varchar(255),
+    hashed_id_utilizador_param varchar(255),
+    data_agendamento_param varchar(255),
+    hora_agendamento_param time,
+    hashed_id_equipa_medica_param varchar(255)
+)
+RETURNS TABLE (
+    hashed_id_agendamento varchar(255)
+) AS $$
+DECLARE
+    id_requerimento_aux integer;
+    id_utilizador_aux integer;
+    id_equipa_medica_aux integer;
+    data_ageendamento_aux timestamp;
+    estado_aux integer;
+BEGIN
+    
+    IF hashed_id_requerimento_param IS NULL OR hashed_id_requerimento_param = '' THEN
+        RAISE EXCEPTION 'O identificador do requerimento não é válido.';
+    ELSIF NOT EXISTS(SELECT * FROM requerimento WHERE requerimento.hashed_id = hashed_id_requerimento_param) THEN
+        RAISE EXCEPTION 'Ocorreu um erro ao verificar o requerimento.';
+    ELSE
+        SELECT requerimento.id_requerimento INTO id_requerimento_aux FROM requerimento WHERE requerimento.hashed_id = hashed_id_requerimento_param;
+        SELECT requerimento.estado INTO estado_aux FROM requerimento WHERE requerimento.hashed_id = hashed_id_requerimento_param;
+    END IF;
+
+    IF hashed_id_utilizador_param IS NULL OR hashed_id_utilizador_param = '' THEN
+        RAISE EXCEPTION 'O identificador do utilizador não é válido.';
+    ELSIF NOT EXISTS(SELECT * FROM utilizador WHERE utilizador.hashed_id = hashed_id_utilizador_param) THEN
+        RAISE EXCEPTION 'Ocorreu um erro ao verificar o utilizador.';
+    ELSE
+        SELECT utilizador.id_utlizador INTO id_utilizador_aux FROM utilizador WHERE utilizador.hashed_id = hashed_id_utilizador_param;
+    END IF;
+
+    IF estado_aux <> 3 THEN
+        RAISE EXCEPTION 'O requerimento não está no estado A Agendar.';
+    END IF;
+
+    IF data_agendamento_param IS NULL OR data_agendamento_param = '' THEN
+        RAISE EXCEPTION 'A data do agendamento não é válida.';
+    ELSIF data_agendamento_param ~ '^[0-9]{2}/[0-9]{2}/[0-9]{4}$' = FALSE THEN
+        RAISE EXCEPTION 'A data do agendamento não é válida.';
+    ELSE
+        data_ageendamento_aux := converter_from_pt_to_iso(data_agendamento_param);
+    END IF;
+
+    IF hora_agendamento_param IS NULL THEN
+        RAISE EXCEPTION 'A hora do agendamento não é válida.';
+    END IF;
+
+    IF hashed_id_equipa_medica_param IS NULL OR hashed_id_equipa_medica_param = '' THEN
+        RAISE EXCEPTION 'O identificador da equipa médica não é válido.';
+    ELSIF NOT EXISTS(SELECT * FROM equipa_medica WHERE equipa_medica.hashed_id = hashed_id_equipa_medica_param) THEN
+        RAISE EXCEPTION 'Ocorreu um erro ao verificar a equipa médica.';
+    ELSE
+        SELECT equipa_medica.id_equipa_medica INTO id_equipa_medica_aux FROM equipa_medica WHERE equipa_medica.hashed_id = hashed_id_equipa_medica_param;
+    END IF;
+
+    INSERT INTO agendamento_consulta (
+        id_requerimento,
+        id_utilizador,
+        data_agendamento,
+        hora_agendamento,
+        id_equipa_medica
+    ) VALUES (
+        id_requerimento_aux,
+        id_utilizador_aux,
+        data_ageendamento_aux,
+        hora_agendamento_param,
+        id_equipa_medica_aux
+    );
+
+    PERFORM alterar_estado_requerimento(hashed_id_requerimento_param, hashed_id_utilizador_param, 4);
+
+    RETURN QUERY SELECT hashed_id FROM agendamento_consulta WHERE agendamento_consulta.id_requerimento = id_requerimento_aux;
+
+END;
+$$ LANGUAGE plpgsql;
+
+
+/**
+    * Adicionar o HashedID a um agendamento de consulta.
+    */
+CREATE TRIGGER add_uuid_agendamento_consulta BEFORE INSERT ON agendamento_consulta FOR EACH ROW EXECUTE PROCEDURE add_uuid();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
+    
 
 
 

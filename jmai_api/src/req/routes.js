@@ -22,5 +22,15 @@ router.post("/avaliar", authMiddleware, controller.AvaliarRequerimento);
 
 router.get("/historico_estados/:hashed_id", authMiddleware, controller.HistoricoEstadosRequerimento);
 
+router.put("/resposta_utente/aceitar/:hashed_id", authMiddleware, controller.AceitarRespostaUtente);
+
+router.put("/resposta_utente/rejeitar/:hashed_id", authMiddleware, controller.RejeitarRespostaUtente);
+
+router.get("/comunicacao_utente/:hashed_id", authMiddleware, controller.VerComunicacaoUtente);
+
+router.post("/agendar_consulta", authMiddleware, controller.AgendarConsulta);
+
+
+
 
 module.exports = router;

@@ -496,7 +496,7 @@ const AceitarRespostaUtente = (req, res) => {
 			res.status(200).json({
 				status: "success",
 				data: results.rows[0],
-				messages: ["Resposta aceite com Sucesso!"],
+				messages: ["Junta Médica aceite com Sucesso!"],
 			});
 		}
 	);
@@ -520,7 +520,7 @@ const RejeitarRespostaUtente = (req, res) => {
 			res.status(200).json({
 				status: "success",
 				data: results.rows[0],
-				messages: ["Resposta rejeitada com Sucesso!"],
+				messages: ["Junta Médica recusada com Sucesso!"],
 			});
 		}
 	);

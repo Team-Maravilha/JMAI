@@ -26,7 +26,7 @@ router.get("/historico_estados/:hashed_id", authMiddleware, controller.Historico
 
 router.put("/resposta_utente/aceitar/:hashed_id", authMiddleware, controller.AceitarRespostaUtente);
 
-router.put("/resposta_utente/rejeitar/:hashed_id", authMiddleware, controller.RejeitarRespostaUtente);
+router.put("/resposta_utente/recusar/:hashed_id", authMiddleware, controller.RejeitarRespostaUtente);
 
 router.get("/comunicacao_utente/:hashed_id", authMiddleware, controller.VerComunicacaoUtente);
 

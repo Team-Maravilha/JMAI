@@ -16,7 +16,11 @@ $numero_requerimento = $info_requerimento["numero_requerimento"];
 $numero_utente = $info_requerimento["informacao_utente"]["numero_utente"];
 
 $patient_info = $api_rnu->fetch("patients/num_utente", null, $numero_utente);
-$patient_info_data = $patient_info["response"][0];
+if($patient_info["status"] == false){
+    $patient_info_data = null;
+} else {
+    $patient_info_data = $patient_info["response"][0];
+}
 
 $get_tab = isset($_GET["tab"]) ? $_GET["tab"] : "requerimento_tab_2";
 ?>

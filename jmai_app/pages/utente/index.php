@@ -52,6 +52,21 @@ $page_name = "O Meu Espaço"
                                                             </a>
                                                         </div>
 
+                                                        <div class="col-4">
+                                                            <a href="notificacoes/lista">
+                                                                <div class="bg-gray-100 bg-opacity-70 rounded-2 px-6 py-5">
+                                                                    <div class="symbol symbol-30px me-5 mb-8">
+                                                                        <span class="symbol-label">
+                                                                            <i class="ki-outline ki-notification-on fs-2hx text-primary"></i>
+                                                                        </span>
+                                                                    </div>
+                                                                    <div class="m-0">
+                                                                        <span class="text-gray-700 fw-bolder d-block fs-3 lh-1 mb-1">Notificações</span>
+                                                                    </div>
+                                                                </div>
+                                                            </a>
+                                                        </div>
+
                                                     </div>
                                                 </div>
                                             </div>

@@ -78,7 +78,7 @@
                     serverSide: false,
                     responsive: true,
                     order: [
-                        [0, "asc"]
+                        [5, "desc"]
                     ],
                     lengthMenu: [5, 10, 25, 50, 75, 100],
                     stateSave: false,

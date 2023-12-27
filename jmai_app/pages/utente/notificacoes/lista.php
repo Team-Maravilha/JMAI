@@ -4,6 +4,7 @@
 $api = new Api();
 $requerimentos = $api->post("requerimentos/ver_requerimentos", ["hashed_id_utente" => $id_user], null);
 $notificacoes = $requerimentos["response"]["data"];
+$count_notificacoes = count($notificacoes);
 $page_name = "As Minhas Notificações";
 ?>
 
@@ -20,6 +21,14 @@ $page_name = "As Minhas Notificações";
 								<!-- Conteudo AQUI! -->
 
 								<div class="row">
+
+									<?php if ($count_notificacoes === 0) { ?>
+										<div class="text-center my-10">
+											<i class="ki-solid ki-information-2 text-dark-blue fs-5tx"></i>
+											<h1 class="my-4">Sem Notificações</h1>
+											<h4 class="text-muted fw-bold">Consulte a página de Requerimentos para obter mais informações</h4>
+										</div>
+									<?php } ?>
 
 									<?php foreach ($notificacoes as $key => $value) { ?>
 										<div class="col-12 col-lg-4">
@@ -93,7 +102,7 @@ $page_name = "As Minhas Notificações";
 																			<span class="fw-bold text-gray-800 text-hover-primary fs-7"><?php echo $value["data_criacao"] ?></span>
 																		</div>
 																	</div>
-																	<?php 
+																	<?php
 																	$hashed_id_requerimento = $value["hashed_id"];
 																	?>
 																	<div class="d-flex my-4">
@@ -218,15 +227,15 @@ $page_name = "As Minhas Notificações";
 			})
 		}
 
-		var rejectRequest = () => {
+		var rejectRequest = (hashed_id_requerimento) => {
 			Swal.fire({
-				title: 'Recusar Requerimento',
-				text: "Tem a certeza que pretende recusar o Requerimento?",
+				title: 'Recusar Junta Médica',
+				text: "Tem a certeza que pretende recusar a Junta Médica?",
 				icon: 'error',
 				showCancelButton: true,
 				showConfirmButton: true,
 				confirmButtonText: 'Sim, recusar!',
-				cancelButtonText: 'Não, cancelar!',
+				cancelButtonText: 'Cancelar!',
 				reverseButtons: true,
 				buttonsStyling: false,
 				allowOutsideClick: false,
@@ -241,32 +250,28 @@ $page_name = "As Minhas Notificações";
 			}).then((result) => {
 				if (result.isConfirmed) {
 					Swal.fire({
-						title: 'A recusar o requerimento!',
+						title: 'A recusar o pedido!',
 						text: 'Por favor aguarde...',
-						icon: 'info',
+						icon: 'error',
 						allowOutsideClick: false,
 						showConfirmButton: false,
 						willOpen: () => {
 							Swal.showLoading()
 						},
 					});
-					fetch(api_url + path + "invalidar", {
-							method: "POST",
+					fetch(api_base_url + "requerimentos/resposta_utente/recusar/" + hashed_id_requerimento, {
+							method: "PUT",
 							headers: {
 								"Content-Type": "application/json",
 								"Authorization": token,
 							},
-							body: JSON.stringify({
-								hashed_id_requerimento: "<?php echo $hashed_id_requerimento ?>",
-								hashed_id_utilizador: "<?php echo $id_user ?>"
-							}),
 						})
 						.then(response => response.json())
 						.then(data => {
 							if (data.status === "success") {
 								Swal.fire({
 									title: data.messages[0],
-									text: 'A redirecionar para a lista de requerimentos...',
+									text: 'Por Favor Aguarde...',
 									icon: 'success',
 									allowOutsideClick: false,
 									showConfirmButton: false,
@@ -275,11 +280,11 @@ $page_name = "As Minhas Notificações";
 									},
 								});
 								setTimeout(() => {
-									window.location = "<?php echo $link_home ?>pages/rececionista/requerimentos/lista";
+									location.reload();
 								}, 1500);
 							} else {
 								Swal.fire({
-									title: 'Erro ao recusar o requerimento!',
+									title: 'Erro ao recusar o pedido!',
 									text: data.messages[0],
 									icon: 'error',
 									allowOutsideClick: false,
@@ -289,13 +294,13 @@ $page_name = "As Minhas Notificações";
 									},
 								});
 								setTimeout(() => {
-									window.location = "<?php echo $link_home ?>pages/rececionista/requerimentos/lista";
+									location.reload();
 								}, 1500);
 							}
 						})
 						.catch(error => {
 							Swal.fire({
-								title: 'Erro ao recusar o requerimento!',
+								title: 'Erro ao recusar o pedido!',
 								text: 'Por favor tente novamente...',
 								icon: 'error',
 								allowOutsideClick: false,
@@ -305,7 +310,7 @@ $page_name = "As Minhas Notificações";
 								},
 							});
 							setTimeout(() => {
-									window.location.href = "<?php echo $link_home ?>pages/rececionista/requerimentos/lista";
+									location.reload();
 								},
 								1500);
 						});

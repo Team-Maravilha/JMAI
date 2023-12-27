@@ -109,7 +109,6 @@ const ListarRequerimentosDataTable = (req, res) => {
 	);
 };
 
-
 const RegistarAcesso = (req, res) => {
 	const { hashed_id_requerimento, hashed_id_utilizador } = req.body;
 
@@ -225,6 +224,7 @@ const AvaliarRequerimento = (req, res) => {
 				});
 				return;
 			}
+			const id_notificacao = results.rows[0].id_notificacao;
 
 			// Enviar Email
 			const email_to = results.rows[0].email_preferencial;
@@ -406,21 +406,41 @@ const AvaliarRequerimento = (req, res) => {
 					</div>
 			`;
 
-			if (email_to != null)
+			if (email_to != null) {
 				SendEmail(email_to, email_subjet, email_text, email_html);
+				pool.query(
+					"SELECT * FROM comunicar_utente($1, 1, $2, $3)",
+					[id_notificacao, email_subjet, email_text],
+					(error, results) => {
+						if (error) {
+							//console.log(error.message);
+						}
+					}
+				);
+			}
 
 			// Enviar SMS
 			const numero_telemovel = results.rows[0].numero_telemovel;
 			const texto = `Olá ${nome}, temos novidades! O seu requerimento foi avaliado por um dos nossos médicos, com base nas informações fornecidas por sí.`;
 
-			if (numero_telemovel != null)
+			if (numero_telemovel != null) {
 				//SendSMS(numero_telemovel, texto);
+				// pool.query(
+				// 	"SELECT * FROM comunicar_utente($1, 0, $2, $3)",
+				// 	[id_notificacao, "SMS", texto],
+				// 	(error, results) => {
+				// 		if (error) {
+				// 			//console.log(error.message);
+				// 		}
+				// 	}
+				// );
+			}
 
-				res.status(201).json({
-					status: "success",
-					data: results.rows[0],
-					messages: ["Requerimento avaliado com Sucesso!"],
-				});
+			res.status(201).json({
+				status: "success",
+				data: results.rows[0],
+				messages: ["Requerimento avaliado com Sucesso!"],
+			});
 		}
 	);
 };
@@ -475,15 +495,102 @@ const HistoricoEstadosRequerimento = (req, res) => {
 			});
 		}
 	);
+};
+
+const AceitarRespostaUtente = (req, res) => {
+	const { hashed_id } = req.params;
+
+	pool.query(
+		"SELECT * FROM responder_comunicacao_utente($1, 1)",
+		[hashed_id],
+		(error, results) => {
+			if (error) {
+				res.status(400).json({
+					status: "error",
+					data: null,
+					messages: [error.message],
+				});
+				return;
+			}
+			res.status(200).json({
+				status: "success",
+				data: results.rows[0],
+				messages: ["Resposta aceite com Sucesso!"],
+			});
+		}
+	);
+};
+
+const RejeitarRespostaUtente = (req, res) => {
+	const { hashed_id } = req.params;
+
+	pool.query(
+		"SELECT * FROM responder_comunicacao_utente($1, 0)",
+		[hashed_id],
+		(error, results) => {
+			if (error) {
+				res.status(400).json({
+					status: "error",
+					data: null,
+					messages: [error.message],
+				});
+				return;
+			}
+			res.status(200).json({
+				status: "success",
+				data: results.rows[0],
+				messages: ["Resposta rejeitada com Sucesso!"],
+			});
+		}
+	);
+};
+
+const VerComunicacaoUtente = (req, res) => {
+	const { hashed_id } = req.params;
+
+	pool.query(
+		"SELECT * FROM listar_comunicacoes_requerimento($1)",
+		[hashed_id],
+		(error, results) => {
+			if (error) {
+				res.status(400).json({
+					recordsTotal: 0,
+					recordsFiltered: 0,
+					data: [],
+				});
+				return;
+			}
+			res.status(200).json({
+				recordsTotal: results.rows.length,
+				recordsFiltered: results.rows.length,
+				data: results.rows,
+			});
+		}
+	);
 }
 
-
-
-
-
-
-
-
+const AgendarConsulta = (req, res) => {
+	const { hashed_id_requerimento, hashed_id_utilizador, data_agendamento, hora_agendamento, hashed_id_equipa_medica } = req.body;
+	pool.query(
+		"SELECT * FROM  agendar_consulta_requerimento($1, $2, $3, $4, $5)",
+		[hashed_id_requerimento, hashed_id_utilizador, data_agendamento, hora_agendamento, hashed_id_equipa_medica],
+		(error, results) => {
+			if (error) {
+				res.status(400).json({
+					status: "error",
+					data: null,
+					messages: [error.message]
+				});
+				return;
+			}
+			res.status(201).json({
+				status: "success",
+				data: results.rows[0],
+				messages: ["Consulta agendada com sucesso."],
+			});
+		}
+	);
+};
 
 const SendEmail = (to, subject, text, html) => {
 	/* Configuração do Nodemailer */
@@ -551,13 +658,17 @@ const SendSMS = async (to, text) => {
 };
 
 module.exports = {
- 	RegistarRequerimento,
-  	ListarRequerimentosDataTable,
-  	VerInformacaoRequerimentoByHashedID,
+	RegistarRequerimento,
+	ListarRequerimentosDataTable,
+	VerInformacaoRequerimentoByHashedID,
 	RegistarAcesso,
 	ListarAcessosRequerimento,
 	ValidarRequerimento,
 	InvalidarRequerimento,
 	AvaliarRequerimento,
-	HistoricoEstadosRequerimento
+	HistoricoEstadosRequerimento,
+	AceitarRespostaUtente,
+	RejeitarRespostaUtente,
+	VerComunicacaoUtente,
+	AgendarConsulta,
 };

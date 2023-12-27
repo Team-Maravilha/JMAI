@@ -88,4 +88,65 @@ END;
 $$ LANGUAGE plpgsql;
 
 
+/**
+    * Esta função permite editar uma equipa médica.
+    * @param {String} hashed_id_param - O hashed_id da equipa médica.
+    * @param {String} nome_param - O nome da equipa médica.
+    * @param {String} cor_param - A cor da equipa médica.
+    * @param {JSON} membros_param - Os membros da equipa médica.
+    * @returns {Table} Retorna o hashed_id da equipa médica.
+    */
+CREATE OR REPLACE FUNCTION editar_equipa_medica(hashed_id_param varchar(255), nome_param varchar(255), cor_param varchar(255), membros_param json)
+RETURNS TABLE (hashed_id varchar(255)) AS $$
+DECLARE 
+    medico record;
+    id_equipa_medica_aux int;
+BEGIN
+    
+        IF hashed_id_param IS NULL OR hashed_id_param = '' THEN
+            RAISE EXCEPTION 'O hashed_id da equipa médica não é válido.';
+        ELSIF NOT EXISTS (SELECT * FROM equipa_medica WHERE hashed_id = hashed_id_param) THEN
+            RAISE EXCEPTION 'Não existe nenhuma equipa médica com esse hashed_id.';
+        END IF;
+    
+        IF nome_param IS NULL OR nome_param = '' THEN
+            RAISE EXCEPTION 'O nome da equipa médica não é válido.';
+        ELSIF EXISTS (SELECT * FROM equipa_medica WHERE nome = nome_param AND hashed_id != hashed_id_param) THEN
+            RAISE EXCEPTION 'Já existe uma equipa médica com esse nome.';
+        END IF;
+    
+        IF cor_param IS NULL OR cor_param = '' THEN
+            RAISE EXCEPTION 'A cor da equipa médica não é válida.';
+        ELSIF EXISTS (SELECT * FROM equipa_medica WHERE cor = cor_param AND hashed_id != hashed_id_param) THEN
+            RAISE EXCEPTION 'Já existe uma equipa médica com essa cor.';
+        END IF;
+    
+        SELECT equipa_medica.id_equipa_medica INTO id_equipa_medica_aux FROM equipa_medica WHERE equipa_medica.hashed_id = hashed_id_param;
+    
+        UPDATE equipa_medica SET nome = nome_param, cor = cor_param WHERE equipa_medica.id_equipa_medica = id_equipa_medica_aux;
+    
+        DELETE FROM equipa_medica_medicos WHERE equipa_medica_medicos.id_equipa_medica = id_equipa_medica_aux;
+    
+        IF membros_param IS NOT NULL THEN
+            FOR medico IN SELECT * FROM json_array_elements(membros_param) LOOP
+                DECLARE
+                    hashed_id_medico text := medico.value->>'hashed_id';
+                    id_medico_aux bigint;
+                BEGIN
+                    IF hashed_id_medico IS NULL OR hashed_id_medico = '' THEN
+                        --RAISE EXCEPTION 'O hashed_id do médico não pode ser nulo.';
+                    ELSIF NOT EXISTS (SELECT * FROM utilizador WHERE utilizador.hashed_id = hashed_id_medico) THEN
+                        --RAISE EXCEPTION 'Não existe nenhum médico com esse hashed_id.';
+                    ELSE
+                        SELECT utilizador.id_utlizador INTO id_medico_aux FROM utilizador WHERE utilizador.hashed_id = hashed_id_medico;
+                        INSERT INTO equipa_medica_medicos (id_utilizador, id_equipa_medica) VALUES (id_medico_aux, id_equipa_medica_aux);
+                    END IF;
+                END;
+            END LOOP;
+        END IF;
+
+        RETURN QUERY SELECT equipa_medica.hashed_id FROM equipa_medica WHERE equipa_medica.id_equipa_medica = id_equipa_medica_aux;
+END;
+$$ LANGUAGE plpgsql;
+
     

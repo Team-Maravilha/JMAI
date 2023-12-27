@@ -79,8 +79,38 @@ const VerEquipaMedica = async (req, res) => {
 	);
 }
 
+const EditarEquipaMedica = async (req, res) => {
+	const hashed_id = req.params.hashed_id;
+	const { nome, cor, medicos } = req.body;
+	pool.query(
+		"SELECT * FROM editar_equipa_medica($1, $2, $3, $4)",
+		[
+			hashed_id,
+			nome,
+			cor,
+			medicos,
+		],
+		(error, results) => {
+			if (error) {
+				res.status(400).json({
+					status: "error",
+					data: null,
+					messages: [error.message],
+				});
+				return;
+			}
+			res.status(200).json({
+				status: "success",
+				data: results.rows[0],
+				messages: ["Equipa Médica editada com sucesso!"],
+			});
+		}
+	);
+}
+
 module.exports = {
     RegistarEquipaMedica,
 	ListarEquipasMedicas,
-	VerEquipaMedica
+	VerEquipaMedica,
+	EditarEquipaMedica
 };

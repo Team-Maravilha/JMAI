@@ -241,6 +241,16 @@
                                 </div>
                             </div>
                         </div>
+
+                        <div class="menu-item here menu-lg-down-accordion menu-sub-lg-down-indention me-0 me-lg-2">
+                            <span class="menu-link">
+                                <a href="<?php echo $link_home ?>pages/utente/notificacoes/lista">
+                                    <span class="menu-title">Notificações</span>
+                                    <span class="menu-arrow d-lg-none"></span>
+                                </a>
+                            </span>
+                        </div>
+
                     </div>
 
                 </div>

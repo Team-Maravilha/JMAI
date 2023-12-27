@@ -10,199 +10,187 @@ const axios = require("axios").default;
  */
 
 const RegistarRequerimento = async (req, res) => {
-	const {
-		id_utente,
-		tipo_documento,
-		numero_documento,
-		data_validade_documento,
-		numero_contribuinte,
-		data_nascimento,
-		freguesia_naturalidade,
-		morada,
-		codigo_postal,
-		freguesia_residencia,
-		numero_telemovel,
-		tipo_requerimento,
-		primeira_submissao,
-		data_submissao_anterior,
-		numero_telefone,
-		email_preferencial,
-		data_emissao_documento,
-		local_emissao_documento,
-		documentos,
-	} = req.body;
+  const {
+    id_utente,
+    tipo_documento,
+    numero_documento,
+    data_validade_documento,
+    numero_contribuinte,
+    data_nascimento,
+    freguesia_naturalidade,
+    morada,
+    codigo_postal,
+    freguesia_residencia,
+    numero_telemovel,
+    tipo_requerimento,
+    primeira_submissao,
+    data_submissao_anterior,
+    numero_telefone,
+    email_preferencial,
+    data_emissao_documento,
+    local_emissao_documento,
+    documentos,
+  } = req.body;
 
-	pool.query(
-		"SELECT * FROM inserir_requerimento($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19)",
-		[
-			id_utente,
-			tipo_documento,
-			numero_documento,
-			data_validade_documento,
-			numero_contribuinte,
-			data_nascimento,
-			freguesia_naturalidade,
-			morada,
-			codigo_postal,
-			freguesia_residencia,
-			numero_telemovel,
-			tipo_requerimento,
-			primeira_submissao,
-			data_submissao_anterior,
-			numero_telefone,
-			email_preferencial,
-			data_emissao_documento,
-			local_emissao_documento,
-			documentos,
-		],
-		(error, results) => {
-			if (error) {
-				res.status(400).json({
-					status: "error",
-					data: null,
-					messages: [error.message],
-				});
-				return;
-			}
-			res.status(201).json({
-				status: "success",
-				data: results.rows[0],
-				messages: ["O seu Requerimento foi registado com Sucesso!"],
-			});
-		}
-	);
+  pool.query(
+    "SELECT * FROM inserir_requerimento($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19)",
+    [
+      id_utente,
+      tipo_documento,
+      numero_documento,
+      data_validade_documento,
+      numero_contribuinte,
+      data_nascimento,
+      freguesia_naturalidade,
+      morada,
+      codigo_postal,
+      freguesia_residencia,
+      numero_telemovel,
+      tipo_requerimento,
+      primeira_submissao,
+      data_submissao_anterior,
+      numero_telefone,
+      email_preferencial,
+      data_emissao_documento,
+      local_emissao_documento,
+      documentos,
+    ],
+    (error, results) => {
+      if (error) {
+        res.status(400).json({
+          status: "error",
+          data: null,
+          messages: [error.message],
+        });
+        return;
+      }
+      res.status(201).json({
+        status: "success",
+        data: results.rows[0],
+        messages: ["O seu Requerimento foi registado com Sucesso!"],
+      });
+    }
+  );
 };
 
 const ListarRequerimentosDataTable = (req, res) => {
-	const {
-		hashed_id,
-		hashed_id_utente,
-		data_criacao,
-		estado,
-		tipo_requerimento,
-	} = req.body;
+  const { hashed_id, hashed_id_utente, data_criacao, estado, tipo_requerimento } = req.body;
 
-	pool.query(
-		"SELECT * FROM listar_requerimentos($1, $2, $3, $4, $5)",
-		[
-			hashed_id,
-			hashed_id_utente,
-			data_criacao,
-			estado,
-			tipo_requerimento,
-		],
-		(error, results) => {
-			if (error) {
-				res.status(400).json({
-					recordsTotal: 0,
-					recordsFiltered: 0,
-					data: [],
-				});
-				return;
-			}
-			res.status(200).json({
-				recordsTotal: results.rows.length,
-				recordsFiltered: results.rows.length,
-				data: results.rows,
-			});
-		}
-	);
+  pool.query("SELECT * FROM listar_requerimentos($1, $2, $3, $4, $5)", [hashed_id, hashed_id_utente, data_criacao, estado, tipo_requerimento], (error, results) => {
+    if (error) {
+      res.status(400).json({
+        recordsTotal: 0,
+        recordsFiltered: 0,
+        data: [],
+      });
+      return;
+    }
+    res.status(200).json({
+      recordsTotal: results.rows.length,
+      recordsFiltered: results.rows.length,
+      data: results.rows,
+    });
+  });
+};
+
+const ListarRequerimentosUtente = (req, res) => {
+  const { hashed_id_utente } = req.body;
+
+  pool.query("SELECT * FROM listar_requerimentos(NULL, $1, NULL, 2, NULL)", [hashed_id_utente], (error, results) => {
+    if (error) {
+      res.status(400).json({
+        status: "error",
+        data: null,
+        messages: [error.message],
+      });
+      return;
+    }
+    res.status(200).json({
+      status: "success",
+      data: results.rows,
+      messages: ["Informações dos Requerimentos obtidas com Sucesso!"],
+    });
+  });
 };
 
 const RegistarAcesso = (req, res) => {
-	const { hashed_id_requerimento, hashed_id_utilizador } = req.body;
+  const { hashed_id_requerimento, hashed_id_utilizador } = req.body;
 
-	pool.query(
-		"SELECT * FROM inserir_log_acesso_requerimento($1, $2)",
-		[hashed_id_requerimento, hashed_id_utilizador],
-		(error, results) => {
-			if (error) {
-				res.status(400).json({
-					status: "error",
-					data: null,
-					messages: [error.message],
-				});
-				return;
-			}
-			res.status(201).json({
-				status: "success",
-				data: results.rows[0],
-				messages: ["Acesso registado com Sucesso!"],
-			});
-		}
-	);
+  pool.query("SELECT * FROM inserir_log_acesso_requerimento($1, $2)", [hashed_id_requerimento, hashed_id_utilizador], (error, results) => {
+    if (error) {
+      res.status(400).json({
+        status: "error",
+        data: null,
+        messages: [error.message],
+      });
+      return;
+    }
+    res.status(201).json({
+      status: "success",
+      data: results.rows[0],
+      messages: ["Acesso registado com Sucesso!"],
+    });
+  });
 };
 
 const ListarAcessosRequerimento = (req, res) => {
-	const { hashed_id_requerimento, cargo_utilizador } = req.query;
+  const { hashed_id_requerimento, cargo_utilizador } = req.query;
 
-	pool.query(
-		"SELECT * FROM listar_log_acesso_requerimento($1, $2)",
-		[hashed_id_requerimento, cargo_utilizador],
-		(error, results) => {
-			if (error) {
-				res.status(400).json({
-					recordsTotal: 0,
-					recordsFiltered: 0,
-					data: [],
-				});
-				return;
-			}
-			res.status(200).json({
-				recordsTotal: results.rows.length,
-				recordsFiltered: results.rows.length,
-				data: results.rows,
-			});
-		}
-	);
+  pool.query("SELECT * FROM listar_log_acesso_requerimento($1, $2)", [hashed_id_requerimento, cargo_utilizador], (error, results) => {
+    if (error) {
+      res.status(400).json({
+        recordsTotal: 0,
+        recordsFiltered: 0,
+        data: [],
+      });
+      return;
+    }
+    res.status(200).json({
+      recordsTotal: results.rows.length,
+      recordsFiltered: results.rows.length,
+      data: results.rows,
+    });
+  });
 };
 
 const ValidarRequerimento = (req, res) => {
-	const { hashed_id_requerimento, hashed_id_utilizador } = req.body;
+  const { hashed_id_requerimento, hashed_id_utilizador } = req.body;
 
-	pool.query(
-		"SELECT * FROM alterar_estado_requerimento($1, $2, $3)",
-		[hashed_id_requerimento, hashed_id_utilizador, 1],
-		(error, results) => {
-			if (error) {
-				res.status(400).json({
-					status: "error",
-					data: null,
-					messages: [error.message],
-				});
-				return;
-			}
-			res.status(201).json({
-				status: "success",
-				data: results.rows[0],
-				messages: ["Requerimento validado com Sucesso!"],
-			});
-		}
-	);
+  pool.query("SELECT * FROM alterar_estado_requerimento($1, $2, $3)", [hashed_id_requerimento, hashed_id_utilizador, 1], (error, results) => {
+    if (error) {
+      res.status(400).json({
+        status: "error",
+        data: null,
+        messages: [error.message],
+      });
+      return;
+    }
+    res.status(201).json({
+      status: "success",
+      data: results.rows[0],
+      messages: ["Requerimento validado com Sucesso!"],
+    });
+  });
 };
 
 const InvalidarRequerimento = (req, res) => {
-	const { hashed_id_requerimento, hashed_id_utilizador } = req.body;
+  const { hashed_id_requerimento, hashed_id_utilizador } = req.body;
 
-	pool.query(
-		"SELECT * FROM alterar_estado_requerimento($1, $2, $3)",
-		[hashed_id_requerimento, hashed_id_utilizador, 5],
-		(error, results) => {
-			if (error) {
-				res.status(400).json({
-					status: "error",
-					data: null,
-					messages: [error.message],
-				});
-				return;
-			}
-			res.status(201).json({
-				status: "success",
-				data: results.rows[0],
-				messages: ["Requerimento recusado com Sucesso!"],
-			});
-		}
-	);
+  pool.query("SELECT * FROM alterar_estado_requerimento($1, $2, $3)", [hashed_id_requerimento, hashed_id_utilizador, 5], (error, results) => {
+    if (error) {
+      res.status(400).json({
+        status: "error",
+        data: null,
+        messages: [error.message],
+      });
+      return;
+    }
+    res.status(201).json({
+      status: "success",
+      data: results.rows[0],
+      messages: ["Requerimento recusado com Sucesso!"],
+    });
+  });
 };
 
 const AvaliarRequerimento = (req, res) => {
@@ -226,13 +214,12 @@ const AvaliarRequerimento = (req, res) => {
 			}
 			const id_notificacao = results.rows[0].id_notificacao;
 
-			// Enviar Email
-			const email_to = results.rows[0].email_preferencial;
-			const nome = results.rows[0].nome;
-			const email_subjet = "JMAI | Avaliação de Requerimento";
-			const email_text =
-				"O seu requerimento foi avaliado por um dos nossos médicos, com base nas informações fornecidas por sí.";
-			const email_html = `
+    // Enviar Email
+    const email_to = results.rows[0].email_preferencial;
+    const nome = results.rows[0].nome;
+    const email_subjet = "JMAI | Avaliação de Requerimento";
+    const email_text = "O seu requerimento foi avaliado por um dos nossos médicos, com base nas informações fornecidas por sí.";
+    const email_html = `
 					<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,400,500,600,700">
 					<link href="https://preview.keenthemes.com/metronic8/demo1/assets/plugins/global/plugins.bundle.css" rel="stylesheet" type="text/css">
 					<link href="https://preview.keenthemes.com/metronic8/demo1/assets/css/style.bundle.css" rel="stylesheet" type="text/css">
@@ -419,9 +406,9 @@ const AvaliarRequerimento = (req, res) => {
 				);
 			}
 
-			// Enviar SMS
-			const numero_telemovel = results.rows[0].numero_telemovel;
-			const texto = `Olá ${nome}, temos novidades! O seu requerimento foi avaliado por um dos nossos médicos, com base nas informações fornecidas por sí.`;
+    // Enviar SMS
+    const numero_telemovel = results.rows[0].numero_telemovel;
+    const texto = `Olá ${nome}, temos novidades! O seu requerimento foi avaliado por um dos nossos médicos, com base nas informações fornecidas por sí.`;
 
 			if (numero_telemovel != null) {
 				//SendSMS(numero_telemovel, texto);
@@ -446,29 +433,23 @@ const AvaliarRequerimento = (req, res) => {
 };
 
 const VerInformacaoRequerimentoByHashedID = (req, res) => {
-	const { hashed_id } = req.params;
+  const { hashed_id } = req.params;
 
-	pool.query(
-		"SELECT * FROM listar_requerimentos($1)",
-		[hashed_id],
-		(error, results) => {
-			if (error) {
-				res.status(400).json({
-					status: "error",
-					data: null,
-					messages: [error.message],
-				});
-				return;
-			}
-			res.status(200).json({
-				status: "success",
-				data: results.rows[0],
-				messages: [
-					"Informação do Requerimento obtida com Sucesso!",
-				],
-			});
-		}
-	);
+  pool.query("SELECT * FROM listar_requerimentos($1)", [hashed_id], (error, results) => {
+    if (error) {
+      res.status(400).json({
+        status: "error",
+        data: null,
+        messages: [error.message],
+      });
+      return;
+    }
+    res.status(200).json({
+      status: "success",
+      data: results.rows[0],
+      messages: ["Informação do Requerimento obtida com Sucesso!"],
+    });
+  });
 };
 
 const HistoricoEstadosRequerimento = (req, res) => {
@@ -593,68 +574,62 @@ const AgendarConsulta = (req, res) => {
 };
 
 const SendEmail = (to, subject, text, html) => {
-	/* Configuração do Nodemailer */
-	let config = {
-		service: "gmail",
-		auth: {
-			user: process.env.EMAIL_SENDER,
-			pass: process.env.EMAIL_PASSWORD,
-		},
-	};
+  /* Configuração do Nodemailer */
+  let config = {
+    service: "gmail",
+    auth: {
+      user: process.env.EMAIL_SENDER,
+      pass: process.env.EMAIL_PASSWORD,
+    },
+  };
 
-	let transporter = nodemailer.createTransport(config);
+  let transporter = nodemailer.createTransport(config);
 
-	let mailOptions = {
-		from: process.env.EMAIL_SENDER,
-		to: to,
-		subject: subject,
-		text: text,
-		html: html,
-	};
+  let mailOptions = {
+    from: process.env.EMAIL_SENDER,
+    to: to,
+    subject: subject,
+    text: text,
+    html: html,
+  };
 
-	transporter.sendMail(mailOptions, (error, info) => {
-		if (error) {
-			return [false, error.message];
-		} else {
-			return [true, info.messageId];
-		}
-	});
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      return [false, error.message];
+    } else {
+      return [true, info.messageId];
+    }
+  });
 };
 
 const SendSMS = async (to, text) => {
-	try {
-		const ClickSend = await axios.post(
-			"https://rest.clicksend.com/v3/sms/send",
-			{
-				messages: [
-					{
-						source: "sdk",
-						from: "JMAI",
-						body: `Olá ${nome}, temos novidades! O seu requerimento foi avaliado por um dos nossos médicos, com base nas informações fornecidas por sí.`,
-						to: `+351${numero_telemovel}`,
-					},
-				],
-			},
-			{
-				headers: {
-					Authorization:
-						"Basic " +
-						Buffer.from(
-							process.env.CLICKSEND_USERNAME +
-								":" +
-								process.env.CLICKSEND_API_KEY
-						).toString("base64"),
-				},
-			}
-		);
+  try {
+    const ClickSend = await axios.post(
+      "https://rest.clicksend.com/v3/sms/send",
+      {
+        messages: [
+          {
+            source: "sdk",
+            from: "JMAI",
+            body: `Olá ${nome}, temos novidades! O seu requerimento foi avaliado por um dos nossos médicos, com base nas informações fornecidas por sí.`,
+            to: `+351${numero_telemovel}`,
+          },
+        ],
+      },
+      {
+        headers: {
+          Authorization: "Basic " + Buffer.from(process.env.CLICKSEND_USERNAME + ":" + process.env.CLICKSEND_API_KEY).toString("base64"),
+        },
+      }
+    );
 
-		console.log(ClickSend);
+    console.log(ClickSend);
 
-		return true;
-	} catch (error) {
-		console.log(error.message);
-		return false;
-	}
+    return true;
+  } catch (error) {
+    console.log(error.message);
+    return false;
+  }
 };
 
 module.exports = {
@@ -662,6 +637,7 @@ module.exports = {
 	ListarRequerimentosDataTable,
 	VerInformacaoRequerimentoByHashedID,
 	RegistarAcesso,
+  ListarRequerimentosUtente,
 	ListarAcessosRequerimento,
 	ValidarRequerimento,
 	InvalidarRequerimento,

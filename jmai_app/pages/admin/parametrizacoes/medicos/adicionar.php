@@ -40,7 +40,7 @@
                                                             <div class="mb-1">
                                                                 <label class="col-lg-12 col-form-label required fw-semibold fs-6">Palavra-Passe</label>
                                                                 <div class="position-relative mb-3">
-                                                                    <input class="form-control bg-transparent" required type="password" placeholder="Palavra-Passe" name="palavra_passe" autocomplete="off" />
+                                                                    <input class="form-control form-control-lg form-control-solid" required type="password" placeholder="Palavra-Passe" name="palavra_passe" autocomplete="off" />
                                                                     <span class="btn btn-sm btn-icon position-absolute translate-middle top-50 end-0 me-n2" data-kt-password-meter-control="visibility">
                                                                         <i class="ki-duotone ki-eye-slash fs-2"></i>
                                                                         <i class="ki-duotone ki-eye fs-2 d-none"></i>
@@ -58,7 +58,7 @@
 
                                                         <div class="col-12 col-lg-6">
                                                             <label class="col-lg-12 col-form-label required fw-semibold fs-6">Estado</label>
-                                                            <select class="form-select form-select-solid" name="estado" autocomplete="off" data-control="select2" data-hide-search="true" data-placeholder="Selecione um Estado">
+                                                            <select class="form-select form-control-lg form-select-solid" name="estado" autocomplete="off" data-control="select2" data-hide-search="true" data-placeholder="Selecione um Estado">
                                                                 <option></option>
                                                                 <option value="1">Ativo</option>
                                                                 <option value="0">Inativo</option>

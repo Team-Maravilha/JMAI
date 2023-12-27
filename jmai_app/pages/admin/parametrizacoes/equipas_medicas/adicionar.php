@@ -25,7 +25,7 @@ $id = isset($_GET['id']) ? $_GET['id'] : null;
                                                     <div class="row mb-6">
                                                         <div class="col-12 col-lg-6">
                                                             <label class="col-12 col-lg-12 col-form-label required fw-semibold fs-6">Selecione os Médicos</label>
-                                                            <select class="form-select form-select-solid" name="medicos" data-control="select2" data-close-on-select="false" data-placeholder="Selecione os Médicos" data-allow-clear="true" multiple="multiple">
+                                                            <select class="form-select form-select-solid form-control-lg" name="medicos" data-control="select2" data-close-on-select="false" data-placeholder="Selecione os Médicos" data-allow-clear="true" multiple="multiple">
                                                                 <option></option>
                                                             </select>
                                                         </div>

@@ -72,6 +72,13 @@ $breadcrumbs = [
         "clickable" => true
     ],
     [
+        "name" => "Notificações",
+        "path" => "notificacoes",
+        "link" => "/pages/utente/notificacoes/lista",
+        "role" => 3,
+        "clickable" => true
+    ],
+    [
         "name" => "Agendamento de Requerimentos",
         "path" => "agendar_requerimentos",
         "link" => "/pages/rececionista/agendar_requerimentos/lista",

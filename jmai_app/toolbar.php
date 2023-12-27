@@ -7,11 +7,7 @@
 						<i class="ki-duotone ki-home text-gray-500 fs-2"></i>
 					</a>
 				</li>
-				<li class="breadcrumb-item">
-					<i class="ki-duotone ki-right fs-3 text-gray-500 mx-n1"></i>
-				</li>
-				<li class="breadcrumb-item text-gray-600 fw-bold lh-1">Dashboard</li>
-
+				
 				<?php 
 				$request_uri = $_SERVER['REQUEST_URI'];
 				$path = explode('/', $request_uri);

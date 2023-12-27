@@ -35,11 +35,13 @@ if (isset($_SERVER["REQUEST_METHOD"])) {
                             setcookie("token", $verify_user_login["response"]["data"]["token"], time() + (86400 * 8), "/");
 
                             if ($_SESSION["role"] === 0) {
-                                $redirect = "/pages/admin/index";
+                                $redirect = "/pages/admin/";
                             } else if ($_SESSION["role"] === 1) {
-                                $redirect = "/pages/medico/index";
+                                $redirect = "/pages/medico/";
                             } else if ($_SESSION["role"] === 2) {
-                                $redirect = "/pages/rececionista/index";
+                                $redirect = "/pages/rececionista/";
+                            } else {
+                                $redirect = "/pages/auth/login";
                             }
                             $verify_user_login["response"]["redirect"] = $redirect;
                         }
@@ -71,7 +73,7 @@ if (isset($_SERVER["REQUEST_METHOD"])) {
 
 
                             if ($_SESSION["role"] === 3) {
-                                $redirect = "/pages/utente/index";
+                                $redirect = "/pages/utente/";
                             } else {
                                 $redirect = "/pages/auth/login";
                             }

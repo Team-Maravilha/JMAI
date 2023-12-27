@@ -39,7 +39,7 @@ $id = isset($_GET['id']) ? $_GET['id'] : null;
 
                                                         <div class="col-12 col-lg-6">
                                                             <label class="col-lg-12 col-form-label required fw-semibold fs-6">Estado</label>
-                                                            <select class="form-select form-select-solid" name="estado" autocomplete="off" data-control="select2" data-hide-search="true" data-placeholder="Selecione um Estado">
+                                                            <select class="form-select form-control-lg form-select-solid" name="estado" autocomplete="off" data-control="select2" data-hide-search="true" data-placeholder="Selecione um Estado">
                                                                 <option></option>
                                                                 <option value="1">Ativo</option>
                                                                 <option value="0">Inativo</option>

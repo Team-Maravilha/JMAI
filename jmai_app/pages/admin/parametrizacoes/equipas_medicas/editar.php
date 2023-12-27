@@ -184,6 +184,16 @@ $id = isset($_GET['id']) ? $_GET['id'] : null;
             var form = document.getElementById("form-editar-equipas-medicas");
             const formData = new FormData(form);
 
+            const medicos = $("select[name='medicos']").val();
+            console.log(medicos);
+            let medicos_array = [];
+            medicos.forEach((element) => {
+                medicos_array.push({
+                    hashed_id: element
+                });
+            });
+            formData.append("medicos", JSON.stringify(medicos_array));
+
             const data = {};
             for (const [key, value] of formData.entries()) {
                 data[key] = value;

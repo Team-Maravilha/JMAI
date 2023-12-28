@@ -22,6 +22,10 @@ if ($patient_info["status"] == false) {
 }
 
 $get_tab = isset($_GET["tab"]) ? $_GET["tab"] : "requerimento_tab_2";
+
+if($get_tab === "requerimento_tab_2"){
+    $registar_acesso = $api->post("requerimentos/acessos/registar", ["hashed_id_requerimento" => $hashed_id_requerimento, "hashed_id_utilizador" => $id_user], null);
+}
 ?>
 <?php $page_name = "Informação Requerimento " . "(" . $info_requerimento["numero_requerimento"] . ")" . " - " . $info_requerimento["informacao_utente"]["nome"]  ?>
 

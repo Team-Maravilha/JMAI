@@ -58,9 +58,65 @@
             </div>
         </div>
     </div>
+    <!-- Modal para fazer o agendamento da junta médica -->
+    <div class="modal fade" id="agendar_junta" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false" aria-modal="true" role="dialog">
+        <div class="modal-dialog modal-dialog-centered mw-650px">
+            <div class="modal-content">
+                <div class="modal-header" id="modal-agendar-junta-header">
+                    <h2 class="fw-bold">Agendar Junta Médica</h2>
+                    <div class="btn btn-icon btn-sm btn-active-icon-primary" data-bs-dismiss="modal" aria-label="Close">
+                        <i class="las la-times fs-1"></i>
+                    </div>
+                </div>
+
+                <div class="modal-body mx-5 mx-xl-15 my-7">
+                    <form id="modal-agendar-junta-form" class="form" action="#">
+                        <div class="d-flex flex-column me-n7 pe-7" id="modal-agendar-junta-form-scroll" data-kt-scroll="true" data-kt-scroll-activate="{default: false, lg: true}" data-kt-scroll-max-height="auto" data-kt-scroll-dependencies="#modal-agendar-junta-header" data-kt-scroll-wrappers="#modal-agendar-junta-form-scroll" data-kt-scroll-offset="350px" style="max-height: 91px;">
+                            <div class="row g-6">
+                                <div class="col-12">
+                                    <label class="col-lg-12 col-form-label required fw-semibold fs-6">Selecione a Equipa Médica:</label>
+                                    <select class="form-select form-select-solid form-control-lg" name="equipa" data-control="select2" data-close-on-select="false" data-placeholder="Selecione a Equipa" data-allow-clear="true">
+                                        <option></option>
+                                    </select>
+                                </div>
+
+                                <div class="col-12">
+                                    <label class="col-lg-12 col-form-label required required fw-semibold fs-6">Data da Consulta</label>
+                                    <div class="col-lg-12 fv-row fv-plugins-icon-container">
+                                        <input class="form-control form-control-solid" name="data_consulta" autocomplete="off" placeholder="Selecione uma Data para a Consulta" id="data_consulta" />
+                                        <div class="fv-plugins-message-container invalid-feedback"></div>
+                                    </div>
+                                </div>
+
+                                <div class="col-12">
+                                    <label class="col-lg-12 col-form-label required required fw-semibold fs-6">Hora da Consulta</label>
+                                    <div class="col-lg-12 fv-row fv-plugins-icon-container">
+                                        <input class="form-control form-control-solid" name="kt_datepicker_8" autocomplete="off" placeholder="Selecione uma hora para a Consulta" id="kt_datepicker_8" />
+                                        <div class="fv-plugins-message-container invalid-feedback"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="text-center pt-15">
+                            <button type="reset" class="btn btn-light me-3" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="submit" name="data-kt-indicator" class="btn btn-primary" data-modal-action="submit">
+                                <span class="indicator-label">Agendar</span>
+                                <span class="indicator-progress">Aguarde...
+                                    <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                                </span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
     <?php require_once($_SERVER["DOCUMENT_ROOT"] . "/foo.php") ?>
 
     <script>
+        var hashed_id_requerimento = null;
+
         var datatableServerSide = (function() {
             var table
             var dt
@@ -249,7 +305,7 @@
                             render: (data, type, row) => {
                                 return `
 									<div>
-										<a class="btn btn-icon btn-bg-light btn-color-primary btn-active-light-primary rounded w-35px h-35px me-1"><i class="ki-outline ki-calendar-add fs-2"></i></a>
+                                        <button type="button" data-id="${row.hashed_id}" data-datatable-action="submit" class="btn btn-icon btn-bg-light btn-color-primary btn-active-light-primary rounded w-35px h-35px me-1"><i class="ki-outline ki-calendar-add fs-2"></i></button>
 									</div>
 								`
                             },
@@ -280,150 +336,64 @@
                 filterSearch.addEventListener("keyup", (e) => dt.search(e.target.value).draw())
             }
 
-            var handleDeleteRows = () => {
-                const deleteButtons = document.querySelectorAll(`[data-datatable-action="delete-row"]`)
 
-                $("#datatable").on("click", "[data-datatable-action='delete-row']", (e) => {
+            var handleAgendarJunta = () => {
+                const agendarJuntaButtons = document.querySelectorAll(`[data-datatable-action="submit"]`)
+
+                $("#datatable").on("click", "[data-datatable-action='submit']", (e) => {
                     e.preventDefault()
                     const button = e.currentTarget
                     const parent = button.closest("tr")
-                    const name = button.getAttribute("data-name")
+                    const id = button.getAttribute("data-id")
+                    hashed_id_requerimento = id;
 
-                    Swal.fire({
-                        icon: "warning",
-                        title: "Desativar Administrador - " + name,
-                        text: "Tem a certeza que deseja desativar o Administrador - " + name + "?",
-                        showCancelButton: true,
-                        buttonsStyling: false,
-                        cancelButtonText: "Não, cancelar",
-                        confirmButtonText: "Sim, desativar!",
-                        reverseButtons: true,
-                        allowOutsideClick: false,
-                        customClass: {
-                            confirmButton: "btn fw-bold btn-danger",
-                            cancelButton: "btn fw-bold btn-active-light-warning",
-                        },
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            const id = button.getAttribute("data-id");
+                    $("#agendar_junta").modal("show")
 
-                            const options = {
-                                method: "PUT",
-                                headers: {
-                                    "Content-Type": "application/json",
-                                    "Authorization": "<?php echo $_SESSION["token"] ?>",
-                                },
-                                body: JSON.stringify({
-                                    "cargo": 0
-                                })
-                            }
-
-                            fetch(`${api_base_url}utilizadores/desativar/${id}`, options)
-                                .then((response) => response.json())
-                                .then((data) => {
-                                    if (data.status === "success") {
-                                        Swal.fire({
-                                            text: data.messages[0],
-                                            icon: "success",
-                                            buttonsStyling: false,
-                                            confirmButtonText: "Ok, fechar",
-                                            customClass: {
-                                                confirmButton: "btn fw-bold btn-primary",
-                                            },
-                                        }).then(() => {
-                                            dt.ajax.reload()
-                                        })
-                                    } else {
-                                        Swal.fire({
-                                            text: data.messages[0],
-                                            icon: "error",
-                                            buttonsStyling: false,
-                                            confirmButtonText: "Ok, fechar",
-                                            customClass: {
-                                                confirmButton: "btn fw-bold btn-primary",
-                                            },
-                                        })
-                                    }
-                                })
-                                .catch((error) => {
-                                    console.error(error)
-                                })
-                        }
-                    })
                 })
             }
 
-            var handleActivateRows = () => {
-                const activateButtons = document.querySelectorAll(`[data-datatable-action="activate-row"]`)
+            function handleCarregarEquipas() {
+                const submitButton = document.querySelector(`[data-modal-action="submit"]`)
+                submitButton.setAttribute("data-kt-indicator", "on");
 
-                $("#datatable").on("click", "[data-datatable-action='activate-row']", (e) => {
-                    e.preventDefault()
-                    const button = e.currentTarget
-                    const parent = button.closest("tr")
-                    const name = button.getAttribute("data-name")
+                const requestOptions = {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": "<?php echo $_SESSION['token'] ?>"
+                    },
+                };
 
-                    Swal.fire({
-                        icon: "warning",
-                        title: "Ativar Administrador - " + name,
-                        text: "Tem a certeza que deseja ativar o Administrador - " + name + "?",
-                        showCancelButton: true,
-                        buttonsStyling: false,
-                        cancelButtonText: "Não, cancelar",
-                        confirmButtonText: "Sim, ativar!",
-                        reverseButtons: true,
-                        allowOutsideClick: false,
-                        customClass: {
-                            confirmButton: "btn fw-bold btn-success",
-                            cancelButton: "btn fw-bold btn-active-light-warning",
-                        },
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            const id = button.getAttribute("data-id");
+                fetch(`${api_base_url}equipas_medicas/listar`, requestOptions)
+                    .then((response) => response.json())
+                    .then((data) => {
 
-                            const options = {
-                                method: "PUT",
-                                headers: {
-                                    "Content-Type": "application/json",
-                                    "Authorization": "<?php echo $_SESSION["token"] ?>",
-                                },
-                                body: JSON.stringify({
-                                    "cargo": 0
-                                })
-                            }
+                        if (data.status === "success") {
+                            data.data.forEach((element) => {
+                                var option = document.createElement("option");
+                                option.value = element.hashed_id;
+                                option.text = element.nome;
+                                $("select[name='equipa']").append(option);
+                            });
 
-                            fetch(`${api_base_url}utilizadores/ativar/${id}`, options)
-                                .then((response) => response.json())
-                                .then((data) => {
-                                    if (data.status === "success") {
-                                        Swal.fire({
-                                            text: data.messages[0],
-                                            icon: "success",
-                                            buttonsStyling: false,
-                                            confirmButtonText: "Ok, fechar",
-                                            customClass: {
-                                                confirmButton: "btn fw-bold btn-primary",
-                                            },
-                                        }).then(() => {
-                                            dt.ajax.reload()
-                                        })
-                                    } else {
-                                        Swal.fire({
-                                            text: data.messages[0],
-                                            icon: "error",
-                                            buttonsStyling: false,
-                                            confirmButtonText: "Ok, fechar",
-                                            customClass: {
-                                                confirmButton: "btn fw-bold btn-primary",
-                                            },
-                                        })
-                                    }
-                                })
-                                .catch((error) => {
-                                    console.error(error)
-                                })
+                            //reinit select2
+                            $("select[name='equipa']").select2({
+                                placeholder: "Selecione a Equipa",
+                                allowClear: true,
+                            });
+
+                            submitButton.removeAttribute("data-kt-indicator");
+                            submitButton.disabled = false;
+                        } else {
+                            toastr.error(data.messages[0], "Erro!");
                         }
                     })
-                })
+                    .catch((error) => {
+                        toastr.error(error, "Erro!");
+                    })
+                    .finally(() => {
+
+                    });
             }
 
             return {
@@ -431,8 +401,8 @@
                     initDatatable()
                     handleSyncDatatable()
                     handleSearchDatatable()
-                    handleDeleteRows()
-                    handleActivateRows()
+                    handleAgendarJunta()
+                    handleCarregarEquipas()
                 },
             }
         })()
@@ -440,5 +410,89 @@
         window.addEventListener("DOMContentLoaded", () => {
             datatableServerSide.init()
         })
+
+
+
+        $("#modal-agendar-junta-form").on("submit", function(e) {
+            e.preventDefault()
+
+            const button = document.querySelector(`[data-modal-action="submit"]`)
+            const buttonText = button.querySelector(".indicator-label")
+            const buttonProgress = button.querySelector(".indicator-progress")
+
+            button.setAttribute("disabled", "disabled")
+            buttonText.innerHTML = "Aguarde..."
+            buttonProgress.classList.remove("d-none")
+
+            const equipa = document.querySelector(`[name="equipa"]`).value
+            const data_consulta = document.querySelector(`[name="data_consulta"]`).value
+            const hora_consulta = document.querySelector(`[name="kt_datepicker_8"]`).value
+
+            const options = {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": "<?php echo $_SESSION["token"] ?>",
+                },
+                body: JSON.stringify({
+                    "hashed_id_equipa_medica": equipa,
+                    "data_agendamento": data_consulta,
+                    "hora_agendamento": hora_consulta,
+                    "hashed_id_requerimento": hashed_id_requerimento,
+                    "hashed_id_utilizador": "<?php echo $_SESSION["hashed_id"] ?>"
+
+                })
+            }
+
+            fetch(`${api_base_url}requerimentos/agendar_consulta`, options)
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.status === "success") {
+                        Swal.fire({
+                            text: data.messages[0],
+                            icon: "success",
+                            buttonsStyling: false,
+                            confirmButtonText: "Ok, fechar",
+                            customClass: {
+                                confirmButton: "btn fw-bold btn-primary",
+                            },
+                        }).then(() => {
+                            window.location.reload();
+                            hashed_id_requerimento = null;
+                            $("#agendar_junta").modal("hide");
+                            $("#modal-agendar-junta-form").trigger("reset");
+                            
+
+                        })
+                    } else {
+                        Swal.fire({
+                            text: data.messages[0],
+                            icon: "error",
+                            buttonsStyling: false,
+                            confirmButtonText: "Ok, fechar",
+                            customClass: {
+                                confirmButton: "btn fw-bold btn-primary",
+                            },
+                        })
+                    }
+                })
+                .catch((error) => {
+                    console.error(error)
+                })
+        })
     </script>
+
+    <script>
+        flatpickr("#data_consulta", {
+            allowInput: true,
+            minDate: "today",
+        });
+
+        $("#kt_datepicker_8").flatpickr({
+            enableTime: true,
+            noCalendar: true,
+            dateFormat: "H:i",
+        });
+    </script>
+
 </body>

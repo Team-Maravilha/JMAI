@@ -305,6 +305,7 @@
                             render: (data, type, row) => {
                                 return `
 									<div>
+                                        <a href="agenda?id=${row.hashed_id}" class="btn btn-bg-light btn-color-primary btn-active-light-primary rounded me-1"><i class="ki-outline ki-calendar-add fs-2"></i> Agenda</a>
                                         <button type="button" data-id="${row.hashed_id}" data-datatable-action="submit" class="btn btn-icon btn-bg-light btn-color-primary btn-active-light-primary rounded w-35px h-35px me-1"><i class="ki-outline ki-calendar-add fs-2"></i></button>
 									</div>
 								`
@@ -364,7 +365,7 @@
                     },
                 };
 
-                fetch(`${api_base_url}equipas_medicas/listar`, requestOptions)
+                fetch(`${api_base_url}equipas_medicas/listar_equipas_medicas`, requestOptions)
                     .then((response) => response.json())
                     .then((data) => {
 

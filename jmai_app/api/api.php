@@ -46,7 +46,7 @@ class Api
     {
 
         $this->InitCurl();
-        $data = $data !== null ? '/' . http_build_query($data) : '';
+        $data = $data !== null ? '?' . http_build_query($data) : '';
         $path = $id !== null ? $path . '/' . $id : $path;
 
         curl_setopt_array($this->curl, array(

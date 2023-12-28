@@ -8,6 +8,8 @@ router.post("/registar", authMiddleware, controller.RegistarRequerimento);
 
 router.post("/listar", authMiddleware, controller.ListarRequerimentosDataTable);
 
+router.post("/listar_requerimentos", authMiddleware, controller.ListarRequerimentos);
+
 router.post("/ver_requerimentos", authMiddleware, controller.ListarRequerimentosUtente);
 
 router.get("/ver/:hashed_id", authMiddleware, controller.VerInformacaoRequerimentoByHashedID)
@@ -31,6 +33,8 @@ router.put("/resposta_utente/recusar/:hashed_id", authMiddleware, controller.Rej
 router.get("/comunicacao_utente/:hashed_id", authMiddleware, controller.VerComunicacaoUtente);
 
 router.post("/agendar_consulta", authMiddleware, controller.AgendarConsulta);
+
+router.get("/consultas/listar", controller.ListarConsultas);
 
 
 

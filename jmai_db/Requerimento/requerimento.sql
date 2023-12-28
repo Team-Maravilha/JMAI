@@ -269,7 +269,7 @@ BEGIN
     END IF;
 
     IF email_preferencial IS NOT NULL AND email_preferencial <> '' THEN
-        IF email_preferencial ~ '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$' THEN
+        IF NOT email_preferencial ~ '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$' THEN
             RAISE EXCEPTION 'O email preferencial não é válido.';
         END IF;
     ELSE 
@@ -1339,6 +1339,154 @@ $$ LANGUAGE plpgsql;
     */
 CREATE TRIGGER add_uuid_agendamento_consulta BEFORE INSERT ON agendamento_consulta FOR EACH ROW EXECUTE PROCEDURE add_uuid();
 
+
+/**
+    * Esta função permite obter uma listagem de agendamentos de consulta.
+    * @param {String} hashed_id_requerimento_param - O identificador do requerimento a ser obtido.
+    * @param {String} hashed_id_utente_param - O identificador do utente a ser obtido.
+    * @param {String} data_agendamento_param - A data do agendamento a ser obtido.
+    * @returns {JSON} Os dados do agendamento obtido.
+*/
+CREATE OR REPLACE FUNCTION listar_agendamentos_consulta(
+    hashed_id_requerimento_param varchar(255) DEFAULT NULL,
+    hashed_id_utente_param varchar(255) DEFAULT NULL,
+    data_inicio_agendamento_param varchar(255) DEFAULT NULL,
+    data_fim_agendamento_param varchar(255) DEFAULT NULL
+)
+RETURNS TABLE (
+    hashed_id varchar(255),
+    utente JSON,
+    data_agendamento text,
+    hora_agendamento text,
+    duracao_consulta integer,
+    data_fim_agendamento text,
+    hora_fim_agendamento text,
+    equipa_medica JSON,
+    tipo_requerimento integer,
+    texto_tipo_requerimento text
+) AS $$
+
+DECLARE
+    id_requerimento_aux integer;
+    id_utente_aux integer;
+    data_inicio_agendamento_aux timestamp;
+    data_fim_agendamento_aux timestamp;
+    id_equipa_medica_aux integer;
+    tipo_requerimento_aux integer;
+BEGIN
+
+    IF hashed_id_requerimento_param IS NOT NULL AND hashed_id_requerimento_param <> '' THEN
+        IF NOT EXISTS(SELECT * FROM requerimento WHERE requerimento.hashed_id = hashed_id_requerimento_param) THEN
+            RAISE EXCEPTION 'Ocorreu um erro ao verificar o requerimento.';
+        ELSE
+            SELECT requerimento.id_requerimento INTO id_requerimento_aux FROM requerimento WHERE requerimento.hashed_id = hashed_id_requerimento_param;
+        END IF;
+    END IF;
+
+    IF hashed_id_utente_param IS NOT NULL AND hashed_id_utente_param <> '' THEN
+        IF NOT EXISTS(SELECT * FROM utente WHERE utente.hashed_id = hashed_id_utente_param) THEN
+            RAISE EXCEPTION 'Ocorreu um erro ao verificar o utente.';
+        ELSE
+            SELECT utente.id_utente INTO id_utente_aux FROM utente WHERE utente.hashed_id = hashed_id_utente_param;
+        END IF;
+    END IF;
+
+    IF data_inicio_agendamento_param IS NOT NULL AND data_inicio_agendamento_param <> '' THEN
+        IF data_inicio_agendamento_param ~ '^[0-9]{2}/[0-9]{2}/[0-9]{4}$' = FALSE THEN
+            RAISE EXCEPTION 'A data do agendamento não é válida.';
+        ELSE
+            data_inicio_agendamento_aux := converter_from_pt_to_iso(data_inicio_agendamento_param);
+        END IF;
+    END IF;
+
+    IF data_fim_agendamento_param IS NOT NULL AND data_fim_agendamento_param <> '' THEN
+        IF data_fim_agendamento_param ~ '^[0-9]{2}/[0-9]{2}/[0-9]{4}$' = FALSE THEN
+            RAISE EXCEPTION 'A data do agendamento não é válida.';
+        ELSE
+            data_fim_agendamento_aux := converter_from_pt_to_iso(data_fim_agendamento_param);
+        END IF;
+    END IF;
+
+    RETURN QUERY SELECT
+        agendamento_consulta.hashed_id,
+        (
+            SELECT json_build_object(
+                'hashed_id', utente.hashed_id,
+                'nome', utente.nome,
+                'numero_utente', utente.numero_utente,
+                'email_autenticacao', utente.email_autenticacao
+            ) FROM utente WHERE utente.id_utente = (
+                SELECT requerimento.id_utente FROM requerimento WHERE requerimento.id_requerimento = agendamento_consulta.id_requerimento
+            )
+        ),
+        to_char(agendamento_consulta.data_agendamento, 'DD/MM/YYYY'),
+        to_char(agendamento_consulta.hora_agendamento, 'HH24:MI:SS'),
+        60,
+        to_char(agendamento_consulta.data_agendamento, 'DD/MM/YYYY'),
+        --ADD 60 MINUTES TO TIME
+        to_char(agendamento_consulta.hora_agendamento + INTERVAL '60 MINUTE', 'HH24:MI:SS'),
+        (
+            SELECT json_build_object(
+                'hashed_id', equipa_medica.hashed_id,
+                'nome', equipa_medica.nome,
+                'medicos', (
+                    SELECT json_agg(
+                        json_build_object(
+                            'nome', u_m.nome
+                        )
+                    ) FROM equipa_medica_medicos
+					INNER JOIN utilizador u_m ON equipa_medica_medicos.id_utilizador = u_m.id_utlizador
+					WHERE equipa_medica_medicos.id_equipa_medica = equipa_medica.id_equipa_medica
+                )
+            ) FROM equipa_medica WHERE equipa_medica.id_equipa_medica = agendamento_consulta.id_equipa_medica
+        ),
+        (
+            SELECT requerimento.tipo_requerimento FROM requerimento WHERE requerimento.id_requerimento = agendamento_consulta.id_requerimento
+        ),
+        (
+            SELECT
+                CASE
+                    WHEN requerimento.tipo_requerimento = 0 THEN 'Multiuso'
+                    WHEN requerimento.tipo_requerimento = 1 THEN 'Importação de Veículo'
+                    ElSE 'Não definido'
+                END
+			FROM requerimento WHERE requerimento.id_requerimento = agendamento_consulta.id_requerimento
+        )
+    FROM agendamento_consulta
+    WHERE
+        (
+            CASE
+                WHEN id_requerimento_aux IS NULL THEN TRUE
+                ELSE agendamento_consulta.id_requerimento = id_requerimento_aux
+            END
+        )
+        AND
+        (
+            CASE
+                WHEN id_utente_aux IS NULL THEN TRUE
+                ELSE id_utente_aux = (
+					SELECT requerimento.id_utente FROM requerimento WHERE requerimento.id_requerimento = agendamento_consulta.id_requerimento
+				)
+            END
+        )
+        AND
+        (
+            CASE
+                WHEN data_inicio_agendamento_aux IS NULL THEN TRUE
+                ELSE agendamento_consulta.data_agendamento >= data_inicio_agendamento_aux
+            END
+        )
+        AND
+        (
+            CASE
+                WHEN data_fim_agendamento_param IS NULL THEN TRUE
+                ELSE agendamento_consulta.data_agendamento <= data_fim_agendamento_aux
+            END
+        )
+    ORDER BY agendamento_consulta.data_agendamento DESC;
+
+END;
+$$ LANGUAGE plpgsql;
 
 
 

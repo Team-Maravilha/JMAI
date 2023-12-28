@@ -93,6 +93,25 @@ const ListarRequerimentosDataTable = (req, res) => {
   });
 };
 
+const ListarRequerimentos = (req, res) => {
+	const { hashed_id, hashed_id_utente, data_criacao, estado, tipo_requerimento } = req.body;
+	pool.query("SELECT * FROM listar_requerimentos($1, $2, $3, $4, $5)", [hashed_id, hashed_id_utente, data_criacao, estado, tipo_requerimento], (error, results) => {
+		if (error) {
+			res.status(400).json({
+				status: "error",
+				data: null,
+				messages: [error.message],
+			});
+			return;
+		}
+		res.status(200).json({
+			status: "success",
+			data: results.rows,
+			messages: ["Informações dos Requerimentos obtidas com Sucesso!"],
+		});
+	});
+};
+
 const ListarRequerimentosUtente = (req, res) => {
   const { hashed_id_utente } = req.body;
 
@@ -573,6 +592,33 @@ const AgendarConsulta = (req, res) => {
 	);
 };
 
+const ListarConsultas = (req, res) => {
+	
+	const { data_inicio, data_fim } = req.query;
+
+	pool.query(
+		"SELECT * FROM listar_agendamentos_consulta(NULL, NULL, $1, $2)",
+		[data_inicio, data_fim],
+		(error, results) => {
+			if (error) {
+				res.status(400).json({
+					status: "error",
+					data: null,
+					messages: [error.message]
+				});
+				return;
+			}
+			res.status(200).json({
+				status: "success",
+				data: results.rows,
+				messages: ["Consultas obtidas com sucesso."],
+			});
+		}
+	);
+
+};
+
+
 const SendEmail = (to, subject, text, html) => {
   /* Configuração do Nodemailer */
   let config = {
@@ -635,9 +681,10 @@ const SendSMS = async (to, text) => {
 module.exports = {
 	RegistarRequerimento,
 	ListarRequerimentosDataTable,
+	ListarRequerimentos,
 	VerInformacaoRequerimentoByHashedID,
 	RegistarAcesso,
-  ListarRequerimentosUtente,
+  	ListarRequerimentosUtente,
 	ListarAcessosRequerimento,
 	ValidarRequerimento,
 	InvalidarRequerimento,
@@ -647,4 +694,5 @@ module.exports = {
 	RejeitarRespostaUtente,
 	VerComunicacaoUtente,
 	AgendarConsulta,
+	ListarConsultas
 };

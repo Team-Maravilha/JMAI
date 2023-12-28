@@ -78,7 +78,7 @@ $page_name = "As Minhas Notificações";
 																</div>
 
 																<div class="mb-6">
-																	<span class="fw-semibold text-gray-600 fs-6 mb-8 d-block"><?php echo isset($value["avalicao"]["notas"]) && !empty($value["avalicao"]["notas"]) ? $value["avalicao"]["notas"] : "Sem Notas/Observações a Apresentar!" ?></span>
+																	<span class="fw-semibold text-gray-600 fs-6 mb-8 d-block"><?php echo isset($value["avaliacao"]["notas"]) && !empty($value["avaliacao"]["notas"]) ? $value["avaliacao"]["notas"] : "Sem Notas/Observações a Apresentar!" ?></span>
 
 																	<div class="d-flex">
 																		<div class="border border-gray-300 border-dashed rounded min-w-100px w-100 py-2 px-4 me-6 mb-3">

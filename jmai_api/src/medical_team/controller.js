@@ -35,6 +35,27 @@ const RegistarEquipaMedica = async (req, res) => {
 	);
 };
 
+const ListarEquipasMedicasDataTable = async (req, res) => {
+	pool.query(
+		"SELECT * FROM listar_equipas_medicas()",
+		(error, results) => {
+			if (error) {
+				res.status(400).json({
+					recordsTotal: 0,
+					recordsFiltered: 0,
+					data: [],
+				});
+				return;
+			}
+			res.status(200).json({
+				recordsTotal: results.rows.length,
+				recordsFiltered: results.rows.length,
+				data: results.rows,
+			});
+		}
+	);
+}
+
 const ListarEquipasMedicas = async (req, res) => {
 	pool.query(
 		"SELECT * FROM listar_equipas_medicas()",
@@ -110,6 +131,7 @@ const EditarEquipaMedica = async (req, res) => {
 
 module.exports = {
     RegistarEquipaMedica,
+	ListarEquipasMedicasDataTable,
 	ListarEquipasMedicas,
 	VerEquipaMedica,
 	EditarEquipaMedica

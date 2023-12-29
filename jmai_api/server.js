@@ -11,6 +11,7 @@ const patientsRoutes = require("./src/patients/routes");
 const geoRoutes = require("./src/geo/routes");
 const reqRoutes = require("./src/req/routes");
 const medicalTeamRoutes = require("./src/medical_team/routes");
+const chartsRoutes = require("./src/charts/routes");
 
 
 const app = express();
@@ -47,5 +48,7 @@ app.use("/api/utentes", patientsRoutes);
 app.use("/api/geo", geoRoutes);
 app.use("/api/requerimentos", reqRoutes);
 app.use("/api/equipas_medicas", medicalTeamRoutes);
+//ROUTE PARA EXPORTAR DADOS PARA GRAFICOS
+app.use("/api/graficos", chartsRoutes);
 
 app.listen(port, () => console.log(`Servidor ativo na porta: ${port}`));

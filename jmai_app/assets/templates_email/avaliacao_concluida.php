@@ -52,7 +52,7 @@
                             <!--end:Text-->
 
                             <!--begin:Action-->
-                            <a href="/metronic8/demo1/../demo1/authentication/general/welcome.html" target="_blank" style="background-color:#49beb7; border-radius:6px;display:inline-block; padding:11px 19px; color: #FFFFFF; font-size: 14px; font-weight:500;">
+                            <a href="http://jmai.localhost/" target="_blank" style="background-color:#49beb7; border-radius:6px;display:inline-block; padding:11px 19px; color: #FFFFFF; font-size: 14px; font-weight:500;">
                                 Verificar
                             </a>
                             <!--begin:Action-->

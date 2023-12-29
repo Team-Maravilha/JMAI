@@ -1489,6 +1489,70 @@ END;
 $$ LANGUAGE plpgsql;
 
 
+/**
+    * Esta função permite obter uma listagem de requerimentos por distrito de pais.
+    * @param {Number} id_pais - O identificador do país a ser obtido.
+    * @param {Date} data_inicio - A data de início a ser obtida.
+    * @param {Date} data_fim - A data de fim a ser obtida.
+    * @returns {JSON} Os dados do país obtido.
+*/
+CREATE OR REPLACE FUNCTION listar_contagem_requerimentos_por_distrito(
+    id_pais bigint,
+    data_inicio text,
+    data_fim text
+)
+RETURNS TABLE (
+    nome_distrito varchar(255),
+    total_requerimentos bigint
+) AS $$
+DECLARE
+    data_inicio_aux date;
+    data_fim_aux date;
+
+BEGIN
+    
+    IF id_pais IS NULL THEN
+        RAISE EXCEPTION 'O identificador do país não é válido.';
+    ELSIF NOT EXISTS(SELECT 1 FROM pais WHERE pais.id_pais = listar_contagem_requerimentos_por_distrito.id_pais) THEN
+        RAISE EXCEPTION 'Ocorreu um erro ao verificar o país.';
+    END IF;
+
+    IF data_inicio IS NULL THEN
+        RAISE EXCEPTION 'A data de início não é válida.';
+    ELSIF NOT data_inicio ~ '^[0-9]{4}-[0-9]{2}-[0-9]{2}$' THEN
+        RAISE EXCEPTION 'A data de início não é válida.';
+    ELSE
+        data_inicio_aux := data_inicio::date;
+    END IF;
+
+    IF data_fim IS NULL THEN
+        RAISE EXCEPTION 'A data de fim não é válida.';
+    ELSIF NOT data_fim ~ '^[0-9]{4}-[0-9]{2}-[0-9]{2}$' THEN
+        RAISE EXCEPTION 'A data de fim não é válida.';
+    ELSE
+        data_fim_aux := data_fim::date;
+    END IF;
+
+    RETURN QUERY SELECT
+        d.nome AS nome_distrito,
+        COALESCE(SUM(CASE WHEN r.id_requerimento IS NOT NULL THEN 1 ELSE 0 END), 0) AS total_requerimentos
+    FROM
+        distrito d
+        LEFT JOIN concelho c ON d.id_distrito = c.id_distrito
+        LEFT JOIN freguesia f ON c.id_concelho = f.id_concelho
+        LEFT JOIN requerimento r ON f.id_freguesia = r.id_freguesia_residencia AND r.data_criacao >= data_inicio_aux AND r.data_criacao <= data_fim_aux
+    WHERE
+        d.id_pais = listar_contagem_requerimentos_por_distrito.id_pais
+    GROUP BY
+        d.nome
+    ORDER BY
+        d.nome ASC;
+
+END;
+$$ LANGUAGE plpgsql;
+
+
+
 
 
 

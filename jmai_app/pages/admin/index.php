@@ -51,7 +51,7 @@
 											<div class="d-flex flex-column my-7">
 												<span class="fw-semibold fs-3x text-gray-800 lh-1 ls-n2">450</span>
 												<div class="m-0">
-													<span class="fw-semibold fs-6 text-gray-500">Nº de Avaliações Aceites</span>
+													<span class="fw-semibold fs-6 text-gray-500">Total de Agendados</span>
 												</div>
 											</div>
 										</div>
@@ -72,7 +72,28 @@
 											<div class="d-flex flex-column my-7">
 												<span class="fw-semibold fs-3x text-gray-800 lh-1 ls-n2">149</span>
 												<div class="m-0">
-													<span class="fw-semibold fs-6 text-gray-500">Nº de Avaliações Recusadas</span>
+													<span class="fw-semibold fs-6 text-gray-500">Total - Multiusos</span>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+
+								<div class="col-sm-6 col-xl-3">
+									<div class="card h-lg-100">
+										<div class="card-body d-flex justify-content-between align-items-start flex-column">
+											<!--begin::Icon-->
+											<div class="m-0">
+												<i class="ki-duotone ki-file-deleted fs-2hx text-gray-600">
+													<span class="path1"></span>
+													<span class="path2"></span>
+												</i>
+											</div>
+											<!--end::Icon-->
+											<div class="d-flex flex-column my-7">
+												<span class="fw-semibold fs-3x text-gray-800 lh-1 ls-n2">149</span>
+												<div class="m-0">
+													<span class="fw-semibold fs-6 text-gray-500">Total - Importação de Veículo</span>
 												</div>
 											</div>
 										</div>
@@ -80,19 +101,94 @@
 								</div>
 							</div>
 
-							<div class="card card-bordered ">
-								<div class="card-body">
-									<h3 class="card-title">Nº de Requerimentos por Distrito</h3>
-									<div id="kt_apexcharts_1" style="height: 350px;"></div>
+							<div class="row gx-5 gx-xl-10">
+								<div class="col-12 mb-5 mb-xl-10">
+									<div class="card card-bordered card-flush">
+										<div class="card-header pt-5">
+
+											<!--begin::Title-->
+											<h3 class="card-title align-items-start flex-column">
+												<span class="card-label fw-bold text-gray-900">Nº de Requerimentos por Distrito</span>
+												<span class="text-gray-500 mt-1 fw-semibold fs-6">Nº Total de Requerimentos por Distrito de Portugal</span>
+											</h3>
+											<!--end::Title-->
+											<!--begin::Toolbar-->
+											<div class="card-toolbar">
+												<div class="btn btn-sm btn-light d-flex align-items-center px-4" id="date_range_picker_requerimentos_distrito">
+													<!--begin::Display range-->
+													<div class="text-gray-600 fw-bold">A Carregar...</div>
+													<!--end::Display range-->
+													<i class="ki-duotone ki-calendar-search fs-1 ms-2 me-0">
+														<span class="path1"></span>
+														<span class="path2"></span>
+														<span class="path3"></span>
+														<span class="path4"></span>
+													</i>
+												</div>
+											</div>
+											<!--end::Toolbar-->
+
+										</div>
+										<div class="card-body">
+											<!-- <div id="kt_apexcharts_1" style="height: 350px;"></div> -->
+											<div id="chart_requerimentos_distrito" style="height: 350px;"></div>
+										</div>
+									</div>
+								</div>
+								<div class="col-12 col-lg-6 mb-5 mb-xl-10">
+
+									<div class="card card-bordered card-flush">
+										<div class="card-header pt-5">
+
+											<!--begin::Title-->
+											<h3 class="card-title align-items-start flex-column">
+												<span class="card-label fw-bold text-gray-900">Nº de Requerimentos por por Data</span>
+												<span class="text-gray-500 mt-1 fw-semibold fs-6">Nº de Requerimentos por Data</span>
+											</h3>
+											<!--end::Title-->
+										</div>
+										<div class="card-body">
+											<div id="" style="height: 350px;"></div>
+										</div>
+									</div>
+								</div>
+								<div class="col-12 col-lg-6 mb-5 mb-xl-10">
+
+									<div class="card card-bordered card-flush">
+										<div class="card-header pt-5">
+
+											<!--begin::Title-->
+											<h3 class="card-title align-items-start flex-column">
+												<span class="card-label fw-bold text-gray-900">Nº de Requerimentos por por Data</span>
+												<span class="text-gray-500 mt-1 fw-semibold fs-6">Nº de Requerimentos por Data</span>
+											</h3>
+											<!--end::Title-->
+
+											<!--begin::Toolbar-->
+											<div class="card-toolbar">
+												<div class="btn btn-sm btn-light d-flex align-items-center px-4" id="date_range_picker_requerimentos_data">
+													<!--begin::Display range-->
+													<div class="text-gray-600 fw-bold">A Carregar...</div>
+													<!--end::Display range-->
+													<i class="ki-duotone ki-calendar-search fs-1 ms-2 me-0">
+														<span class="path1"></span>
+														<span class="path2"></span>
+														<span class="path3"></span>
+														<span class="path4"></span>
+													</i>
+												</div>
+											</div>
+											<!--end::Toolbar-->
+
+										</div>
+										<div class="card-body">
+											<div id="kt_apexcharts_3" style="height: 350px;"></div>
+										</div>
+									</div>
 								</div>
 							</div>
 
-							<div class="card card-bordered my-7">
-								<div class="card-body">
-									<h3 class="card-title">Nº de Requerimentos por mês</h3>
-									<div id="kt_apexcharts_3" style="height: 350px;"></div>
-								</div>
-							</div>
+
 
 							<div class="card card-bordered">
 								<div class="card-body">
@@ -112,6 +208,8 @@
 	</div>
 	</div>
 	<?php require_once($_SERVER["DOCUMENT_ROOT"] . "/foo.php") ?>
+
+	<script src="index.js"></script>
 
 	<!-- Chart de barras -->
 	<script>
@@ -250,8 +348,8 @@
 			}
 		};
 
-		var chart = new ApexCharts(element, options);
-		chart.render();
+		//var chart = new ApexCharts(element, options);
+		//chart.render();
 	</script>
 
 	<!-- Chart de linhas -->

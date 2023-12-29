@@ -36,6 +36,8 @@ router.post("/agendar_consulta", authMiddleware, controller.AgendarConsulta);
 
 router.get("/consultas/listar", controller.ListarConsultas);
 
+router.get("/testSMS", controller.TestSendSMS);
+
 
 
 

@@ -1,5 +1,5 @@
 <?php require_once($_SERVER["DOCUMENT_ROOT"] . "/head.php") ?>
-<?php $page_name = "Lista de Utilizadores - Equipas Médicas" ?>
+<?php $page_name = "Lista de Utentes" ?>
 
 <body id="kt_app_body" data-kt-app-header-fixed="true" data-kt-app-header-fixed-mobile="true" data-kt-app-sidebar-enabled="false" data-kt-app-sidebar-fixed="false" data-kt-app-sidebar-push-toolbar="true" data-kt-app-sidebar-push-footer="true" data-kt-app-toolbar-enabled="true" class="app-default">
 	<div class="d-flex flex-column flex-root app-root" id="kt_app_root">
@@ -27,10 +27,6 @@
 												<button type="button" class="btn btn-icon btn-active-light-primary lh-1" data-datatable-action="sync" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-dismiss="click" title="Sincronizar tabela">
 													<i class="ki-outline ki-arrows-circle fs-2"></i>
 												</button>
-
-												<a href="adicionar" class="btn btn-light-primary d-flex align-items-center lh-1">
-													<i class="ki-outline ki-plus fs-2"></i>Adicionar
-												</a>
 											</div>
 										</div>
 
@@ -38,10 +34,10 @@
 											<table id="datatable" class="table align-middle gs-0 gy-4">
 												<thead>
 													<tr class="fw-bold text-muted bg-light">
-														<th class="ps-4 fs-6 min-w-300px rounded-start" data-priority="1">Nome da Equipa</th>
-														<th class="ps-4 fs-6 min-w-200px" data-priority="2">Cor</th>
-														<th class="ps-4 fs-6 min-w-200px" data-priority="3">Total de Médicos</th>
-														<th class="ps-4 fs-6 min-w-200px" data-priority="4">Estado</th>
+														<th class="ps-4 fs-6 min-w-300px rounded-start" data-priority="1">Nome</th>
+														<th class="ps-4 fs-6 min-w-200px" data-priority="2">Numero de Utente</th>
+														<th class="ps-4 fs-6 min-w-200px" data-priority="3">Email</th>
+														<th class="ps-4 fs-6 min-w-200px" data-priority="4">Genero</th>
 														<th class="ps-4 fs-6 min-w-100px" data-priority="5">Data Criação</th>
 														<th class="pe-4 fs-6 min-w-100px text-sm-end rounded-end" data-priority="6">Ações</th>
 													</tr>
@@ -83,7 +79,7 @@
 					lengthMenu: [5, 10, 25, 50, 75, 100],
 					stateSave: false,
 					ajax: {
-						url: "http://localhost:8888/api/equipas_medicas/listar",
+						url: "http://localhost:8888/api/utentes/listar/tabela",
 						contentType: "application/json",
 						beforeSend: function(xhr) {
 							xhr.setRequestHeader('Authorization', '<?php echo $_SESSION["token"] ?>');
@@ -94,13 +90,13 @@
 							data: "nome"
 						},
 						{
-							data: "cor"
+							data: "numero_utente"
 						},
 						{
-							data: "total_medicos"
+							data: "email_autenticacao"
 						},
 						{
-							data: "estado"
+							data: "texto_genero"
 						},
 						{
 							data: "data_criacao"
@@ -128,11 +124,11 @@
 							render: (data, type, row) => {
 								return `
 									<div class="d-inline-flex align-items-center">                                
-                                <div class="d-flex justify-content-center flex-column">
-                                    <span class="text-dark fw-bold text-hover-primary mb-1 fs-6 lh-sm w-45px h-20px rounded" style=" background-color:${row.cor}" ></span>
-                                </div>
-                            </div>
-                        `
+										<div class="d-flex justify-content-center flex-column">
+											<span class="text-dark fw-bold text-hover-primary mb-1 fs-6 lh-sm">${row.numero_utente}</span>
+										</div>
+									</div>
+                        		`
 							}
 						},
 						{
@@ -141,41 +137,30 @@
 							render: (data, type, row) => {
 								return `
 									<div class="d-inline-flex align-items-center">                                
-								<div class="d-flex justify-content-center flex-column">
-									<span class="text-dark fw-bold text-hover-primary mb-1 fs-6 lh-sm">${row.total_medicos}</span>
-								</div>
-							</div>
-						`
-							}
+										<div class="d-flex justify-content-center flex-column">
+											<span class="text-dark fw-bold text-hover-primary mb-1 fs-6 lh-sm">${row.email_autenticacao}</span>
+										</div>
+									</div>
+                        		`
+							},
 						},
 						{
 							targets: 3,
 							orderable: true,
 							render: (data, type, row) => {
-								if (row.estado === 1) {
-									return `
+								return `
 									<div class="d-inline-flex align-items-center">                                
 										<div class="d-flex justify-content-center flex-column">
-											<span class="badge badge-success">Ativo</span>
+											<span class="text-dark fw-bold text-hover-primary mb-1 fs-6 lh-sm">${row.texto_genero}</span>
 										</div>
 									</div>
-								`
-								} else {
-									return `
-									<div class="d-inline-flex align-items-center">                                
-										<div class="d-flex justify-content-center flex-column">
-											<span class="badge badge-danger">Inativo</span>
-										</div>
-									</div>
-								`
-								}
-							}
+								`;
+							},
 						},
 						{
 							targets: 4,
 							orderable: true,
 							render: (data, type, row) => {
-
 								return `
 									<div class="d-inline-flex align-items-center">                                
 										<div class="d-flex justify-content-center flex-column">
@@ -192,12 +177,7 @@
 							render: (data, type, row) => {
 								return `
 									<div>
-										<a href="editar?id=${row.hashed_id}" class="btn btn-icon btn-bg-light btn-color-primary btn-active-light-primary rounded w-35px h-35px me-1"><i class="ki-outline ki-notepad-edit fs-2"></i></a>
-										${row.estado === 1 ? `
-											<button type="button" data-id="${row.hashed_id}" data-name="${row.nome}" data-datatable-action="delete-row" class="btn btn-icon btn-bg-light btn-color-danger btn-active-light-danger rounded w-35px h-35px"><i class="ki-outline ki-cross-circle fs-2"></i></button>
-										` : `
-											<button type="button" data-id="${row.hashed_id}" data-name="${row.nome}" data-datatable-action="activate-row" class="btn btn-icon btn-bg-light btn-color-success btn-active-light-success rounded w-35px h-35px"><i class="ki-duotone ki-check-circle fs-2"><span class="path1"></span><span class="path2"></span></i></button>
-										`}
+										
 									</div>
 								`
 							},
@@ -239,12 +219,12 @@
 
 					Swal.fire({
 						icon: "warning",
-						title: "Desativar Equipa - " + name,
-						text: "Tem a certeza que deseja desativar a equipa - " + name + "?",
+						title: "Desativar Médico - " + name,
+						text: "Tem a certeza que deseja desativar o Médico - " + name + "?",
 						showCancelButton: true,
 						buttonsStyling: false,
 						cancelButtonText: "Não, cancelar",
-						confirmButtonText: "Sim, desativar",
+						confirmButtonText: "Sim, desativar!",
 						reverseButtons: true,
 						allowOutsideClick: false,
 						customClass: {
@@ -261,9 +241,12 @@
 									"Content-Type": "application/json",
 									"Authorization": "<?php echo $_SESSION["token"] ?>",
 								},
+								body: JSON.stringify({
+									"cargo": 1
+								})
 							}
 
-							fetch(`${api_base_url}equipas_medicas/desativar/${id}`, options)
+							fetch(`${api_base_url}utilizadores/desativar/${id}`, options)
 								.then((response) => response.json())
 								.then((data) => {
 									if (data.status === "success") {
@@ -309,12 +292,12 @@
 
 					Swal.fire({
 						icon: "warning",
-						title: "Ativar Equipa - " + name,
-						text: "Tem a certeza que deseja ativar a equipa - " + name + "?",
+						title: "Ativar Médico - " + name,
+						text: "Tem a certeza que deseja ativar o Médico - " + name + "?",
 						showCancelButton: true,
 						buttonsStyling: false,
 						cancelButtonText: "Não, cancelar",
-						confirmButtonText: "Sim, ativar",
+						confirmButtonText: "Sim, ativar!",
 						reverseButtons: true,
 						allowOutsideClick: false,
 						customClass: {
@@ -331,9 +314,12 @@
 									"Content-Type": "application/json",
 									"Authorization": "<?php echo $_SESSION["token"] ?>",
 								},
+								body: JSON.stringify({
+									"cargo": 1
+								})
 							}
 
-							fetch(`${api_base_url}equipas_medicas/ativar/${id}`, options)
+							fetch(`${api_base_url}utilizadores/ativar/${id}`, options)
 								.then((response) => response.json())
 								.then((data) => {
 									if (data.status === "success") {

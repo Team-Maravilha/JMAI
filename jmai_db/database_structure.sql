@@ -208,6 +208,7 @@ ALTER TABLE grupos_medicos RENAME TO equipa_medica;
 ALTER TABLE equipa_medica RENAME COLUMN id_grupo_medico TO id_equipa_medica;
 ALTER TABLE equipa_medica ADD CONSTRAINT equipa_medica_nome_key UNIQUE (nome);
 ALTER TABLE equipa_medica ADD CONSTRAINT equipa_medica_cor_key UNIQUE (cor);
+ALTER TABLE equipa_medica ADD COLUMN estado integer NOT NULL DEFAULT 1;
 
 
 CREATE TABLE
@@ -237,6 +238,30 @@ CREATE TABLE
 ALTER TABLE agendamento_consulta ALTER COLUMN data_criacao SET DEFAULT CURRENT_TIMESTAMP;
 
 ALTER TABLE agendamento_consulta RENAME COLUMN id_grupo_medico TO id_equipa_medica;
+
+
+CREATE SEQUENCE sequencia_recuperacao_palavra_passe
+    INCREMENT 1
+    START 1;
+
+CREATE TABLE
+    recuperacao_palavra_passe (
+        id_recuperacao_palavra_passe bigint PRIMARY KEY NOT NULL DEFAULT NEXTVAL('sequencia_recuperacao_palavra_passe'::regclass),
+        id_utente bigint NOT NULL,
+        codigo_recuperacao varchar(25) NOT NULL,
+        token varchar(255) UNIQUE NOT NULL,
+        data_criacao timestamp NOT NULL,
+        data_expiracao timestamp NOT NULL
+    );
+ALTER TABLE recuperacao_palavra_passe ALTER COLUMN data_criacao SET DEFAULT CURRENT_TIMESTAMP;
+
+ALTER TABLE recuperacao_palavra_passe ADD COLUMN estado integer NOT NULL DEFAULT 1;
+
+ALTER TABLE recuperacao_palavra_passe
+ADD 
+    CONSTRAINT recuperacao_palavra_passe_id_utente_fkey FOREIGN KEY (id_utente) REFERENCES utente (id_utente);
+
+
 
 ALTER TABLE distrito
 ADD

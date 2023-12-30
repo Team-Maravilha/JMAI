@@ -47,6 +47,27 @@ const RegistarUtente = async (req, res) => {
     }
 };
 
+const ListarUtentesDataTable = async (req, res) => {
+    pool.query(
+        "SELECT * FROM listar_utentes()",
+        (error, results) => {
+            if (error) {
+                res.status(400).json({
+                    recordsTotal: 0,
+                    recordsFiltered: 0,
+                    data: [],
+                });
+                return;
+            }
+            res.status(200).json({
+                recordsTotal: results.rows.length,
+                recordsFiltered: results.rows.length,
+                data: results.rows,
+            });
+        }
+    );
+}
+
 const VerInformacaoUtenteByHashedID = (req, res) => {
     const hashed_id = req.params.hashed_id;
     pool.query("SELECT * FROM listar_utentes($1)", [hashed_id], (error, results) => {
@@ -68,5 +89,6 @@ const VerInformacaoUtenteByHashedID = (req, res) => {
 
 module.exports = {
     RegistarUtente,
+    ListarUtentesDataTable,
     VerInformacaoUtenteByHashedID
 };

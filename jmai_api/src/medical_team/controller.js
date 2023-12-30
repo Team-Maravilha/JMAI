@@ -57,8 +57,10 @@ const ListarEquipasMedicasDataTable = async (req, res) => {
 }
 
 const ListarEquipasMedicas = async (req, res) => {
+	const { estado } = req.query;
 	pool.query(
-		"SELECT * FROM listar_equipas_medicas()",
+		"SELECT * FROM listar_equipas_medicas(NULL, $1)",
+		[estado],
 		(error, results) => {
 			if (error) {
 				res.status(400).json({
@@ -129,10 +131,58 @@ const EditarEquipaMedica = async (req, res) => {
 	);
 }
 
+const RemoverEquipaMedica = async (req, res) => {
+	const hashed_id = req.params.hashed_id;
+	pool.query(
+		"SELECT * FROM alterar_estado_equipa_medica($1, 0)",
+		[hashed_id],
+		(error, results) => {
+			if (error) {
+				res.status(400).json({
+					status: "error",
+					data: null,
+					messages: [error.message],
+				});
+				return;
+			}
+			res.status(200).json({
+				status: "success",
+				data: null,
+				messages: ["Equipa Médica desativada com sucesso!"],
+			});
+		}
+	);
+}
+
+const AtivarEquipaMedica = async (req, res) => {
+	const hashed_id = req.params.hashed_id;
+	pool.query(
+		"SELECT * FROM alterar_estado_equipa_medica($1, 1)",
+		[hashed_id],
+		(error, results) => {
+			if (error) {
+				res.status(400).json({
+					status: "error",
+					data: null,
+					messages: [error.message],
+				});
+				return;
+			}
+			res.status(200).json({
+				status: "success",
+				data: null,
+				messages: ["Equipa Médica ativada com sucesso!"],
+			});
+		}
+	);
+}
+
 module.exports = {
     RegistarEquipaMedica,
 	ListarEquipasMedicasDataTable,
 	ListarEquipasMedicas,
 	VerEquipaMedica,
-	EditarEquipaMedica
+	EditarEquipaMedica,
+	RemoverEquipaMedica,
+	AtivarEquipaMedica
 };

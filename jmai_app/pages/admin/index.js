@@ -904,7 +904,6 @@ const renderChartRequerimentosEstado = () => {
 					templateField: "columnSettings",
 				});
 
-				// Animate chart and series in
 				// https://www.amcharts.com/docs/v5/concepts/animations/#Initial_animation
 
 				setTimeout(() => {
@@ -919,7 +918,6 @@ const renderChartRequerimentosEstado = () => {
 					chartRequerimentosEstado.self.appear(1000, 100);
 					chartRequerimentosEstado.rendered = true;
 					blockUIRequerimentosEstado.release();
-					console.log(chartRequerimentosEstado.self);
 				}, 1000);
 			} else {
 				toastr.error(
@@ -980,9 +978,6 @@ const renderChartRequerimentosMesAnual = () => {
 						color: colorsPastel[index],
 					});
 				});
-
-				console.log(series);
-				console.log(categories);
 
 				return {
 					status: "success",
@@ -1167,7 +1162,6 @@ const renderChartRequerimentosMesAnual = () => {
 						},
 					},
 				};
-				console.log(options);
 
 				chartRequerimentosMesAnual.self = new ApexCharts(
 					chartElementRequerimentosMesAnual,

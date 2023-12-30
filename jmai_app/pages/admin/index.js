@@ -807,7 +807,7 @@ const renderChartRequerimentosEstado = () => {
 							wheelY: "zoomX",
 							innerRadius: am5.percent(20),
 							startAngle: -90,
-							endAngle: 180,
+							endAngle: 180
 						})
 					);
 

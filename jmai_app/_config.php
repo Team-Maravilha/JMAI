@@ -9,6 +9,13 @@ $id_user = isset($_SESSION["hashed_id"]) ? $_SESSION["hashed_id"] : null;
 
 $breadcrumbs = [
     [
+        "name" => "Utentes",
+        "path" => "utentes",
+        "link" => "/pages/admin/utentes/lista",
+        "role" => 0,
+        "clickable" => true
+    ],
+    [
         "name" => "Parametrizações",
         "path" => "parametrizacoes",
         "link" => "/pages/admin/parametrizacoes/",

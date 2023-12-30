@@ -60,7 +60,7 @@
                             </div>
                             <div class="d-flex flex-stack flex-wrap gap-3 fs-base fw-semibold mb-8">
                                 <div></div>
-                                <a href="" class="link-primary">Recuperar Palavra-Passe?</a>
+                                <a href="recover-password" class="link-primary">Recuperar Palavra-Passe?</a>
                             </div>
                             <div class="d-grid mb-10">
                                 <button type="submit" id="kt_sign_in_submit" class="btn btn-primary">

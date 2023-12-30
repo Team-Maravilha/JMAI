@@ -231,7 +231,6 @@
 			fetch(`${api_base_url}graficos/dashboard_totais`, requestOptions)
 				.then((response) => response.json())
 				.then((data) => {
-					console.log("data", data);
 					if (data.status === "success") {
 						const kt_countup_1 = new countUp.CountUp(document.querySelector("[data-element='total_requerimentos']"));
 						kt_countup_1.update(data.data.total_requerimentos);
@@ -256,11 +255,11 @@
 				});
 		}
 
-		window.addEventListener("DOMContentLoaded", 
+		window.addEventListener("DOMContentLoaded", () => {
 			setTimeout(function() {
 				handleCarregarDadosDashboard();
 			}, 1000)
-		);
+		});
 
 	</script>
 

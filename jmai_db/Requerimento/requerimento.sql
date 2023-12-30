@@ -1552,6 +1552,242 @@ END;
 $$ LANGUAGE plpgsql;
 
 
+/**
+    * Esta função permite obter uma listagem de requerimentos por periodo.
+    * @param {Date} data_inicio - A data de início a ser obtida.
+    * @param {Date} data_fim - A data de fim a ser obtida.
+    * @returns {JSON} Os dados obtidos.
+*/
+CREATE OR REPLACE FUNCTION listar_contagem_requerimentos_por_periodo(
+    data_inicio text,
+    data_fim text
+)
+RETURNS TABLE (
+    periodo text,
+    texto_periodo text,
+    total_requerimentos bigint
+) AS $$
+DECLARE
+    data_inicio_aux date;
+    data_fim_aux date;
+    dias_diff int;
+BEGIN
+    
+    -- Validações iniciais
+    IF data_inicio IS NULL THEN
+        RAISE EXCEPTION 'A data de início não é válida.';
+    ELSIF NOT data_inicio ~ '^[0-9]{4}-[0-9]{2}-[0-9]{2}$' THEN
+        RAISE EXCEPTION 'A data de início não é válida.';
+    ELSE
+        data_inicio_aux := data_inicio::date;
+    END IF;
+
+    IF data_fim IS NULL THEN
+        RAISE EXCEPTION 'A data de fim não é válida.';
+    ELSIF NOT data_fim ~ '^[0-9]{4}-[0-9]{2}-[0-9]{2}$' THEN
+        RAISE EXCEPTION 'A data de fim não é válida.';
+    ELSE
+        data_fim_aux := data_fim::date;
+    END IF;
+    
+    dias_diff := data_fim_aux - data_inicio_aux;
+
+    -- Retornar dados por dia
+    IF dias_diff < 60 THEN
+        RETURN QUERY
+        WITH date_series AS (
+            SELECT generate_series(data_inicio_aux, data_fim_aux, '1 day'::interval)::date AS data
+        )
+        SELECT
+            TO_CHAR(ds.data, 'YYYY-MM-DD') AS periodo,
+            TO_CHAR(ds.data, 'YYYY-MM-DD') AS texto_periodo,
+            COALESCE(COUNT(r.data_criacao), 0) AS total_requerimentos
+        FROM
+            date_series ds
+            LEFT JOIN requerimento r ON ds.data = DATE(r.data_criacao)
+        GROUP BY
+            ds.data
+        ORDER BY
+            ds.data;
+
+    -- Retornar dados por mês
+    ELSIF dias_diff >= 60 AND dias_diff < 370 THEN
+        RETURN QUERY
+        WITH month_series AS (
+            SELECT generate_series(data_inicio_aux, data_fim_aux, '1 month'::interval)::date AS mes
+        )
+        SELECT
+            TO_CHAR(ms.mes, 'YYYY-MM') AS periodo,
+            CASE EXTRACT(MONTH FROM ms.mes)
+                WHEN 1 THEN 'jan'
+                WHEN 2 THEN 'fev'
+                WHEN 3 THEN 'mar'
+                WHEN 4 THEN 'abr'
+                WHEN 5 THEN 'mai'
+                WHEN 6 THEN 'jun'
+                WHEN 7 THEN 'jul'
+                WHEN 8 THEN 'ago'
+                WHEN 9 THEN 'set'
+                WHEN 10 THEN 'out'
+                WHEN 11 THEN 'nov'
+                WHEN 12 THEN 'dez'
+            END || ' de ' ||  TO_CHAR(ms.mes, 'YYYY') AS texto_periodo,
+            COALESCE(COUNT(r.data_criacao), 0) AS total_requerimentos
+        FROM
+            month_series ms
+            LEFT JOIN requerimento r ON DATE_TRUNC('month', r.data_criacao) = ms.mes
+        GROUP BY
+            ms.mes
+        ORDER BY
+            ms.mes;
+
+    -- Retornar dados por ano
+    ELSE
+        RETURN QUERY
+        WITH year_series AS (
+            SELECT generate_series(data_inicio_aux, data_fim_aux, '1 year'::interval)::date AS ano
+        )
+        SELECT
+            TO_CHAR(ys.ano, 'YYYY') AS periodo,
+            TO_CHAR(ys.ano, 'YYYY') AS texto_periodo,
+            COALESCE(COUNT(r.data_criacao), 0) AS total_requerimentos
+        FROM
+            year_series ys
+            LEFT JOIN requerimento r ON DATE_TRUNC('year', r.data_criacao) = ys.ano
+        GROUP BY
+            ys.ano
+        ORDER BY
+            ys.ano;
+    END IF;
+
+END;
+$$ LANGUAGE plpgsql;
+
+
+/**
+    * Esta função permite obter uma listagem de querimentos por estado.
+    * @returns {Table} Os dados obtidos.
+*/
+CREATE OR REPLACE FUNCTION listar_contagem_requerimentos_por_estado()
+RETURNS TABLE (
+    estado integer,
+    texto_estado text,
+    total_requerimentos bigint
+) AS $$
+BEGIN
+
+    RETURN QUERY
+    WITH estados AS (
+        SELECT 0 AS estado, 'Pendente' AS texto_estado
+		UNION ALL SELECT 1, 'Aguarda Avaliação'
+		UNION ALL SELECT 2, 'Avaliado'
+        UNION ALL SELECT 3, 'A Agendar'
+        UNION ALL SELECT 4, 'Agendado'
+		UNION ALL SELECT 5, 'Inválido'
+        UNION ALL SELECT 6, 'Cancelado'
+    )
+    SELECT
+        e.estado,
+        e.texto_estado,
+        COALESCE(COUNT(r.estado), 0) AS total_requerimentos
+    FROM
+        estados e
+        LEFT JOIN requerimento r ON e.estado = r.estado
+    GROUP BY
+        e.estado, e.texto_estado
+    ORDER BY
+        e.texto_estado DESC;
+
+END;
+$$ LANGUAGE plpgsql;
+
+
+/**
+    * Esta função permite obter uma contagem de dados para o dashboard.
+    * @returns {Table} Os dados obtidos.
+*/
+CREATE OR REPLACE FUNCTION listar_contagem_dashboard()
+RETURNS TABLE (
+    total_requerimentos bigint,
+    total_utentes bigint,
+    total_equipas_medicas bigint,
+    total_medicos bigint,
+    total_requerimentos_pendentes bigint,
+    total_requerimentos_aguarda_avaliacao bigint,
+    total_requerimentos_avaliados bigint,
+    total_requerimentos_a_agendar bigint,
+    total_requerimentos_agendados bigint,
+    total_requerimentos_invalidos bigint,
+    total_requerimentos_cancelados bigint,
+    total_requerimentos_tipo_multiuso bigint,
+    total_requerimentos_tipo_importacao bigint
+) AS $$
+BEGIN
+
+    RETURN QUERY
+    WITH estados AS (
+        SELECT 0 AS estado, 'Pendente' AS texto_estado
+        UNION ALL SELECT 1, 'Aguarda Avaliação'
+        UNION ALL SELECT 2, 'Avaliado'
+        UNION ALL SELECT 3, 'A Agendar'
+        UNION ALL SELECT 4, 'Agendado'
+        UNION ALL SELECT 5, 'Inválido'
+        UNION ALL SELECT 6, 'Cancelado'
+    )
+    SELECT
+        (
+            SELECT COUNT(r.id_requerimento) FROM requerimento r
+        ),
+        (
+            SELECT COUNT(u.id_utente) FROM utente u
+        ),
+        (
+            SELECT COUNT(em.id_equipa_medica) FROM equipa_medica em
+        ),
+        (
+            SELECT COUNT(u.id_utlizador) FROM utilizador u WHERE u.cargo=1
+        ),
+        (
+            SELECT COUNT(r.id_requerimento) FROM requerimento r WHERE r.estado = 0
+        ),
+        (
+            SELECT COUNT(r.id_requerimento) FROM requerimento r WHERE r.estado = 1
+        ),
+        (
+            SELECT COUNT(r.id_requerimento) FROM requerimento r WHERE r.estado = 2
+        ),
+        (
+            SELECT COUNT(r.id_requerimento) FROM requerimento r WHERE r.estado = 3
+        ),
+        (
+            SELECT COUNT(r.id_requerimento) FROM requerimento r WHERE r.estado = 4
+        ),
+        (
+            SELECT COUNT(r.id_requerimento) FROM requerimento r WHERE r.estado = 5
+        ),
+        (
+            SELECT COUNT(r.id_requerimento) FROM requerimento r WHERE r.estado = 6
+        ),
+        (
+            SELECT COUNT(r.id_requerimento) FROM requerimento r WHERE r.tipo_requerimento = 0
+        ),
+        (
+            SELECT COUNT(r.id_requerimento) FROM requerimento r WHERE r.tipo_requerimento = 1
+        )
+    FROM
+        estados e
+        LEFT JOIN requerimento r ON e.estado = r.estado
+    GROUP BY
+        e.estado, e.texto_estado
+    ORDER BY
+        e.texto_estado DESC
+	LIMIT 1;
+END;
+$$ LANGUAGE plpgsql;
+
+
+
+
 
 
 

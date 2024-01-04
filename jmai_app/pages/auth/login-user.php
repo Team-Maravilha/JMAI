@@ -16,7 +16,7 @@
                 left: 0;
                 background-image: url('<?php echo $link_home ?>assets/media/uploads/fundos/login.jpg');
                 background-position: left;
-                background-size: auto;
+                background-size: cover !important;
                 opacity: 0.5;
                 z-index: -1;
             }
@@ -28,7 +28,7 @@
         <div class="d-flex flex-column flex-column-fluid flex-lg-row">
             <div class="d-flex flex-center w-lg-50 pt-15 pt-lg-0 px-10 ms-20">
                 <div class="d-flex flex-center flex-lg-start flex-column">
-                    <a href="index.html" class="mb-7">
+                    <a class="mb-7">
                         <img alt="Logo" class="mw-75" src="<?php echo $link_home ?>assets/media/uploads/logos/logo.svg" />
                     </a>
                     <h1 class="text-dark-blue fw-bold m-0 ls-2 lh-md"><em>Comprometidos com a Verdadeira Medida da Saúde</em></h1>
@@ -54,7 +54,6 @@
                             </div>
                             <div class="d-flex flex-stack flex-wrap gap-3 fs-base fw-semibold mb-8">
                                 <div></div>
-                                <!-- <a href="authentication/layouts/creative/reset-password.html" class="link-primary">Recuperar Palavra-Passe?</a> -->
                             </div>
                             <div class="d-grid mb-10">
                                 <button type="submit" id="kt_sign_in_submit" class="btn btn-primary">

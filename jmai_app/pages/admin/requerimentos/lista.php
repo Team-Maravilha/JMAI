@@ -24,9 +24,64 @@
                                             </div>
 
                                             <div class="d-flex flex-column flex-sm-row align-items-center justify-content-md-end gap-3">
+
+
+                                                <!-- Filtros Tabela -->
+                                                <button type="button" class="btn btn-light-warning d-flex align-items-center lh-1 gap-3" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">
+                                                    <i class="ki-outline ki-filter fs-2 p-0 m-0"></i>
+                                                    Filtros
+                                                </button>
+                                                <div class="menu menu-sub menu-sub-dropdown w-300px w-md-325px" data-kt-menu="true" id="toolbar-filter">
+                                                    <div class="px-7 py-5">
+                                                        <div class="fs-4 text-dark fw-bold">Opções de Filtro</div>
+                                                    </div>
+
+                                                    <div class="separator border-gray-200"></div>
+
+                                                    <div class="px-7 py-5">
+                                                        <div class="mb-0">
+                                                            <label class="form-label fs-5 fw-semibold mb-3">Estado Requerimento</label>
+
+                                                            <select class="form-select form-select-solid" id="estado" data-datatable-filter="estado">
+                                                                <option value="all" selected>Todos</option>
+                                                                <option value="0" data-color="#7239ea">Pendente</option>
+                                                                <option value="1" data-color="#50cd89">Aguarda Avaliação</option>
+                                                                <option value="2" data-color="#ffc700">Avaliado</option>
+                                                                <option value="3" data-color="#181C32">A Agendar</option>
+                                                                <option value="4" data-color="#f1416c">Agendado</option>
+                                                                <option value="5" data-color="#ff407b">Inválido</option>
+                                                                <option value="6" data-color="#ff5e3a">Cancelado</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="px-7 py-5">
+                                                        <div class="mb-0">
+                                                            <label class="form-label fs-5 fw-semibold mb-3">Tipo Requerimento</label>
+
+                                                            <select class="form-select form-select-solid" id="tipo" data-datatable-filter="tipo">
+                                                                <option value="all" selected>Todos</option>
+                                                                <option value="0">Multiuso</option>
+                                                                <option value="1">Importação de Veículo</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+
+
+
+                                                    <div class="separator border-gray-200"></div>
+
+                                                    <div class="px-7 py-5">
+                                                        <div class="d-flex justify-content-end">
+                                                            <button type="submit" class="btn btn-light-primary" data-kt-menu-dismiss="true" data-datatable-action="filter">Aplicar</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
                                                 <button type="button" class="btn btn-icon btn-active-light-primary lh-1" data-datatable-action="sync" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-dismiss="click" title="Sincronizar tabela">
                                                     <i class="ki-outline ki-arrows-circle fs-2"></i>
                                                 </button>
+
                                             </div>
                                         </div>
 
@@ -59,7 +114,41 @@
         </div>
     </div>
     <?php require_once($_SERVER["DOCUMENT_ROOT"] . "/foo.php") ?>
+    <script>
+        const select2OptionFormat = (item) => {
+            if (!item.id) return item.text;
+            const color = item.element.getAttribute("data-color");
+            if (!color) return item.text;
 
+            const span = document.createElement("span");
+            let template = "";
+
+            span.setAttribute("class", "d-flex align-items-center");
+
+            template += `<span class="badge text-white" style="background-color: ${color};">${item.text}</span>`;
+
+            span.innerHTML = template;
+            return $(span);
+        };
+
+        window.addEventListener("DOMContentLoaded", () => {
+            $("#tipo").select2({
+                placeholder: "Selecione um tipo",
+                allowClear: false,
+                width: "100%",
+                templateSelection: select2OptionFormat,
+                templateResult: select2OptionFormat
+            });
+
+            $("#estado").select2({
+                placeholder: "Selecione um estado",
+                allowClear: false,
+                width: "100%",
+                templateSelection: select2OptionFormat,
+                templateResult: select2OptionFormat
+            });
+        });
+    </script>
     <script>
         var datatableServerSide = (function() {
             var table
@@ -77,7 +166,7 @@
                     order: [
                         [5, "desc"]
                     ],
-                    lengthMenu: [5, 10, 25, 50, 75, 100],
+                    lengthMenu: [10, 25, 50, 75, 100],
                     stateSave: false,
                     ajax: {
                         url: "http://localhost:8888/api/requerimentos/listar",
@@ -87,6 +176,8 @@
                         },
                         data: () => {
                             return JSON.stringify({
+                                'estado': document.querySelector('select[data-datatable-filter="estado"]').value === "all" ? null : document.querySelector('select[data-datatable-filter="estado"]').value,
+                                'tipo_requerimento': document.querySelector('select[data-datatable-filter="tipo"]').value === "all" ? null : document.querySelector('select[data-datatable-filter="tipo"]').value
                             });
                         },
                         type: "POST",
@@ -425,6 +516,14 @@
                 })
             }
 
+            var handleFilterDatatable = () => {
+                const filterButton = document.querySelector(`[data-datatable-action="filter"]`);
+
+                filterButton.addEventListener("click", () => {
+                    dt.ajax.reload()
+                });
+            };
+
             return {
                 init: () => {
                     initDatatable()
@@ -432,6 +531,7 @@
                     handleSearchDatatable()
                     handleDeleteRows()
                     handleActivateRows()
+                    handleFilterDatatable()
                 },
             }
         })()

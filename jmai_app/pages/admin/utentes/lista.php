@@ -38,8 +38,7 @@
 														<th class="ps-4 fs-6 min-w-200px" data-priority="2">Numero de Utente</th>
 														<th class="ps-4 fs-6 min-w-200px" data-priority="3">Email</th>
 														<th class="ps-4 fs-6 min-w-200px" data-priority="4">Genero</th>
-														<th class="ps-4 fs-6 min-w-100px" data-priority="5">Data Criação</th>
-														<th class="pe-4 fs-6 min-w-100px text-sm-end rounded-end" data-priority="6">Ações</th>
+														<th class="pe-4 fs-6 text-sm-end rounded-end min-w-100px" data-priority="5">Data Criação</th>
 													</tr>
 												</thead>
 												<tbody></tbody>
@@ -76,7 +75,7 @@
 					order: [
 						[0, "asc"]
 					],
-					lengthMenu: [5, 10, 25, 50, 75, 100],
+					lengthMenu: [10, 25, 50, 75, 100],
 					stateSave: false,
 					ajax: {
 						url: "http://localhost:8888/api/utentes/listar/tabela",
@@ -101,9 +100,6 @@
 						{
 							data: "data_criacao"
 						},
-						{
-							data: null
-						}
 					],
 					columnDefs: [{
 							targets: 0,
@@ -168,18 +164,6 @@
 										</div>
 									</div>
 								`;
-							},
-						},
-						{
-							targets: -1,
-							orderable: false,
-							className: "text-sm-end",
-							render: (data, type, row) => {
-								return `
-									<div>
-										
-									</div>
-								`
 							},
 						},
 					],

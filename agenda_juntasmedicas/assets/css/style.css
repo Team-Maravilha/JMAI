@@ -1,0 +1,76 @@
+:root {
+  --bs-primary: #49beb7;
+  --bs-text-primary: #49beb7;
+  --bs-link-color: #49beb7;
+  --bs-link-color-rgb: 73,190,183;
+  --bs-primary-active: #085f63;
+  --bs-link-hover-color: #085f63;
+  --bs-link-hover-color-rgb: 8,95,99;
+  --bs-primary-light: #d6ffea;
+  --bs-text-primary: #085f63 !important;
+  --bs-primary-rgb: 8,95,99;
+
+  --bs-success: #50cd89;
+  --bs-text-success: #50cd89;
+  --bs-success-active: #50cd89;
+  --bs-success-rgb: 80, 205, 137;
+
+  --bs-component-active-bg: #49beb7;
+  --bs-component-hover-color: #49beb7;
+  --bs-component-checked-bg: #49beb7;
+
+  --bs-menu-link-color-hover: #49beb7;
+  --bs-menu-link-color-show: #49beb7;
+  --bs-menu-link-color-here: #49beb7;
+  --bs-menu-link-color-active: #49beb7;
+
+  --bs-nav-pills-link-active-bg: #49beb7;
+  --bs-nav-pills-link-active-color: #fff;
+  --bs-app-header-base-bg-color: #f3f3f3 !important;
+
+}
+
+.form-check-input:checked {
+  background-color: #49beb7 !important;
+}
+
+.text-dark-blue{
+  color: #085f63 !important;
+}
+
+.background-blue {
+  background-color: #085f63 !important;
+}
+
+.text-light-blue{
+  color: #49beb7 !important
+}
+
+.link-primary:hover{
+  color: #49beb7 !important;
+}
+.app-header .app-container {
+  background-color: #085f63 !important;
+}
+.app-default,
+body {
+  background-color: var(--bs-app-header-base-bg-color);
+}
+::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  background-color: #f5f5f5;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  background-color: #f5f5f5;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  background-color: #777;
+}
+
+/* #085f63
+#49beb7 */

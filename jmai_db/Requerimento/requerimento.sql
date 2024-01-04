@@ -53,7 +53,7 @@ DECLARE
 BEGIN
     check_ano := EXTRACT(YEAR FROM data);
     IF existe_contagem_requerimentos(data) = FALSE THEN
-        CALL criar_contagem_requerimentos(data);
+        PERFORM criar_contagem_requerimentos(data);
     END IF;
     SELECT numero_ultimo_requerimento INTO check_numero_requerimento FROM numero_requerimento WHERE ano = check_ano;
     check_numero_requerimento := check_numero_requerimento + 1;
@@ -144,6 +144,9 @@ DECLARE
     data_nascimento_aux date DEFAULT NULL;
     data_submissao_anterior_aux date DEFAULT NULL;
     data_emissao_documento_aux date DEFAULT NULL;
+    estado_aux integer;
+    texto_estado_aux text;
+    numero_requerimento_anterior_aux varchar(255);
 BEGIN
 
     IF hashed_id_utente IS NULL THEN
@@ -259,13 +262,12 @@ BEGIN
 
     IF primeira_submissao = 0 AND data_submissao_anterior IS NULL THEN
         RAISE EXCEPTION 'A data de submissão anterior não é válida.';
-    ELSE 
+    ELSIF primeira_submissao = 0 THEN
         data_submissao_anterior_aux = converter_from_pt_to_iso(data_submissao_anterior);
 
         IF data_submissao_anterior_aux > CURRENT_DATE THEN
             RAISE EXCEPTION 'A data de submissão anterior tem de ser inferior à data atual.';
         END IF;
-
     END IF;
 
     IF email_preferencial IS NOT NULL AND email_preferencial <> '' THEN
@@ -274,6 +276,22 @@ BEGIN
         END IF;
     ELSE 
         email_preferencial = NULL;
+    END IF;
+
+    -- Verificar se o utente já tem um requerimento pendente
+    IF EXISTS(SELECT * FROM requerimento WHERE requerimento.id_utente = id_utente_aux AND requerimento.estado < 4) THEN
+        SELECT requerimento.estado INTO estado_aux FROM requerimento WHERE requerimento.id_utente = id_utente_aux AND requerimento.estado < 4 LIMIT 1;
+        SELECT requerimento.numero_requerimento INTO numero_requerimento_anterior_aux FROM requerimento WHERE requerimento.id_utente = id_utente_aux AND requerimento.estado < 4 LIMIT 1;
+        IF estado_aux = 0 THEN
+            texto_estado_aux = 'Pendente';
+        ELSIF estado_aux = 1 THEN
+            texto_estado_aux = 'Aguarda Avaliação';
+        ELSIF estado_aux = 2 THEN
+            texto_estado_aux = 'Avaliado';
+        ELSIF estado_aux = 3 THEN   
+            texto_estado_aux = 'A Agendar';
+        END IF;
+        RAISE EXCEPTION 'O utente já tem um requerimento(%), com o estado %.', numero_requerimento_anterior_aux, texto_estado_aux;
     END IF;
 
     numero_requerimento_aux := obter_numero_requerimento(CURRENT_DATE);
@@ -1786,8 +1804,106 @@ END;
 $$ LANGUAGE plpgsql;
 
 
+/**
+    * Esta função permite obter uma contagem de dados para o dashboard por utilizador.
+    * @param {String} hashed_id_utilizador - O identificador do utilizador a ser obtido.
+    * @returns {Table} Os dados obtidos.
+*/
+CREATE OR REPLACE FUNCTION listar_contagem_dashboard_por_utilizador(
+    hashed_id_utilizador varchar(255)
+)
+RETURNS TABLE (
+    total_requerimentos_avaliados bigint,
+    total_avaliados_acima_60 bigint,
+    total_avaliados_ate_60 bigint,
+    total_requerimentos_agendados bigint,
+    total_requerimentos_por_validar bigint,
+    total_requerimentos_validados bigint,
+    total_requerimentos_invalidos bigint
+)
+AS $$
+DECLARE
+    id_utilizador_aux integer;
+BEGIN
 
+    IF hashed_id_utilizador IS NULL OR hashed_id_utilizador = '' THEN
+        RAISE EXCEPTION 'O identificador do utilizador não é válido.';
+    ELSIF NOT EXISTS(SELECT * FROM utilizador WHERE utilizador.hashed_id = hashed_id_utilizador) THEN
+        RAISE EXCEPTION 'Ocorreu um erro ao verificar o utilizador.';
+    ELSE
+        SELECT utilizador.id_utlizador INTO id_utilizador_aux FROM utilizador WHERE utilizador.hashed_id = hashed_id_utilizador;
+    END IF;
 
+    RETURN QUERY
+    WITH estados AS (
+        SELECT 0 AS estado, 'Pendente' AS texto_estado
+        UNION ALL SELECT 1, 'Aguarda Avaliação'
+        UNION ALL SELECT 2, 'Avaliado'
+        UNION ALL SELECT 3, 'A Agendar'
+        UNION ALL SELECT 4, 'Agendado'
+        UNION ALL SELECT 5, 'Inválido'
+        UNION ALL SELECT 6, 'Cancelado'
+    )
+    SELECT
+        (
+            SELECT 
+                COUNT(r.id_requerimento) 
+            FROM requerimento r 
+            INNER JOIN avaliacao_requerimento ar ON r.id_requerimento = ar.id_requerimento 
+            WHERE r.estado = 2 AND ar.id_utilizador = id_utilizador_aux
+        ),
+        (
+            SELECT 
+                COUNT(r.id_requerimento) 
+            FROM requerimento r 
+            INNER JOIN avaliacao_requerimento ar ON r.id_requerimento = ar.id_requerimento 
+            WHERE r.estado = 2 AND ar.id_utilizador = id_utilizador_aux AND ar.grau_avaliacao > 60
+        ),
+        (
+            SELECT 
+                COUNT(r.id_requerimento) 
+            FROM requerimento r 
+            INNER JOIN avaliacao_requerimento ar ON r.id_requerimento = ar.id_requerimento 
+            WHERE r.estado = 2 AND ar.id_utilizador = id_utilizador_aux AND ar.grau_avaliacao <= 60
+        ),
+        (
+            SELECT 
+                COUNT(r.id_requerimento) 
+            FROM requerimento r 
+            INNER JOIN agendamento_consulta ac ON r.id_requerimento = ac.id_requerimento 
+            WHERE r.estado = 4 AND ac.id_utilizador = id_utilizador_aux
+        ),
+        (
+            SELECT 
+                COUNT(r.id_requerimento) 
+            FROM requerimento r 
+            WHERE r.estado = 0
+        ),
+        (
+            SELECT 
+                COUNT(r.id_requerimento) 
+            FROM requerimento r 
+            INNER JOIN historico_estados he WHERE he.id_requerimento = r.id_requerimento AND he.estado_novo = 1
+            WHERE r.estado > 0 AND r.estado <> 5 AND r.estado <> 6 AND he.id_utilizador = id_utilizador_aux
+        ),
+        (
+            SELECT 
+                COUNT(r.id_requerimento) 
+            FROM requerimento r 
+            INNER JOIN historico_estados he WHERE he.id_requerimento = r.id_requerimento AND he.estado_novo = 5
+            WHERE r.estado = 5 AND he.id_utilizador = id_utilizador_aux
+        )
+    FROM
+        estados e
+        LEFT JOIN requerimento r ON e.estado = r.estado
+    GROUP BY
+        e.estado, e.texto_estado
+    ORDER BY
+        e.texto_estado DESC
+    LIMIT 1;
+
+END;
+$$ LANGUAGE plpgsql;
 
 
 

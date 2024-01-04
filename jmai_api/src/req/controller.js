@@ -1,3 +1,4 @@
+const { parse } = require("dotenv");
 const pool = require("../../db");
 const SendEmail = require("../send_email/send_email");
 const axios = require("axios").default;
@@ -36,20 +37,20 @@ const RegistarRequerimento = async (req, res) => {
     "SELECT * FROM inserir_requerimento($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19)",
     [
       id_utente,
-      tipo_documento,
-      numero_documento,
+      parseInt(tipo_documento),
+      parseInt(numero_documento) || null,
       data_validade_documento,
-      numero_contribuinte,
+      parseInt(numero_contribuinte) || null,
       data_nascimento,
       freguesia_naturalidade,
       morada,
       codigo_postal,
       freguesia_residencia,
-      numero_telemovel,
-      tipo_requerimento,
+      parseInt(numero_telemovel) || null,
+      parseInt(tipo_requerimento),
       primeira_submissao,
       data_submissao_anterior,
-      numero_telefone,
+      parseInt(numero_telefone) || null,
       email_preferencial,
       data_emissao_documento,
       local_emissao_documento,
@@ -635,6 +636,24 @@ const TestSendSMS = (req, res) => {
 
 }
 
+const TestSendPDF = (req, res) => {
+	const buildPdf = require("../pdf/pdf");
+
+	const stream = res.writeHead(200, {
+		"Content-Type": "application/pdf",
+		"Content-Disposition": "attachment; filename=requerimento.pdf",
+	});
+
+	buildPdf.buildPdf(
+		(data) => {
+			stream.write(data);
+		},
+		() => {
+			stream.end();
+		}
+	);
+}
+
 const SendSMS = async (to, text) => {
   try {
     const ClickSend = await axios.post(
@@ -682,5 +701,6 @@ module.exports = {
 	VerComunicacaoUtente,
 	AgendarConsulta,
 	ListarConsultas,
-	TestSendSMS
+	TestSendSMS,
+	TestSendPDF,
 };

@@ -14,4 +14,6 @@ router.get("/requerimentos_por_mes_anual", authMiddleware, controller.Requerimen
 
 router.get("/dashboard_totais", authMiddleware, controller.DashboardTotais);
 
+router.get("/dashboard_totais_por_utilizador", authMiddleware, controller.DashboardTotaisPorUtilizador);
+
 module.exports = router;

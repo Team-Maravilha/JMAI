@@ -99,10 +99,30 @@ const DashboardTotais = (req, res) => {
 	});
 }
 
+const DashboardTotaisPorUtilizador = (req, res) => {
+	const { id_utilizador } = req.query;
+	pool.query("SELECT * FROM listar_contagem_dashboard_por_utilizador($1)", [id_utilizador], (error, results) => {
+		if (error) {
+			res.status(400).json({
+				status: "error",
+				data: null,
+				messages: [error.message],
+			});
+			return;
+		}
+		res.status(200).json({
+			status: "success",
+			data: results.rows[0],
+			messages: ["Totais obtidos com sucesso"],
+		});
+	});
+}
+
 module.exports = {
 	RequerimentoPorDistrito,
 	RequerimentoPorPeriodo,
 	RequerimentoPorEstado,
 	RequerimentoPorMesAnual,
 	DashboardTotais,
+	DashboardTotaisPorUtilizador
 };

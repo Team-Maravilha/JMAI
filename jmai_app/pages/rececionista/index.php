@@ -1,6 +1,6 @@
 <?php require_once($_SERVER["DOCUMENT_ROOT"] . "/head.php") ?>
 <?php require_once($_SERVER["DOCUMENT_ROOT"] . "/api/api.php") ?>
-<?php 
+<?php
 $api = new Api();
 $user = $api->fetch("utilizadores/informacao", null, $id_user);
 $user_info = $user["response"]["data"];
@@ -52,7 +52,7 @@ $page_name = "O Meu Espaço"
                                                             </a>
                                                         </div>
 
-														<div class="col-4">
+                                                        <div class="col-4">
                                                             <a href="agendar_requerimentos/lista">
                                                                 <div class="bg-gray-100 bg-opacity-70 rounded-2 px-6 py-5">
                                                                     <div class="symbol symbol-30px me-5 mb-8">
@@ -76,7 +76,9 @@ $page_name = "O Meu Espaço"
                                     <div class="col-xl-4 mb-xl-10">
                                         <div class="card background-blue h-md-100" data-bs-theme="light">
                                             <div class="card-body d-flex flex-column pt-13 pb-14">
-                                                <div class="m-0"><h1 class="fw-semibold text-white text-center lh-lg fw-bolder">Validar Requerimentos</h1></div>
+                                                <div class="m-0">
+                                                    <h1 class="fw-semibold text-white text-center lh-lg fw-bolder">Validar Requerimentos</h1>
+                                                </div>
                                                 <img class="mw-125px align-self-center" src="<?php echo $link_home ?>assets/media/illustrations/unitedpalms-1/4.png">
                                                 <div class="text-center">
                                                     <a href="requerimentos/lista" class="btn btn-sm bg-white btn-color-gray-800 me-2">Validar Agora!</a>
@@ -96,7 +98,7 @@ $page_name = "O Meu Espaço"
                                                     <i class="ki-outline ki-file-down fs-2hx text-primary"></i>
                                                 </div>
                                                 <div class="d-flex flex-column my-7">
-                                                    <span class="fw-semibold fs-3x text-gray-800 lh-1 ls-n2"><?php echo $variavel1 = rand(80, 100); ?></span>
+                                                    <span class="fw-semibold fs-3x text-gray-800 lh-1 ls-n2" data-element="total_requerimentos_por_validar">0</span>
                                                     <div class="m-0">
                                                         <span class="fw-semibold fs-6 text-gray-400">Requerimentos por Validar</span>
                                                     </div>
@@ -112,7 +114,7 @@ $page_name = "O Meu Espaço"
                                                     <i class="ki-outline ki-tablet-ok fs-2hx text-primary"></i>
                                                 </div>
                                                 <div class="d-flex flex-column my-7">
-                                                    <span class="fw-semibold fs-3x text-gray-800 lh-1 ls-n2"><?php echo $variavel2 = rand(40, 70); ?></span>
+                                                    <span class="fw-semibold fs-3x text-gray-800 lh-1 ls-n2" data-element="total_requerimentos_validados">0</span>
                                                     <div class="m-0">
                                                         <span class="fw-semibold fs-6 text-gray-400">Requerimentos Validados</span>
                                                     </div>
@@ -128,7 +130,7 @@ $page_name = "O Meu Espaço"
                                                     <i class="ki-outline ki-delete-folder  fs-2hx text-primary"></i>
                                                 </div>
                                                 <div class="d-flex flex-column my-7">
-                                                    <span class="fw-semibold fs-3x text-gray-800 lh-1 ls-n2"><?php echo $variavel3 = rand(10, 20); ?></span>
+                                                    <span class="fw-semibold fs-3x text-gray-800 lh-1 ls-n2" data-element="total_requerimentos_invalidos">0</span>
                                                     <div class="m-0">
                                                         <span class="fw-semibold fs-6 text-gray-400">Requerimentos Recusados</span>
                                                     </div>
@@ -144,7 +146,7 @@ $page_name = "O Meu Espaço"
                                                     <i class="ki-outline ki-calendar-tick fs-2hx text-primary"></i>
                                                 </div>
                                                 <div class="d-flex flex-column my-7">
-                                                    <span class="fw-semibold fs-3x text-gray-800 lh-1 ls-n2"><?php echo $variavel4 = rand(30, 70); ?></span>
+                                                    <span class="fw-semibold fs-3x text-gray-800 lh-1 ls-n2" data-element="total_requerimentos_agendados">0</span>
                                                     <div class="m-0">
                                                         <span class="fw-semibold fs-6 text-gray-400">Juntas Médicas Agendadas</span>
                                                     </div>
@@ -152,8 +154,6 @@ $page_name = "O Meu Espaço"
                                             </div>
                                         </div>
                                     </div>
-
-                                    <span class="text-end text-muted">* dados ilustrativos</span>
                                 </div>
 
                                 <!-- Fecha Conteudo AQUI! -->
@@ -166,4 +166,49 @@ $page_name = "O Meu Espaço"
         </div>
     </div>
     <?php require_once($_SERVER["DOCUMENT_ROOT"] . "/foo.php") ?>
+    <script>
+        function handleCarregarDadosDashboard() {
+
+            const requestOptions = {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": "<?php echo $_SESSION['token'] ?>"
+                },
+            };
+
+            fetch(`${api_base_url}graficos/dashboard_totais_por_utilizador?id_utilizador=<?php echo $id_user ?>`, requestOptions)
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.status === "success") {
+                        const kt_countup_1 = new countUp.CountUp(document.querySelector("[data-element='total_requerimentos_por_validar']"));
+                        kt_countup_1.update(data.data.total_requerimentos_por_validar);
+
+                        const kt_countup_2 = new countUp.CountUp(document.querySelector("[data-element='total_requerimentos_validados']"));
+                        kt_countup_2.update(data.data.total_requerimentos_validados);
+
+                        const kt_countup_3 = new countUp.CountUp(document.querySelector("[data-element='total_requerimentos_invalidos']"));
+                        kt_countup_3.update(data.data.total_requerimentos_invalidos);
+
+                        const kt_countup_4 = new countUp.CountUp(document.querySelector("[data-element='total_requerimentos_agendados']"));
+                        kt_countup_4.update(data.data.total_requerimentos_agendados);
+
+                    } else {
+                        toastr.error(data.messages[0], "Erro!");
+                    }
+                })
+                .catch((error) => {
+                    toastr.error(error, "Erro!");
+                })
+                .finally(() => {
+
+                });
+        }
+
+        window.addEventListener("DOMContentLoaded", () => {
+            setTimeout(function() {
+                handleCarregarDadosDashboard();
+            }, 1000)
+        });
+    </script>
 </body>

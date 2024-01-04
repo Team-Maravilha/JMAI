@@ -309,7 +309,7 @@
     <script src="<?php echo $link_home ?>js/firebase_upload.js"></script>
 
     <script>
-        /* Carregar */
+
         function handleCarregarCamposRNU(numero_utente) {
             const requestOptions = {
                 method: "GET",
@@ -326,28 +326,28 @@
                         console.log(results);
                         var dataNascimento = new Date(results.data_nascimento);
                         var dataNascimentoFormatada = dataNascimento.toLocaleDateString('pt-PT');
-                        document.querySelector(`[name="data_nascimento"]`).value = dataNascimentoFormatada;
-                        document.querySelector(`[name="data_nascimento"]`).readOnly = true;
+                        flatPikrDataNascimento.setDate(dataNascimentoFormatada);
+
                         document.querySelector(`[name="numero_contribuinte"]`).value = results.num_ident_fiscal;
-                        document.querySelector(`[name="numero_contribuinte"]`).readOnly = true;
 
                         Swal.fire({
                             icon: "question",
-                            title: "Ligação ao Registo Nacional de Utentes",
+                            title: "Preenchimento Automático",
                             text: "Deseja preencher os campos com dados provenientes do Registo Nacional de Utentes?",
                             buttonsStyling: false,
                             allowOutsideClick: false,
                             showConfirmButton: true,
                             confirmButtonText: 'Preencher',
                             showCancelButton: true,
-                            cancelButtonText: 'Não Preencher',
+                            cancelButtonText: "Não",
+                            reverseButtons: true,
                             didOpen: () => {
                                 const confirmButton = Swal.getConfirmButton();
                                 confirmButton.blur();
                             },
                             customClass: {
-                                confirmButton: "btn fw-bold btn-primary",
-                                cancelButton: "btn fw-bold btn-danger",
+                                confirmButton: "btn fw-bold btn-light-primary",
+                                cancelButton: "btn fw-bold btn-light-danger",
                             },
                         }).then((result) => {
                             if (result.isConfirmed) {
@@ -356,7 +356,7 @@
                                 document.querySelector(`[name="numero_telemovel"]`).value = results.num_telemovel;
                                 document.querySelector(`[name="numero_telefone"]`).value = results.num_telefone;
                                 document.querySelector(`[name="numero_documento"]`).value = results.num_cc;
-                                
+
                                 var dataValidade = new Date(results.data_validade_cc);
                                 var dataValidadeFormatada = dataValidade.toLocaleDateString('pt-PT');
                                 document.querySelector(`[name="data_validade_documento"]`).value = dataValidadeFormatada;
@@ -366,6 +366,87 @@
                                 } else if (results.id_tipo_documento === 2) {
                                     $('[name="tipo_documento"]').val(1).trigger("change");
                                 }
+
+                                //SELECT WHERE OPTION TEXT = results.morada.pais
+                                $('[name="pais"]').val($('select[name="pais"] option:contains("' + results.morada.pais + '")').val()).trigger("change");
+
+                                let tries_distrito = 0;
+                                let interval_distrito = setInterval(() => {
+                                    if (tries_distrito > 10) {
+                                        clearInterval(interval_distrito);
+                                    }
+                                    if ($('select[name="distrito_naturalidade"] option').length > 1) {
+                                        $('[name="distrito_naturalidade"]').val($('select[name="distrito_naturalidade"] option:contains("' + results.morada.distrito + '")').val()).trigger("change");
+
+                                        let tries_concelho = 0;
+                                        let interval_concelho = setInterval(() => {
+                                            if (tries_concelho > 10) {
+                                                clearInterval(interval_concelho);
+                                            }
+                                            if ($('select[name="concelho_naturalidade"] option').length > 1) {
+                                                $('[name="concelho_naturalidade"]').val($('select[name="concelho_naturalidade"] option:contains("' + results.morada.concelho + '")').val()).trigger("change");
+
+                                                let tries_freguesia = 0;
+                                                let interval_freguesia = setInterval(() => {
+                                                    if (tries_freguesia > 10) {
+                                                        clearInterval(interval_freguesia);
+                                                    }
+                                                    if ($('select[name="freguesia_naturalidade"] option').length > 1) {
+                                                        $('[name="freguesia_naturalidade"]').val($('select[name="freguesia_naturalidade"] option:contains("' + results.morada.freguesia + '")').val()).trigger("change");
+                                                        clearInterval(interval_freguesia);
+                                                    }
+                                                    tries_freguesia++;
+                                                }, 200);
+
+                                                clearInterval(interval_concelho);
+                                            }
+                                            tries_concelho++;
+                                        }, 200);
+
+                                        clearInterval(interval_distrito);
+                                    }
+                                    tries_distrito++;
+                                }, 200);
+
+                                let tries_distrito_residencia = 0;
+                                let interval_distrito_residencia = setInterval(() => {
+                                    if (tries_distrito_residencia > 10) {
+                                        clearInterval(interval_distrito_residencia);
+                                    }
+                                    if ($('select[name="distrito_residencia"] option').length > 1) {
+                                        $('[name="distrito_residencia"]').val($('select[name="distrito_residencia"] option:contains("' + results.morada.distrito + '")').val()).trigger("change");
+
+                                        let tries_concelho_residencia = 0;
+                                        let interval_concelho_residencia = setInterval(() => {
+                                            if (tries_concelho_residencia > 10) {
+                                                clearInterval(interval_concelho_residencia);
+                                            }
+                                            if ($('select[name="concelho_residencia"] option').length > 1) {
+                                                $('[name="concelho_residencia"]').val($('select[name="concelho_residencia"] option:contains("' + results.morada.concelho + '")').val()).trigger("change");
+
+                                                let tries_freguesia_residencia = 0;
+                                                let interval_freguesia_residencia = setInterval(() => {
+                                                    if (tries_freguesia_residencia > 10) {
+                                                        clearInterval(interval_freguesia_residencia);
+                                                    }
+                                                    if ($('select[name="freguesia_residencia"] option').length > 1) {
+                                                        $('[name="freguesia_residencia"]').val($('select[name="freguesia_residencia"] option:contains("' + results.morada.freguesia + '")').val()).trigger("change");
+                                                        clearInterval(interval_freguesia_residencia);
+                                                    }
+                                                    tries_freguesia_residencia++;
+                                                }, 200);
+
+                                                clearInterval(interval_concelho_residencia);
+                                            }
+                                            tries_concelho_residencia++;
+                                        }, 200);
+
+                                        clearInterval(interval_distrito_residencia);
+                                    }
+                                    tries_distrito_residencia++;
+                                }, 200);
+
+                                toastr.success('Sinconização com o Registo Nacional de Utentes efetuada com sucesso!', 'Sucesso!');
                             }
                         });
 
@@ -374,7 +455,7 @@
                     }
                 })
                 .catch((error) => {
-                    toastr.error(error, "Erro!");
+                    toastr.error('Ocorreu um erro ao estabelecer ligação com o Registo Nacional de Utentes', 'Erro!');
                 })
                 .finally(() => {
 
@@ -463,7 +544,7 @@
             maxDate: "today",
         })
 
-        flatpickr("#data_nascimento", {
+        const flatPikrDataNascimento = flatpickr("#data_nascimento", {
             allowInput: true,
             maxDate: "today",
         });
@@ -604,6 +685,41 @@
                 data[key] = value;
             }
 
+
+
+            
+            console.log(data.tipo_requerimento);
+            if(data.tipo_requerimento === undefined){
+                Swal.fire({
+                    icon: "warning",
+                    title: "Atenção!",
+                    text: "Selecione um Tipo de Requerimento",
+                    confirmButtonText: "Voltar a Edição",
+                    buttonsStyling: false,
+                    customClass: {
+                        confirmButton: "btn btn-warning",
+                    },
+                });
+                submitButton.removeAttribute("data-kt-indicator");
+                submitButton.disabled = false;
+                return;
+            }else if( data.primeira_submissao === undefined){
+                Swal.fire({
+                    icon: "warning",
+                    title: "Atenção!",
+                    text: "Deve indicar se já foi submetido a uma Junta Médica",
+                    confirmButtonText: "Voltar a Edição",
+                    buttonsStyling: false,
+                    customClass: {
+                        confirmButton: "btn btn-warning",
+                    },
+                });
+                submitButton.removeAttribute("data-kt-indicator");
+                submitButton.disabled = false;
+                return;
+            }
+            
+
             const requestOptions = {
                 method: "POST",
                 headers: {
@@ -668,7 +784,35 @@
                 });
         }
 
-        form.addEventListener("submit", handleRegistar);
+        form.addEventListener("submit", function(event) {
+            event.preventDefault();
+            if(documentos.length == 0){
+                Swal.fire({
+                    icon: "warning",
+                    title: "Atenção!",
+                    text: "Não anexou nenhum documento, tem a certeza que pretende submeter o requerimento?",
+                    confirmButtonText: "Sim, Submeter!",
+                    cancelButtonText: "Voltar a Edição",
+                    showCancelButton: true,
+                    buttonsStyling: false,
+                    customClass: {
+                        confirmButton: "btn btn-light-primary",
+                        cancelButton: "btn btn-light-warning",
+                    },
+                    allowOutsideClick: false,
+                    reverseButtons: true,
+                })
+                .then((result) => {
+                   
+                    if (result.isConfirmed) {
+                        handleRegistar(event);
+                    }
+                    
+                });
+            }else{
+                handleRegistar(event);
+            }
+        });
     </script>
 
 </body>

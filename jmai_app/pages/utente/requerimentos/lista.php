@@ -80,7 +80,7 @@
                     order: [
                         [5, "desc"]
                     ],
-                    lengthMenu: [5, 10, 25, 50, 75, 100],
+                    lengthMenu: [10, 25, 50, 75, 100],
                     stateSave: false,
                     ajax: {
                         url: "http://localhost:8888/api/requerimentos/listar",

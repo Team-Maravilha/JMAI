@@ -16,7 +16,7 @@
                 left: 0;
                 background-image: url('<?php echo $link_home ?>assets/media/uploads/fundos/login.jpg');
                 background-position: left;
-                background-size: auto;
+                background-size: cover !important;
                 opacity: 0.5;
                 z-index: -1;
             }

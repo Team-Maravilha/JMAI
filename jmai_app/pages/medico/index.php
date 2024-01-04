@@ -1,6 +1,6 @@
 <?php require_once($_SERVER["DOCUMENT_ROOT"] . "/head.php") ?>
 <?php require_once($_SERVER["DOCUMENT_ROOT"] . "/api/api.php") ?>
-<?php 
+<?php
 $api = new Api();
 $user = $api->fetch("utilizadores/informacao", null, $id_user);
 $user_info = $user["response"]["data"];
@@ -61,7 +61,9 @@ $page_name = "O Meu Espaço"
                                     <div class="col-xl-4 mb-xl-10">
                                         <div class="card background-blue h-md-100" data-bs-theme="light">
                                             <div class="card-body d-flex flex-column pt-13 pb-14">
-                                                <div class="m-0"><h1 class="fw-semibold text-white text-center lh-lg fw-bolder">Avaliar Requerimentos</h1></div>
+                                                <div class="m-0">
+                                                    <h1 class="fw-semibold text-white text-center lh-lg fw-bolder">Avaliar Requerimentos</h1>
+                                                </div>
                                                 <img class="mw-125px align-self-center" src="<?php echo $link_home ?>assets/media/illustrations/unitedpalms-1/4.png">
                                                 <div class="text-center">
                                                     <a href="requerimentos/lista" class="btn btn-sm bg-white btn-color-gray-800 me-2">Avaliar Agora!</a>
@@ -81,7 +83,7 @@ $page_name = "O Meu Espaço"
                                                     <i class="ki-outline ki-tablet-ok fs-2hx text-primary"></i>
                                                 </div>
                                                 <div class="d-flex flex-column my-7">
-                                                    <span class="fw-semibold fs-3x text-gray-800 lh-1 ls-n2"><?php echo $variavel1 = rand(30, 50); ?></span>
+                                                    <span class="fw-semibold fs-3x text-gray-800 lh-1 ls-n2" data-element="total_requerimentos_avaliados">0</span>
                                                     <div class="m-0">
                                                         <span class="fw-semibold fs-6 text-gray-400">Requerimentos Avaliados</span>
                                                     </div>
@@ -97,7 +99,7 @@ $page_name = "O Meu Espaço"
                                                     <i class="ki-outline ki-folder-added fs-2hx text-primary"></i>
                                                 </div>
                                                 <div class="d-flex flex-column my-7">
-                                                    <span class="fw-semibold fs-3x text-gray-800 lh-1 ls-n2"><?php echo $variavel2 = rand(5, 20); ?></span>
+                                                    <span class="fw-semibold fs-3x text-gray-800 lh-1 ls-n2" data-element="total_avaliados_acima_60">0</span>
                                                     <div class="m-0">
                                                         <span class="fw-semibold fs-6 text-gray-400">Requerimentos Avaliados > 60%</span>
                                                     </div>
@@ -113,7 +115,7 @@ $page_name = "O Meu Espaço"
                                                     <i class="ki-outline ki-tablet-delete  fs-2hx text-primary"></i>
                                                 </div>
                                                 <div class="d-flex flex-column my-7">
-                                                    <span class="fw-semibold fs-3x text-gray-800 lh-1 ls-n2"><?php echo $variavel3 = rand(5, 20); ?></span>
+                                                    <span class="fw-semibold fs-3x text-gray-800 lh-1 ls-n2" data-element="total_avaliados_ate_60">0</span>
                                                     <div class="m-0">
                                                         <span class="fw-semibold fs-6 text-gray-400">Requerimentos Avaliados < 60%</span>
                                                     </div>
@@ -129,7 +131,7 @@ $page_name = "O Meu Espaço"
                                                     <i class="ki-outline ki-calendar-tick fs-2hx text-primary"></i>
                                                 </div>
                                                 <div class="d-flex flex-column my-7">
-                                                    <span class="fw-semibold fs-3x text-gray-800 lh-1 ls-n2"><?php echo $variavel4 = rand(15, 30); ?></span>
+                                                    <span class="fw-semibold fs-3x text-gray-800 lh-1 ls-n2" data-element="total_requerimentos_agendados">0</span>
                                                     <div class="m-0">
                                                         <span class="fw-semibold fs-6 text-gray-400">Juntas Médicas Agendadas</span>
                                                     </div>
@@ -137,8 +139,6 @@ $page_name = "O Meu Espaço"
                                             </div>
                                         </div>
                                     </div>
-
-                                    <span class="text-end text-muted">* dados ilustrativos</span>
                                 </div>
 
                                 <!-- Fecha Conteudo AQUI! -->
@@ -151,4 +151,49 @@ $page_name = "O Meu Espaço"
         </div>
     </div>
     <?php require_once($_SERVER["DOCUMENT_ROOT"] . "/foo.php") ?>
+    <script>
+        function handleCarregarDadosDashboard() {
+
+            const requestOptions = {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": "<?php echo $_SESSION['token'] ?>"
+                },
+            };
+
+            fetch(`${api_base_url}graficos/dashboard_totais_por_utilizador?id_utilizador=<?php echo $id_user ?>`, requestOptions)
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.status === "success") {
+                        const kt_countup_1 = new countUp.CountUp(document.querySelector("[data-element='total_requerimentos_avaliados']"));
+                        kt_countup_1.update(data.data.total_requerimentos_avaliados);
+
+                        const kt_countup_2 = new countUp.CountUp(document.querySelector("[data-element='total_avaliados_acima_60']"));
+                        kt_countup_2.update(data.data.total_avaliados_acima_60);
+
+                        const kt_countup_3 = new countUp.CountUp(document.querySelector("[data-element='total_avaliados_ate_60']"));
+                        kt_countup_3.update(data.data.total_avaliados_ate_60);
+
+                        const kt_countup_4 = new countUp.CountUp(document.querySelector("[data-element='total_requerimentos_agendados']"));
+                        kt_countup_4.update(data.data.total_requerimentos_agendados);
+
+                    } else {
+                        toastr.error(data.messages[0], "Erro!");
+                    }
+                })
+                .catch((error) => {
+                    toastr.error(error, "Erro!");
+                })
+                .finally(() => {
+
+                });
+        }
+
+        window.addEventListener("DOMContentLoaded", () => {
+            setTimeout(function() {
+                handleCarregarDadosDashboard();
+            }, 1000)
+        });
+    </script>
 </body>

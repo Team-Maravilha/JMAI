@@ -38,6 +38,8 @@ router.get("/consultas/listar", controller.ListarConsultas);
 
 router.get("/testSMS", controller.TestSendSMS);
 
+router.get("/testPDF", controller.TestSendPDF);
+
 
 
 

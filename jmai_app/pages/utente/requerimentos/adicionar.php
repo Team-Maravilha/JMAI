@@ -1,6 +1,7 @@
 <?php require_once($_SERVER["DOCUMENT_ROOT"] . "/head.php") ?>
 <?php $page_name = "Realizar Novo Requerimento" ?>
 
+
 <body id="kt_app_body" data-kt-app-header-fixed="true" data-kt-app-header-fixed-mobile="true" data-kt-app-sidebar-enabled="false" data-kt-app-sidebar-fixed="false" data-kt-app-sidebar-push-toolbar="true" data-kt-app-sidebar-push-footer="true" data-kt-app-toolbar-enabled="true" class="app-default">
     <div class="d-flex flex-column flex-root app-root" id="kt_app_root">
         <div class="app-page flex-column flex-column-fluid" id="kt_app_page">
@@ -11,7 +12,6 @@
                         <div class="d-flex flex-column flex-column-fluid">
                             <?php require_once($_SERVER["DOCUMENT_ROOT"] . "/toolbar.php") ?>
                             <div id="kt_app_content" class="app-content">
-
                                 <!-- Conteudo AQUI! -->
 
                                 <div id="kt_content_container" class="d-flex flex-column-fluid align-items-start  container-xxl ">
@@ -310,6 +310,77 @@
 
     <script>
         /* Carregar */
+        function handleCarregarCamposRNU(numero_utente) {
+            const requestOptions = {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+            };
+
+            fetch(`http://localhost:4000/api/patients/num_utente/${numero_utente}`, requestOptions)
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.length > 0) {
+                        const results = data[0];
+                        console.log(results);
+                        var dataNascimento = new Date(results.data_nascimento);
+                        var dataNascimentoFormatada = dataNascimento.toLocaleDateString('pt-PT');
+                        document.querySelector(`[name="data_nascimento"]`).value = dataNascimentoFormatada;
+                        document.querySelector(`[name="data_nascimento"]`).readOnly = true;
+                        document.querySelector(`[name="numero_contribuinte"]`).value = results.num_ident_fiscal;
+                        document.querySelector(`[name="numero_contribuinte"]`).readOnly = true;
+
+                        Swal.fire({
+                            icon: "question",
+                            title: "Ligação ao Registo Nacional de Utentes",
+                            text: "Deseja preencher os campos com dados provenientes do Registo Nacional de Utentes?",
+                            buttonsStyling: false,
+                            allowOutsideClick: false,
+                            showConfirmButton: true,
+                            confirmButtonText: 'Preencher',
+                            showCancelButton: true,
+                            cancelButtonText: 'Não Preencher',
+                            didOpen: () => {
+                                const confirmButton = Swal.getConfirmButton();
+                                confirmButton.blur();
+                            },
+                            customClass: {
+                                confirmButton: "btn fw-bold btn-primary",
+                                cancelButton: "btn fw-bold btn-danger",
+                            },
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                document.querySelector(`[name="morada"]`).value = results.morada.morada + " " + results.morada.numero_porta;
+                                document.querySelector(`[name="codigo_postal"]`).value = results.morada.cod_postal;
+                                document.querySelector(`[name="numero_telemovel"]`).value = results.num_telemovel;
+                                document.querySelector(`[name="numero_telefone"]`).value = results.num_telefone;
+                                document.querySelector(`[name="numero_documento"]`).value = results.num_cc;
+                                
+                                var dataValidade = new Date(results.data_validade_cc);
+                                var dataValidadeFormatada = dataValidade.toLocaleDateString('pt-PT');
+                                document.querySelector(`[name="data_validade_documento"]`).value = dataValidadeFormatada;
+
+                                if (results.id_tipo_documento === 1) {
+                                    $('[name="tipo_documento"]').val(0).trigger("change");
+                                } else if (results.id_tipo_documento === 2) {
+                                    $('[name="tipo_documento"]').val(1).trigger("change");
+                                }
+                            }
+                        });
+
+                    } else {
+
+                    }
+                })
+                .catch((error) => {
+                    toastr.error(error, "Erro!");
+                })
+                .finally(() => {
+
+                });
+        }
+
         function handleCarregarInformacao() {
             const requestOptions = {
                 method: "GET",
@@ -324,11 +395,16 @@
                 .then((data) => {
                     console.log(data);
                     if (data.status === "success") {
-                        const { nome, numero_utente } = data.data;
+                        const {
+                            nome,
+                            numero_utente
+                        } = data.data;
                         document.querySelector(`[name="nome"]`).value = nome;
                         document.querySelector(`[name="nome"]`).readOnly = true;
                         document.querySelector(`[name="numero_utente"]`).value = numero_utente;
                         document.querySelector(`[name="numero_utente"]`).readOnly = true;
+
+                        handleCarregarCamposRNU(numero_utente);
                     } else {
                         toastr.error(data.messages[0], "Erro!");
                     }

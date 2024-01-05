@@ -108,13 +108,13 @@
 
 											<!--begin::Title-->
 											<h3 class="card-title align-items-start flex-column">
-												<span class="card-label fw-bold text-gray-900">Nº de Requerimentos por Distrito</span>
-												<span class="text-gray-500 mt-1 fw-semibold fs-6">Nº Total de Requerimentos por Distrito de Portugal</span>
+												<span class="card-label fw-bold text-gray-900">Nº de Requerimentos por Concelho</span>
+												<span class="text-gray-500 mt-1 fw-semibold fs-6">Nº Total de Requerimentos por Concelho de Braga</span>
 											</h3>
 											<!--end::Title-->
 											<!--begin::Toolbar-->
 											<div class="card-toolbar">
-												<div class="btn btn-sm btn-light d-flex align-items-center px-4" id="date_range_picker_requerimentos_distrito">
+												<div class="btn btn-sm btn-light d-flex align-items-center px-4" id="date_range_picker_requerimentos_concelho">
 													<!--begin::Display range-->
 													<div class="text-gray-600 fw-bold">A Carregar...</div>
 													<!--end::Display range-->
@@ -131,7 +131,7 @@
 										</div>
 										<div class="card-body">
 											<!-- <div id="kt_apexcharts_1" style="height: 350px;"></div> -->
-											<div id="chart_requerimentos_distrito" style="height: 350px;"></div>
+											<div id="chart_requerimentos_concelho" style="height: 350px;"></div>
 										</div>
 									</div>
 								</div>
@@ -196,6 +196,39 @@
 										</div>
 										<div class="card-body">
 											<div id="chart_evolucao_requerimentos_ano" style="height: 350px;"></div>
+										</div>
+									</div>
+								</div>
+								<div class="col-12">
+									<div class="card card-bordered card-flush">
+										<div class="card-header pt-5">
+
+											<!--begin::Title-->
+											<h3 class="card-title align-items-start flex-column">
+												<span class="card-label fw-bold text-gray-900">Nº de Requerimentos por Distrito</span>
+												<span class="text-gray-500 mt-1 fw-semibold fs-6">Nº Total de Requerimentos por Distrito de Portugal</span>
+											</h3>
+											<!--end::Title-->
+											<!--begin::Toolbar-->
+											<div class="card-toolbar">
+												<div class="btn btn-sm btn-light d-flex align-items-center px-4" id="date_range_picker_requerimentos_distrito">
+													<!--begin::Display range-->
+													<div class="text-gray-600 fw-bold">A Carregar...</div>
+													<!--end::Display range-->
+													<i class="ki-duotone ki-calendar-search fs-1 ms-2 me-0">
+														<span class="path1"></span>
+														<span class="path2"></span>
+														<span class="path3"></span>
+														<span class="path4"></span>
+													</i>
+												</div>
+											</div>
+											<!--end::Toolbar-->
+
+										</div>
+										<div class="card-body">
+											<!-- <div id="kt_apexcharts_1" style="height: 350px;"></div> -->
+											<div id="chart_requerimentos_distrito" style="height: 350px;"></div>
 										</div>
 									</div>
 								</div>

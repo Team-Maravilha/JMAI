@@ -82,6 +82,26 @@ let blockUIRequerimentosDistrito = new KTBlockUI(
 	}
 );
 
+//Chart Requerimentos por Concelho
+const dateRangeSelectorRequerimentosConcelho = document.getElementById(
+	"date_range_picker_requerimentos_concelho"
+);
+const startRequerimentosConcelho = moment().startOf("year");
+const todayRequerimentosConcelho = moment();
+let chartRequerimentosConcelho = {
+	self: null,
+	rendered: false,
+};
+let chartElementRequerimentosConcelho = document.getElementById(
+	"chart_requerimentos_concelho"
+);
+let blockUIRequerimentosConcelho = new KTBlockUI(
+	chartElementRequerimentosConcelho,
+	{
+		message: '<div class="blockui-message bg-white"><span class="spinner-border text-primary"></span>A Carregar Dados...</div>',
+	}
+);
+
 //Chart Requerimentos por Periodo
 const dateRangeSelectorRequerimentosPeriodo = document.getElementById(
 	"date_range_picker_requerimentos_periodo"
@@ -181,6 +201,54 @@ $(dateRangeSelectorRequerimentosDistrito).daterangepicker(
 		},
 	},
 	GetDataRequerimentosDistrito
+);
+
+//Chart Requerimentos por Concelho
+$(dateRangeSelectorRequerimentosConcelho).daterangepicker(
+	{
+		startDate: startRequerimentosConcelho,
+		endDate: todayRequerimentosConcelho,
+		ranges: {
+			Hoje: [moment(), moment()],
+			Ontem: [
+				moment().subtract(1, "days"),
+				moment().subtract(1, "days"),
+			],
+			"Ultimos 7 Dias": [moment().subtract(6, "days"), moment()],
+			"Este Mês": [moment().startOf("month"), moment()],
+			"Mês Passado": [
+				moment().subtract(1, "month").startOf("month"),
+				moment().subtract(1, "month").endOf("month"),
+			],
+			"Este Ano": [moment().startOf("year"), moment()],
+		},
+		locale: {
+			format: "DD/MM/YYYY",
+			separator: " - ",
+			applyLabel: "Aplicar",
+			cancelLabel: "Cancelar",
+			fromLabel: "De",
+			toLabel: "Até",
+			customRangeLabel: "Personalizado",
+			daysOfWeek: ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"],
+			monthNames: [
+				"Janeiro",
+				"Fevereiro",
+				"Março",
+				"Abril",
+				"Maio",
+				"Junho",
+				"Julho",
+				"Agosto",
+				"Setembro",
+				"Outubro",
+				"Novembro",
+				"Dezembro",
+			],
+			firstDay: 1,
+		},
+	},
+	GetDataRequerimentosConcelho
 );
 
 //Chart Requerimentos por Periodo
@@ -709,6 +777,248 @@ const renderChartRequerimentosPeriodo = (start, end) => {
 			KTThemeMode.on("kt.thememode.change", function () {
 				if (chartRequerimentosPeriodo.rendered) {
 					chartRequerimentosPeriodo.self.destroy();
+				}
+				loadChart();
+			});
+		},
+	};
+};
+
+//Chart Requerimentos por Concelho
+const renderChartRequerimentosConcelho = (start, end) => {
+	const GatherData = async () => {
+		try {
+			let response = await fetch(
+				`${api_base_url}graficos/requerimentos_por_concelho?id_distrito=1&data_inicio=${start}&data_fim=${end}`,
+				{
+					method: "GET",
+					headers: {
+						"Content-Type": "application/json",
+						Authorization: token,
+					},
+				}
+			);
+			let dados = await response.json();
+			if (dados.status == "success") {
+				let labels = [];
+				let series = [];
+				dados.data.forEach((item) => {
+					labels.push(item.nome_concelho);
+					series.push(parseInt(item.total_requerimentos));
+				});
+				return {
+					status: "success",
+					data: {
+						labels,
+						series,
+					},
+					messages: [
+						"Lista de Requerimentos por Concelho obtida com sucesso",
+					],
+				};
+			} else {
+				return {
+					status: "error",
+					data: null,
+					messages: [dados.messages],
+				};
+			}
+		} catch (err) {
+			return {
+				status: "error",
+				data: null,
+				messages: [err.message],
+			};
+		}
+	};
+
+	const loadChart = async () => {
+		if (!chartElementRequerimentosConcelho) return;
+
+		if (chartRequerimentosConcelho.rendered) {
+			chartRequerimentosConcelho.self.destroy();
+			chartRequerimentosConcelho.rendered = false;
+		}
+
+		blockUIRequerimentosConcelho.block();
+
+		try {
+			let dados = await GatherData();
+			if (dados.status == "success") {
+				let options = {
+					series: [
+						{
+							name: "Nº de Requerimentos",
+							data: dados.data.series,
+						},
+					],
+					chart: {
+						fontFamily: "inherit",
+						type: "bar",
+						height: 350,
+						toolbar: {
+							show: true,
+							offsetX: 0,
+							offsetY: 0,
+							tools: {
+								download: true,
+								selection: true,
+								zoom: true,
+								zoomin: true,
+								zoomout: true,
+								pan: true,
+								reset:
+									true |
+									'<img src="/static/icons/reset.png" width="20">',
+								customIcons: [],
+							},
+							export: {
+								csv: {
+									filename:
+										"Requerimentos por Concelho",
+									columnDelimiter: ",",
+									headerCategory: "Concelho",
+									headerValue: "value",
+									dateFormatter(timestamp) {
+										return new Date(
+											timestamp
+										).toDateString();
+									},
+								},
+								svg: {
+									filename:
+										"Requerimentos por Concelho",
+								},
+								png: {
+									filename:
+										"Requerimentos por Concelho",
+								},
+							},
+						},
+					},
+					plotOptions: {
+						bar: {
+							horizontal: false,
+							columnWidth: ["30%"],
+							borderRadius: 6,
+							endingShape: "rounded",
+							distributed: true,
+						},
+					},
+
+					legend: {
+						show: false,
+					},
+					dataLabels: {
+						enabled: false,
+					},
+					stroke: {
+						show: true,
+						width: 2,
+						colors: ["transparent"],
+					},
+					xaxis: {
+						categories: dados.data.labels,
+						axisBorder: {
+							show: false,
+						},
+						axisTicks: {
+							show: false,
+						},
+						labels: {
+							style: {
+								colors: labelColor,
+								fontSize: "12px",
+							},
+						},
+					},
+					yaxis: {
+						labels: {
+							style: {
+								colors: labelColor,
+								fontSize: "12px",
+							},
+							formatter: function (val) {
+								return Math.floor(val);
+							},
+						},
+					},
+					fill: {
+						opacity: 1,
+					},
+					states: {
+						normal: {
+							filter: {
+								type: "none",
+								value: 0,
+							},
+						},
+						hover: {
+							filter: {
+								type: "none",
+								value: 0,
+							},
+						},
+						active: {
+							allowMultipleDataPointsSelection: false,
+							filter: {
+								type: "none",
+								value: 0,
+							},
+						},
+					},
+					tooltip: {
+						style: {
+							fontSize: "12px",
+						},
+						y: {
+							formatter: function (val) {
+								return val;
+							},
+						},
+						x: {
+							show: true,
+						},
+					},
+					colors: colorsPastel,
+					grid: {
+						borderColor: "#d7d7e7",
+						strokeDashArray: 4,
+						yaxis: {
+							lines: {
+								show: true,
+							},
+						},
+					},
+				};
+
+				chartRequerimentosConcelho.self = new ApexCharts(
+					chartElementRequerimentosConcelho,
+					options
+				);
+
+				setTimeout(() => {
+					chartRequerimentosConcelho.self.render();
+					chartRequerimentosConcelho.rendered = true;
+					blockUIRequerimentosConcelho.release();
+				}, 1000);
+			} else {
+				toastr.error(
+					"Erro ao obter dados para o gráfico de Requerimentos por Concelho"
+				);
+			}
+		} catch (err) {
+			console.log(err.message);
+		}
+	};
+
+	return {
+		init: async () => {
+			await loadChart();
+
+			KTThemeMode.on("kt.thememode.change", function () {
+				if (chartRequerimentosConcelho.rendered) {
+					chartRequerimentosConcelho.self.destroy();
 				}
 				loadChart();
 			});
@@ -1247,4 +1557,27 @@ function GetDataRequerimentosPeriodo(start, end) {
 GetDataRequerimentosPeriodo(
 	startRequerimentosPeriodo,
 	todayRequerimentosPeriodo
+);
+
+//Chart Requerimentos por Concelho
+function GetDataRequerimentosConcelho(start, end) {
+	$(dateRangeSelectorRequerimentosConcelho).html(
+		start.format("LL") +
+			" - " +
+			end.format("LL") +
+			`<i class="ki-duotone ki-calendar-search fs-1 ms-2 me-0">
+                <span class="path1"></span>
+                <span class="path2"></span>
+                <span class="path3"></span>
+                <span class="path4"></span>
+            </i>`
+	);
+	renderChartRequerimentosConcelho(
+		start.format("YYYY-MM-DD"),
+		end.format("YYYY-MM-DD")
+	).init();
+}
+GetDataRequerimentosConcelho(
+	startRequerimentosConcelho,
+	todayRequerimentosConcelho
 );

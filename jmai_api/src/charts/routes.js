@@ -6,6 +6,8 @@ const router = Router();
 
 router.get("/requerimentos_por_distrito", authMiddleware, controller.RequerimentoPorDistrito);
 
+router.get("/requerimentos_por_concelho", authMiddleware, controller.RequerimentoPorConcelho);
+
 router.get("/requerimentos_por_periodo", authMiddleware, controller.RequerimentoPorPeriodo);
 
 router.get("/requerimentos_por_estado", authMiddleware, controller.RequerimentoPorEstado);

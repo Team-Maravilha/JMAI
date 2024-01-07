@@ -8,6 +8,20 @@ const axios = require('axios').default;
  *   description: Gestão de Equipas Médicas
  */
 
+
+/**
+ * @swagger
+ * /api/equipas_medicas/registar:
+ *  post:
+ *      tags: [Equipas Médicas]
+ *      summary: Registar Nova Equipa Médica
+ *      description: Permite inserir uma nova Equipa Médica
+ *      responses:
+ *          '201':
+ *              description: Sucesso
+ *          '400':
+ *              description: Erro
+ */
 const RegistarEquipaMedica = async (req, res) => {
     const { nome, cor, medicos } = req.body;
     pool.query(
@@ -35,6 +49,19 @@ const RegistarEquipaMedica = async (req, res) => {
 	);
 };
 
+/**
+ * @swagger
+ * /api/equipas_medicas/listar:
+ *  get:
+ *      tags: [Equipas Médicas]
+ *      summary: Lista de Equipas Médicas DataTable
+ *      description: Obter Lista de Equipas Médicas para a DataTable
+ *      responses:
+ *          '201':
+ *              description: Sucesso
+ *          '400':
+ *              description: Erro
+ */
 const ListarEquipasMedicasDataTable = async (req, res) => {
 	pool.query(
 		"SELECT * FROM listar_equipas_medicas()",
@@ -56,6 +83,19 @@ const ListarEquipasMedicasDataTable = async (req, res) => {
 	);
 }
 
+/**
+ * @swagger
+ * /api/equipas_medicas/listar_equipas_medicas:
+ *  get:
+ *      tags: [Equipas Médicas]
+ *      summary: Lista de Equipas Médicas
+ *      description: Obter Lista de Equipas Médicas
+ *      responses:
+ *          '200':
+ *              description: Sucesso
+ *          '400':
+ *              description: Erro
+ */
 const ListarEquipasMedicas = async (req, res) => {
 	const { estado } = req.query;
 	pool.query(
@@ -79,6 +119,19 @@ const ListarEquipasMedicas = async (req, res) => {
 	);
 }
 
+/**
+ * @swagger
+ * /api/equipas_medicas/ver/{hashed_id}:
+ *  get:
+ *      tags: [Equipas Médicas]
+ *      summary: Ver Equipa Médica
+ *      description: Obter Informação da Equipa Médica
+ *      responses:
+ *          '200':
+ *              description: Sucesso
+ *          '400':
+ *              description: Erro
+ */
 const VerEquipaMedica = async (req, res) => {
 	const hashed_id = req.params.hashed_id;
 	pool.query(
@@ -102,6 +155,19 @@ const VerEquipaMedica = async (req, res) => {
 	);
 }
 
+/**
+ * @swagger
+ * /api/equipas_medicas/editar/{hashed_id}:
+ *  put:
+ *      tags: [Equipas Médicas]
+ *      summary: Editar Equipa Médica
+ *      description: Editar Equipa Médica
+ *      responses:
+ *          '200':
+ *              description: Sucesso
+ *          '400':
+ *              description: Erro
+ */
 const EditarEquipaMedica = async (req, res) => {
 	const hashed_id = req.params.hashed_id;
 	const { nome, cor, medicos } = req.body;
@@ -131,6 +197,19 @@ const EditarEquipaMedica = async (req, res) => {
 	);
 }
 
+/**
+ * @swagger
+ * /api/equipas_medicas/desativar/{hashed_id}:
+ *  put:
+ *      tags: [Equipas Médicas]
+ *      summary: Desativar Equipa Médica
+ *      description: Desativar uma Equipa Médica
+ *      responses:
+ *          '200':
+ *              description: Sucesso
+ *          '400':
+ *              description: Erro
+ */
 const RemoverEquipaMedica = async (req, res) => {
 	const hashed_id = req.params.hashed_id;
 	pool.query(
@@ -154,6 +233,19 @@ const RemoverEquipaMedica = async (req, res) => {
 	);
 }
 
+/**
+ * @swagger
+ * /api/equipas_medicas/ativar/{hashed_id}:
+ *  put:
+ *      tags: [Equipas Médicas]
+ *      summary: Ativar Equipa Médica
+ *      description: Ativar uma Equipa Médica
+ *      responses:
+ *          '200':
+ *              description: Sucesso
+ *          '400':
+ *              description: Erro
+ */
 const AtivarEquipaMedica = async (req, res) => {
 	const hashed_id = req.params.hashed_id;
 	pool.query(

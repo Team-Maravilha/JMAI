@@ -3,10 +3,23 @@ const pool = require("../../db");
 /**
  * @swagger
  * tags:
- *   name: Dados para Gráficos
- *   description: EndPoint para obter dados para os gráficos
+ *   name: Dashboard
+ *   description: Obter dados para Dashboard
  */
 
+/**
+ * @swagger
+ * /api/graficos/requerimentos_por_distrito:
+ *  get:
+ *      tags: [Dashboard]
+ *      summary: Requerimentos por Distrito
+ *      description: Obter Dados de Requerimentos por Distrito
+ *      responses:
+ *          '200':
+ *              description: Sucesso
+ *          '400':
+ *              description: Erro
+ */
 const RequerimentoPorDistrito = (req, res) => {
 	const { id_pais, data_inicio, data_fim } = req.query;
 	pool.query("SELECT * FROM listar_contagem_requerimentos_por_distrito($1, $2, $3)", [id_pais, data_inicio, data_fim], (error, results) => {
@@ -26,6 +39,19 @@ const RequerimentoPorDistrito = (req, res) => {
 	});
 };
 
+/**
+ * @swagger
+ * /api/graficos/requerimentos_por_concelho:
+ *   get:
+ *     tags: [Dashboard]
+ *     summary: Requerimentos por Concelho
+ *     description: Obter Dados de Requerimentos por Concelho
+ *     responses:
+ *          '200':
+ *              description: Sucesso
+ *          '400':
+ *              description: Erro
+ */
 const RequerimentoPorConcelho = (req, res) => {
 	const { id_distrito, data_inicio, data_fim } = req.query;
 	pool.query("SELECT * FROM listar_contagem_requerimentos_por_concelho($1, $2, $3)", [id_distrito, data_inicio, data_fim], (error, results) => {
@@ -45,6 +71,19 @@ const RequerimentoPorConcelho = (req, res) => {
 	});
 }
 
+/**
+ * @swagger
+ * /api/graficos/requerimentos_por_periodo:
+ *   get:
+ *     tags: [Dashboard]
+ *     summary: Total Requerimentos por Período
+ *     description: Obter Dados do Total Requerimentos por Período
+ *     responses:
+ *          '200':
+ *              description: Sucesso
+ *          '400':
+ *              description: Erro
+ */
 const RequerimentoPorPeriodo = (req, res) => {
 	const { data_inicio, data_fim } = req.query;
 	pool.query("SELECT * FROM listar_contagem_requerimentos_por_periodo($1, $2)", [data_inicio, data_fim], (error, results) => {
@@ -64,6 +103,19 @@ const RequerimentoPorPeriodo = (req, res) => {
 	});
 }
 
+/**
+ * @swagger
+ * /api/graficos/requerimentos_por_estado:
+ *   get:
+ *     tags: [Dashboard]
+ *     summary: Total Requerimentos por Estado
+ *     description: Obter Dados do Total Requerimentos por Estado
+ *     responses:
+ *          '200':
+ *              description: Sucesso
+ *          '400':
+ *              description: Erro
+ */
 const RequerimentoPorEstado = (req, res) => {
 	pool.query("SELECT * FROM listar_contagem_requerimentos_por_estado()", [], (error, results) => {
 		if (error) {
@@ -82,6 +134,19 @@ const RequerimentoPorEstado = (req, res) => {
 	});
 }
 
+/**
+ * @swagger
+ * /api/graficos/requerimentos_por_mes_anual:
+ *   get:
+ *     tags: [Dashboard]
+ *     summary: Total Requerimentos por Mês Anual
+ *     description: Obter Dados do Total Requerimentos por Mês Anual
+ *     responses:
+ *          '200':
+ *              description: Sucesso
+ *          '400':
+ *              description: Erro
+ */
 const RequerimentoPorMesAnual = (req, res) => {
 	pool.query("SELECT * FROM listar_contagem_requerimentos_anual()", [], (error, results) => {
 		if (error) {
@@ -100,6 +165,19 @@ const RequerimentoPorMesAnual = (req, res) => {
 	});
 }
 
+/**
+ * @swagger
+ * /api/graficos/dashboard_totais:
+ *   get:
+ *     tags: [Dashboard]
+ *     summary: Total Requerimentos para Indicadores Administrador
+ *     description: Obter Dados do Total Requerimentos para Indicadores Administrador
+ *     responses:
+ *          '200':
+ *              description: Sucesso
+ *          '400':
+ *              description: Erro
+ */
 const DashboardTotais = (req, res) => {
 	pool.query("SELECT * FROM listar_contagem_dashboard()", [], (error, results) => {
 		if (error) {
@@ -118,6 +196,19 @@ const DashboardTotais = (req, res) => {
 	});
 }
 
+/**
+ * @swagger
+ * /api/graficos/dashboard_totais_por_utilizador:
+ *   get:
+ *     tags: [Dashboard]
+ *     summary: Total Requerimentos para Indicadores Utilizadores
+ *     description: Obter Dados do Total Requerimentos para Indicadores Utilizadores
+ *     responses:
+ *          '200':
+ *              description: Sucesso
+ *          '400':
+ *              description: Erro
+ */
 const DashboardTotaisPorUtilizador = (req, res) => {
 	const { id_utilizador } = req.query;
 	pool.query("SELECT * FROM listar_contagem_dashboard_por_utilizador($1)", [id_utilizador], (error, results) => {

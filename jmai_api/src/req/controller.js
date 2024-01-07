@@ -10,6 +10,20 @@ const axios = require("axios").default;
  *   description: Gestão de Requerimentos
  */
 
+/**
+ * @swagger
+ * /api/requerimentos/registar:
+ *  post:
+ *     tags: [Requerimentos]
+ *     summary: Registar um Novo Requerimento
+ *     description: Inserir um Novo Requerimento
+ *     responses:
+ *          '201':
+ *              description: Sucesso
+ *          '400':
+ *              description: Erro
+ *
+ */
 const RegistarRequerimento = async (req, res) => {
   const {
     id_utente,
@@ -74,6 +88,20 @@ const RegistarRequerimento = async (req, res) => {
   );
 };
 
+/**
+ * @swagger
+ * /api/requerimentos/listar:
+ *  post:
+ *     tags: [Requerimentos]
+ *     summary: Listar Requerimentos para DataTable
+ *     description: Listar Informação Requerimentos para DataTable
+ *     responses:
+ *          '200':
+ *              description: Sucesso
+ *          '400':
+ *              description: Erro
+ *
+ */
 const ListarRequerimentosDataTable = (req, res) => {
   const { hashed_id, hashed_id_utente, data_criacao, estado, tipo_requerimento } = req.body;
 
@@ -94,6 +122,20 @@ const ListarRequerimentosDataTable = (req, res) => {
   });
 };
 
+/**
+ * @swagger
+ * /api/requerimentos/listar_requerimentos:
+ *  post:
+ *     tags: [Requerimentos]
+ *     summary: Listar Requerimentos
+ *     description: Listar Informação Requerimentos
+ *     responses:
+ *          '200':
+ *              description: Sucesso
+ *          '400':
+ *              description: Erro
+ *
+ */
 const ListarRequerimentos = (req, res) => {
 	const { hashed_id, hashed_id_utente, data_criacao, estado, tipo_requerimento } = req.body;
 	pool.query("SELECT * FROM listar_requerimentos($1, $2, $3, $4, $5)", [hashed_id, hashed_id_utente, data_criacao, estado, tipo_requerimento], (error, results) => {
@@ -113,6 +155,20 @@ const ListarRequerimentos = (req, res) => {
 	});
 };
 
+/**
+ * @swagger
+ * /api/requerimentos/ver_requerimentos:
+ *  post:
+ *     tags: [Requerimentos]
+ *     summary: Listar Requerimentos do Utente
+ *     description: Listar Informação Requerimentos do Utente
+ *     responses:
+ *          '200':
+ *              description: Sucesso
+ *          '400':
+ *              description: Erro
+ *
+ */
 const ListarRequerimentosUtente = (req, res) => {
   const { hashed_id_utente } = req.body;
 
@@ -133,6 +189,20 @@ const ListarRequerimentosUtente = (req, res) => {
   });
 };
 
+/**
+ * @swagger
+ * /api/requerimentos/acessos/registar:
+ *  post:
+ *     tags: [Requerimentos]
+ *     summary: Registar Acesso ao Requerimento
+ *     description: Registar Acesso ao Requerimento
+ *     responses:
+ *          '201':
+ *              description: Sucesso
+ *          '400':
+ *              description: Erro
+ *
+ */
 const RegistarAcesso = (req, res) => {
   const { hashed_id_requerimento, hashed_id_utilizador } = req.body;
 
@@ -153,6 +223,20 @@ const RegistarAcesso = (req, res) => {
   });
 };
 
+/**
+ * @swagger
+ * /api/requerimentos/acessos/listar:
+ *  get:
+ *     tags: [Requerimentos]
+ *     summary: Listar Acessos ao Requerimento
+ *     description: Listar Acessos ao Requerimento
+ *     responses:
+ *          '200':
+ *              description: Sucesso
+ *          '400':
+ *              description: Erro
+ *
+ */
 const ListarAcessosRequerimento = (req, res) => {
   const { hashed_id_requerimento, cargo_utilizador } = req.query;
 
@@ -173,6 +257,20 @@ const ListarAcessosRequerimento = (req, res) => {
   });
 };
 
+/**
+ * @swagger
+ * /api/requerimentos/validar:
+ *  post:
+ *     tags: [Requerimentos]
+ *     summary: Validar Requerimento
+ *     description: Validar um Requerimento
+ *     responses:
+ *          '201':
+ *              description: Sucesso
+ *          '400':
+ *              description: Erro
+ *
+ */
 const ValidarRequerimento = (req, res) => {
   const { hashed_id_requerimento, hashed_id_utilizador } = req.body;
 
@@ -193,6 +291,20 @@ const ValidarRequerimento = (req, res) => {
   });
 };
 
+/**
+ * @swagger
+ * /api/requerimentos/invalidar:
+ *  post:
+ *     tags: [Requerimentos]
+ *     summary: Recusar Requerimento
+ *     description: Recusar um Requerimento
+ *     responses:
+ *          '201':
+ *              description: Sucesso
+ *          '400':
+ *              description: Erro
+ *
+ */
 const InvalidarRequerimento = (req, res) => {
   const { hashed_id_requerimento, hashed_id_utilizador } = req.body;
 
@@ -213,6 +325,20 @@ const InvalidarRequerimento = (req, res) => {
   });
 };
 
+/**
+ * @swagger
+ * /api/requerimentos/avaliar:
+ *  post:
+ *     tags: [Requerimentos]
+ *     summary: Avaliar Requerimento
+ *     description: Avaliar um Requerimento
+ *     responses:
+ *          '201':
+ *              description: Sucesso
+ *          '400':
+ *              description: Erro
+ *
+ */
 const AvaliarRequerimento = (req, res) => {
 	const {
 		hashed_id_requerimento,
@@ -452,6 +578,20 @@ const AvaliarRequerimento = (req, res) => {
 	);
 };
 
+/**
+ * @swagger
+ * /api/requerimentos/ver/{hashed_id}:
+ *  get:
+ *     tags: [Requerimentos]
+ *     summary: Ver Informação do Requerimento
+ *     description: Ver Informação de um Requerimento
+ *     responses:
+ *          '200':
+ *              description: Sucesso
+ *          '400':
+ *              description: Erro
+ *
+ */
 const VerInformacaoRequerimentoByHashedID = (req, res) => {
   const { hashed_id } = req.params;
 
@@ -472,6 +612,20 @@ const VerInformacaoRequerimentoByHashedID = (req, res) => {
   });
 };
 
+/**
+ * @swagger
+ * /api/requerimentos/historico_estados/{hashed_id}:
+ *  get:
+ *     tags: [Requerimentos]
+ *     summary: Ver Histórico de Estados do Requerimento
+ *     description: Ver Histórico de Estados de um Requerimento
+ *     responses:
+ *          '200':
+ *              description: Sucesso
+ *          '400':
+ *              description: Erro
+ *
+ */
 const HistoricoEstadosRequerimento = (req, res) => {
 	const { hashed_id } = req.params;
 
@@ -498,6 +652,20 @@ const HistoricoEstadosRequerimento = (req, res) => {
 	);
 };
 
+/**
+ * @swagger
+ * /api/requerimentos/resposta_utente/aceitar/{hashed_id}:
+ *  put:
+ *     tags: [Requerimentos]
+ *     summary: Aceitar Junta Médica pela Resposta do Utente
+ *     description: Aceitar Junta Médica pela Resposta do Utente
+ *     responses:
+ *          '200':
+ *              description: Sucesso
+ *          '400':
+ *              description: Erro
+ *
+ */
 const AceitarRespostaUtente = (req, res) => {
 	const { hashed_id } = req.params;
 
@@ -522,6 +690,20 @@ const AceitarRespostaUtente = (req, res) => {
 	);
 };
 
+/**
+ * @swagger
+ * /api/requerimentos/resposta_utente/recusar/{hashed_id}:
+ *  put:
+ *     tags: [Requerimentos]
+ *     summary: Rejeitar Junta Médica pela Resposta do Utente
+ *     description: Rejeitar Junta Médica pela Resposta do Utente
+ *     responses:
+ *          '200':
+ *              description: Sucesso
+ *          '400':
+ *              description: Erro
+ *
+ */
 const RejeitarRespostaUtente = (req, res) => {
 	const { hashed_id } = req.params;
 
@@ -546,6 +728,20 @@ const RejeitarRespostaUtente = (req, res) => {
 	);
 };
 
+/**
+ * @swagger
+ * /api/requerimentos/comunicacao_utente/{hashed_id}:
+ *  get:
+ *     tags: [Requerimentos]
+ *     summary: Ver Comunicação do Utente
+ *     description: Ver Comunicação do Utente
+ *     responses:
+ *          '200':
+ *              description: Sucesso
+ *          '400':
+ *              description: Erro
+ *
+ */
 const VerComunicacaoUtente = (req, res) => {
 	const { hashed_id } = req.params;
 
@@ -570,6 +766,20 @@ const VerComunicacaoUtente = (req, res) => {
 	);
 }
 
+/**
+ * @swagger
+ * /api/requerimentos/agendar_consulta:
+ *  post:
+ *     tags: [Requerimentos]
+ *     summary: Agendar Nova Consulta Junta Médica
+ *     description: Agendar uma Nova Consulta para Junta Médica
+ *     responses:
+ *          '201':
+ *              description: Sucesso
+ *          '400':
+ *              description: Erro
+ *
+ */
 const AgendarConsulta = (req, res) => {
 	const { hashed_id_requerimento, hashed_id_utilizador, data_agendamento, hora_agendamento, hashed_id_equipa_medica } = req.body;
 	pool.query(
@@ -593,6 +803,20 @@ const AgendarConsulta = (req, res) => {
 	);
 };
 
+/**
+ * @swagger
+ * /api/requerimentos/consultas/listar:
+ *  get:
+ *     tags: [Requerimentos]
+ *     summary: Lista de Consultas Agendadas
+ *     description: Lista de Consultas Agendadas para Junta Médica
+ *     responses:
+ *          '200':
+ *              description: Sucesso
+ *          '400':
+ *              description: Erro
+ *
+ */
 const ListarConsultas = (req, res) => {
 	
 	const { data_inicio, data_fim } = req.query;

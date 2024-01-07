@@ -8,6 +8,19 @@ const axios = require('axios').default;
  *   description: Gestão de Utentes
  */
 
+/**
+ * @swagger
+ * /api/utentes/registar:
+ *  post:
+ *      tags: [Utentes]
+ *      summary: Registar Novo Utente (+RNU)
+ *      description: Permite inserir um novo Utente com Ligação ao RNU
+ *      responses:
+ *          '201':
+ *              description: Sucesso
+ *          '400':
+ *              description: Erro
+ */
 const RegistarUtente = async (req, res) => {
     const { nome, numero_utente, genero, email, palavra_passe } = req.body;
 
@@ -47,6 +60,19 @@ const RegistarUtente = async (req, res) => {
     }
 };
 
+/**
+ * @swagger
+ * /api/utentes/listar/tabela:
+ *  get:
+ *      tags: [Utentes]
+ *      summary: Lista de Utentes DataTable
+ *      description: Obter Lista de Utentes para a DataTable
+ *      responses:
+ *          '200':
+ *              description: Sucesso
+ *          '400':
+ *              description: Erro
+ */
 const ListarUtentesDataTable = async (req, res) => {
     pool.query(
         "SELECT * FROM listar_utentes()",
@@ -68,6 +94,19 @@ const ListarUtentesDataTable = async (req, res) => {
     );
 }
 
+/**
+ * @swagger
+ * /api/utentes/ver/{hashed_id}:
+ *  get:
+ *      tags: [Utentes]
+ *      summary: Ver Informação do Utente por Id
+ *      description: Ver Informação Total do Utente por Id
+ *      responses:
+ *          '200':
+ *              description: Sucesso
+ *          '400':
+ *              description: Erro
+ */
 const VerInformacaoUtenteByHashedID = (req, res) => {
     const hashed_id = req.params.hashed_id;
     pool.query("SELECT * FROM listar_utentes($1)", [hashed_id], (error, results) => {

@@ -33,7 +33,26 @@ const swaggerOptions = {
 };
 
 const swaggerDocs = swaggerJsDoc(swaggerOptions);
-app.use("/api-doc", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+const DisableTryItOutPlugin = function() {
+  return {
+    statePlugins: {
+      spec: {
+        wrapSelectors: {
+          allowTryItOutFor: () => () => false
+        }
+      }
+    }
+  }
+}
+const options = {
+  swaggerOptions: {
+      plugins: [
+           DisableTryItOutPlugin
+      ]
+   }
+};
+
+app.use("/api-doc", swaggerUi.serve, swaggerUi.setup(swaggerDocs, options));
 
 app.use(cors());
 app.use(express.json());

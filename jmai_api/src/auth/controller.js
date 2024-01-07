@@ -8,20 +8,20 @@ const SendEmail = require("../send_email/send_email");
  *   name: Autenticação
  *   description: Gestão de Autenticações
  */
+
 /**
  * @swagger
- * /api/auth/login:
- *  get:
+ * /api/auth/login-utilizador:
+ *  post:
  *      tags: [Autenticação]
- *      summary: Verifica o Login
+ *      summary: Verifica o Login do Utilizador
  *      description: Permite o Login no Software ou Recusa
  *      responses:
- *          '200':
+ *          '201':
  *              description: Sucesso
  *          '400':
  *              description: Erro
  */
-
 const LoginUtilizador = (req, res) => {
 	const { email, palavra_passe } = req.body;
 	const user = req.body;
@@ -51,6 +51,19 @@ const LoginUtilizador = (req, res) => {
 	);
 };
 
+/**
+ * @swagger
+ * /api/auth/login-utente:
+ *  post:
+ *      tags: [Autenticação]
+ *      summary: Verifica o Login do Utente
+ *      description: Permite o Login no Software ou Recusa
+ *      responses:
+ *          '201':
+ *              description: Sucesso
+ *          '400':
+ *              description: Erro
+ */
 const LoginUtente = (req, res) => {
 	const { email, palavra_passe } = req.body;
 	const user = req.body;
@@ -80,6 +93,19 @@ const LoginUtente = (req, res) => {
 	);
 };
 
+/**
+ * @swagger
+ * /api/auth/utente/recuperar-palavra-passe:
+ *  post:
+ *      tags: [Autenticação]
+ *      summary: Recuperar Palavra-Passe
+ *      description: Permite o Utente Recuperar a Palavra-Passe
+ *      responses:
+ *          '201':
+ *              description: Sucesso
+ *          '400':
+ *              description: Erro
+ */
 const RecuperarPalavraPasseUtente = (req, res) => {
 	console.log(req.body);
 	const { email } = req.body;
@@ -207,6 +233,19 @@ const RecuperarPalavraPasseUtente = (req, res) => {
 	);
 };
 
+/**
+ * @swagger
+ * /api/auth/utente/recuperar-palavra-passe/verificar/{token}:
+ *  get:
+ *      tags: [Autenticação]
+ *      summary: Verificar Token de Recuperação de Palavra-Passe
+ *      description: Permite Verificar o Token de Recuperação de Palavra-Passe
+ *      responses:
+ *          '201':
+ *              description: Sucesso
+ *          '400':
+ *              description: Erro
+ */
 const VerificarTokenRecuperacaoPalavraPasseUtente = (req, res) => {
 	const { token } = req.params;
 
@@ -234,6 +273,19 @@ const VerificarTokenRecuperacaoPalavraPasseUtente = (req, res) => {
 	);
 };
 
+/**
+ * @swagger
+ * /api/auth/utente/recuperar-palavra-passe/validar:
+ *  put:
+ *      tags: [Autenticação]
+ *      summary: Validar Token de Recuperação de Palavra-Passe
+ *      description: Permite Validar o Token de Recuperação de Palavra-Passe
+ *      responses:
+ *          '201':
+ *              description: Sucesso
+ *          '400':
+ *              description: Erro
+ */
 const ValidarTokenRecuperacaoPalavraPasseUtente = (req, res) => {
 	const { token, codigo_verificacao } = req.body;
 
@@ -261,6 +313,19 @@ const ValidarTokenRecuperacaoPalavraPasseUtente = (req, res) => {
 	);
 };
 
+/**
+ * @swagger
+ * /api/auth/utente/recuperar-palavra-passe/alterar:
+ *  put:
+ *      tags: [Autenticação]
+ *      summary: Alterar Palavra-Passe
+ *      description: Permite Alterar a Palavra-Passe
+ *      responses:
+ *          '201':
+ *              description: Sucesso
+ *          '400':
+ *              description: Erro
+ */
 const AlterarPalavraPasseUtente = (req, res) => {
 	const { token, palavra_passe } = req.body;
 

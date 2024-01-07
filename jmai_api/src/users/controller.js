@@ -7,6 +7,20 @@ const pool = require("../../db");
  *   description: Gestão de Utilizadores
  */
 
+
+/**
+ * @swagger
+ * /api/utilizadores/listar/tabela:
+ *  get:
+ *      tags: [Utilizadores]
+ *      summary: Lista de Utilizadores DataTable
+ *      description: Obter Lista de Utilizadores para a DataTable
+ *      responses:
+ *          '200':
+ *              description: Sucesso
+ *          '400':
+ *              description: Erro
+ */
 const ListarUtilizadoresDataTable = (req, res) => {
     const cargo = req.get("Cargo");
     pool.query("SELECT * FROM listar_utilizadores(NULL, NULL, $1)", [cargo], (error, results) => {
@@ -26,6 +40,19 @@ const ListarUtilizadoresDataTable = (req, res) => {
     });
 };
 
+/**
+ * @swagger
+ * /api/utilizadores/listar:
+ *  get:
+ *      tags: [Utilizadores]
+ *      summary: Lista de Utilizadores
+ *      description: Obter Lista de Utilizadores
+ *      responses:
+ *          '200':
+ *              description: Sucesso
+ *          '400':
+ *              description: Erro
+ */
 const ListarUtilizadores = (req, res) => {
     const { cargo, estado } = req.query;
     pool.query("SELECT * FROM listar_utilizadores(NULL, NULL, $1, $2)", [cargo, estado], (error, results) => {
@@ -45,6 +72,19 @@ const ListarUtilizadores = (req, res) => {
     });
 };
 
+/**
+ * @swagger
+ * /api/utilizadores/registar/administrador:
+ *  post:
+ *      tags: [Utilizadores]
+ *      summary: Registar Novo Administrador
+ *      description: Permite inserir um novo Administrador
+ *      responses:
+ *          '201':
+ *              description: Sucesso
+ *          '400':
+ *              description: Erro
+ */
 const RegistarAdministrador = (req, res) => {
     const { nome, email, palavra_passe, estado } = req.body;
     pool.query("SELECT inserir_utilizador($1, $2, $3, $4, $5)", [nome, email, palavra_passe, 0, estado], (error, results) => {
@@ -66,6 +106,19 @@ const RegistarAdministrador = (req, res) => {
     });
 }
 
+/**
+ * @swagger
+ * /api/utilizadores/registar/medico:
+ *  post:
+ *      tags: [Utilizadores]
+ *      summary: Registar Novo Médico
+ *      description: Permite inserir um novo Médico
+ *      responses:
+ *          '201':
+ *              description: Sucesso
+ *          '400':
+ *              description: Erro
+ */
 const RegistarMedico = (req, res) => {
     const { nome, email, palavra_passe, estado } = req.body;
     pool.query("SELECT inserir_utilizador($1, $2, $3, $4, $5)", [nome, email, palavra_passe, 1, estado], (error, results) => {
@@ -87,6 +140,19 @@ const RegistarMedico = (req, res) => {
     });
 }
 
+/**
+ * @swagger
+ * /api/utilizadores/registar/rececionista:
+ *  post:
+ *      tags: [Utilizadores]
+ *      summary: Registar Nova Rececionista
+ *      description: Permite inserir uma nova Rececionista
+ *      responses:
+ *          '201':
+ *              description: Sucesso
+ *          '400':
+ *              description: Erro
+ */
 const RegistarRececionista = (req, res) => {
     const { nome, email, palavra_passe, estado } = req.body;
     pool.query("SELECT inserir_utilizador($1, $2, $3, $4, $5)", [nome, email, palavra_passe, 2, estado], (error, results) => {
@@ -108,6 +174,19 @@ const RegistarRececionista = (req, res) => {
     });
 }
 
+/**
+ * @swagger
+ * /api/utilizadores/informacao/{hashed_id}:
+ *  get:
+ *      tags: [Utilizadores]
+ *      summary: Obter Informação do Utilizador por Id
+ *      description: Obter Informação Completa do Utilizador por Id
+ *      responses:
+ *          '200':
+ *              description: Sucesso
+ *          '400':
+ *              description: Erro
+ */
 const InformacaoUtilizador = (req, res) => {
     const hashed_id = req.params.hashed_id;
     pool.query("SELECT * FROM listar_utilizadores($1)", [hashed_id], (error, results) => {
@@ -127,6 +206,19 @@ const InformacaoUtilizador = (req, res) => {
     });
 }
 
+/**
+ * @swagger
+ * /api/utilizadores/editar/{hashed_id}:
+ *  put:
+ *      tags: [Utilizadores]
+ *      summary: Editar Informação do Utilizador por Id
+ *      description: Editar Informação Completa do Utilizador por Id
+ *      responses:
+ *          '200':
+ *              description: Sucesso
+ *          '400':
+ *              description: Erro
+ */
 const EditarUtilizador = (req, res) => {
     const hashed_id = req.params.hashed_id;
     const { nome, email, cargo, estado } = req.body;
@@ -172,6 +264,19 @@ const EditarUtilizador = (req, res) => {
     });
 }
 
+/**
+ * @swagger
+ * /api/utilizadores/desativar/{hashed_id}:
+ *  put:
+ *      tags: [Utilizadores]
+ *      summary: Desativar Utilizador
+ *      description: Desativar um Utilizador
+ *      responses:
+ *          '200':
+ *              description: Sucesso
+ *          '400':
+ *              description: Erro
+ */
 const DesativarUtilizador = (req, res) => {
     const hashed_id = req.params.hashed_id;
     const { cargo } = req.body;
@@ -217,6 +322,19 @@ const DesativarUtilizador = (req, res) => {
     });
 }
 
+/**
+ * @swagger
+ * /api/utilizadores/ativar/{hashed_id}:
+ *  put:
+ *      tags: [Utilizadores]
+ *      summary: Ativar Utilizador
+ *      description: Ativar uma Utilizador
+ *      responses:
+ *          '200':
+ *              description: Sucesso
+ *          '400':
+ *              description: Erro
+ */
 const AtivarUtilizador = (req, res) => {
     const hashed_id = req.params.hashed_id;
     const { cargo } = req.body;

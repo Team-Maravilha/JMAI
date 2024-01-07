@@ -137,22 +137,22 @@ const ListarRequerimentosDataTable = (req, res) => {
  *
  */
 const ListarRequerimentos = (req, res) => {
-	const { hashed_id, hashed_id_utente, data_criacao, estado, tipo_requerimento } = req.body;
-	pool.query("SELECT * FROM listar_requerimentos($1, $2, $3, $4, $5)", [hashed_id, hashed_id_utente, data_criacao, estado, tipo_requerimento], (error, results) => {
-		if (error) {
-			res.status(400).json({
-				status: "error",
-				data: null,
-				messages: [error.message],
-			});
-			return;
-		}
-		res.status(200).json({
-			status: "success",
-			data: results.rows,
-			messages: ["Informações dos Requerimentos obtidas com Sucesso!"],
-		});
-	});
+  const { hashed_id, hashed_id_utente, data_criacao, estado, tipo_requerimento } = req.body;
+  pool.query("SELECT * FROM listar_requerimentos($1, $2, $3, $4, $5)", [hashed_id, hashed_id_utente, data_criacao, estado, tipo_requerimento], (error, results) => {
+    if (error) {
+      res.status(400).json({
+        status: "error",
+        data: null,
+        messages: [error.message],
+      });
+      return;
+    }
+    res.status(200).json({
+      status: "success",
+      data: results.rows,
+      messages: ["Informações dos Requerimentos obtidas com Sucesso!"],
+    });
+  });
 };
 
 /**
@@ -340,32 +340,24 @@ const InvalidarRequerimento = (req, res) => {
  *
  */
 const AvaliarRequerimento = (req, res) => {
-	const {
-		hashed_id_requerimento,
-		hashed_id_utilizador,
-		grau_avaliacao,
-		notas,
-	} = req.body;
-	pool.query(
-		"SELECT * FROM avaliar_requerimento($1, $2, $3, $4)",
-		[hashed_id_requerimento, hashed_id_utilizador, grau_avaliacao, notas],
-		(error, results) => {
-			if (error) {
-				res.status(400).json({
-					status: "error",
-					data: null,
-					messages: [error.message],
-				});
-				return;
-			}
-			const id_notificacao = results.rows[0].id_notificacao;
+  const { hashed_id_requerimento, hashed_id_utilizador, grau_avaliacao, notas } = req.body;
+  pool.query("SELECT * FROM avaliar_requerimento($1, $2, $3, $4)", [hashed_id_requerimento, hashed_id_utilizador, grau_avaliacao, notas], (error, results) => {
+    if (error) {
+      res.status(400).json({
+        status: "error",
+        data: null,
+        messages: [error.message],
+      });
+      return;
+    }
+    const id_notificacao = results.rows[0].id_notificacao;
 
-			// Enviar Email
-			const email_to = results.rows[0].email_preferencial;
-			const nome = results.rows[0].nome;
-			const email_subjet = "JMAI | Avaliação de Requerimento";
-			const email_text = "O seu requerimento foi avaliado por um dos nossos médicos, com base nas informações fornecidas por sí.";
-			const email_html = `
+    // Enviar Email
+    const email_to = results.rows[0].email_preferencial;
+    const nome = results.rows[0].nome;
+    const email_subjet = "JMAI | Avaliação de Requerimento";
+    const email_text = "O seu requerimento foi avaliado por um dos nossos médicos, com base nas informações fornecidas por sí.";
+    const email_html = `
 					<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,400,500,600,700">
 					<link href="https://preview.keenthemes.com/metronic8/demo1/assets/plugins/global/plugins.bundle.css" rel="stylesheet" type="text/css">
 					<link href="https://preview.keenthemes.com/metronic8/demo1/assets/css/style.bundle.css" rel="stylesheet" type="text/css">
@@ -539,43 +531,34 @@ const AvaliarRequerimento = (req, res) => {
 					</div>
 			`;
 
-			if (email_to != null) {
-				SendEmail(email_to, email_subjet, email_text, email_html);
-				pool.query(
-					"SELECT * FROM comunicar_utente($1, 1, $2, $3)",
-					[id_notificacao, email_subjet, email_text],
-					(error, results) => {
-						if (error) {
-							//console.log(error.message);
-						}
-					}
-				);
-			}
+    if (email_to != null) {
+      SendEmail(email_to, email_subjet, email_text, email_html);
+      pool.query("SELECT * FROM comunicar_utente($1, 1, $2, $3)", [id_notificacao, email_subjet, email_text], (error, results) => {
+        if (error) {
+          //console.log(error.message);
+        }
+      });
+    }
 
-			// Enviar SMS
-			const numero_telemovel = results.rows[0].numero_telemovel;
-			const texto = `Olá ${nome}, temos novidades! \nO seu requerimento foi avaliado por um dos nossos médicos, com base nas informações fornecidas por sí. \n\nConsulte a sua área reservada para dar continuidade ao processo. \nComprometidos com a Verdadeira Medida da Saúde`;
+    // Enviar SMS
+    const numero_telemovel = results.rows[0].numero_telemovel;
+    const texto = `Olá ${nome}, temos novidades! \nO seu requerimento foi avaliado por um dos nossos médicos, com base nas informações fornecidas por sí. \n\nConsulte a sua área reservada para dar continuidade ao processo. \nComprometidos com a Verdadeira Medida da Saúde`;
 
-			if (numero_telemovel != null) {
-				SendSMS(numero_telemovel, texto);
-				pool.query(
-					"SELECT * FROM comunicar_utente($1, 0, $2, $3)",
-					[id_notificacao, "SMS", texto],
-					(error, results) => {
-						if (error) {
-							//console.log(error.message);
-						}
-					}
-				);
-			}
+    if (numero_telemovel != null) {
+      SendSMS(numero_telemovel, texto);
+      pool.query("SELECT * FROM comunicar_utente($1, 0, $2, $3)", [id_notificacao, "SMS", texto], (error, results) => {
+        if (error) {
+          //console.log(error.message);
+        }
+      });
+    }
 
-			res.status(201).json({
-				status: "success",
-				data: results.rows[0],
-				messages: ["Requerimento avaliado com Sucesso!"],
-			});
-		}
-	);
+    res.status(201).json({
+      status: "success",
+      data: results.rows[0],
+      messages: ["Requerimento avaliado com Sucesso!"],
+    });
+  });
 };
 
 /**
@@ -627,29 +610,23 @@ const VerInformacaoRequerimentoByHashedID = (req, res) => {
  *
  */
 const HistoricoEstadosRequerimento = (req, res) => {
-	const { hashed_id } = req.params;
+  const { hashed_id } = req.params;
 
-	pool.query(
-		"SELECT * FROM listar_alteracoes_estado_requerimento($1)",
-		[hashed_id],
-		(error, results) => {
-			if (error) {
-				res.status(400).json({
-					status: "error",
-					data: null,
-					messages: [error.message],
-				});
-				return;
-			}
-			res.status(200).json({
-				status: "success",
-				data: results.rows,
-				messages: [
-					"Informação do Requerimento obtida com Sucesso!",
-				],
-			});
-		}
-	);
+  pool.query("SELECT * FROM listar_alteracoes_estado_requerimento($1)", [hashed_id], (error, results) => {
+    if (error) {
+      res.status(400).json({
+        status: "error",
+        data: null,
+        messages: [error.message],
+      });
+      return;
+    }
+    res.status(200).json({
+      status: "success",
+      data: results.rows,
+      messages: ["Informação do Requerimento obtida com Sucesso!"],
+    });
+  });
 };
 
 /**
@@ -667,27 +644,23 @@ const HistoricoEstadosRequerimento = (req, res) => {
  *
  */
 const AceitarRespostaUtente = (req, res) => {
-	const { hashed_id } = req.params;
+  const { hashed_id } = req.params;
 
-	pool.query(
-		"SELECT * FROM responder_comunicacao_utente($1, 1)",
-		[hashed_id],
-		(error, results) => {
-			if (error) {
-				res.status(400).json({
-					status: "error",
-					data: null,
-					messages: [error.message],
-				});
-				return;
-			}
-			res.status(200).json({
-				status: "success",
-				data: results.rows[0],
-				messages: ["Junta Médica aceite com Sucesso!"],
-			});
-		}
-	);
+  pool.query("SELECT * FROM responder_comunicacao_utente($1, 1)", [hashed_id], (error, results) => {
+    if (error) {
+      res.status(400).json({
+        status: "error",
+        data: null,
+        messages: [error.message],
+      });
+      return;
+    }
+    res.status(200).json({
+      status: "success",
+      data: results.rows[0],
+      messages: ["Junta Médica aceite com Sucesso!"],
+    });
+  });
 };
 
 /**
@@ -705,27 +678,23 @@ const AceitarRespostaUtente = (req, res) => {
  *
  */
 const RejeitarRespostaUtente = (req, res) => {
-	const { hashed_id } = req.params;
+  const { hashed_id } = req.params;
 
-	pool.query(
-		"SELECT * FROM responder_comunicacao_utente($1, 0)",
-		[hashed_id],
-		(error, results) => {
-			if (error) {
-				res.status(400).json({
-					status: "error",
-					data: null,
-					messages: [error.message],
-				});
-				return;
-			}
-			res.status(200).json({
-				status: "success",
-				data: results.rows[0],
-				messages: ["Junta Médica recusada com Sucesso!"],
-			});
-		}
-	);
+  pool.query("SELECT * FROM responder_comunicacao_utente($1, 0)", [hashed_id], (error, results) => {
+    if (error) {
+      res.status(400).json({
+        status: "error",
+        data: null,
+        messages: [error.message],
+      });
+      return;
+    }
+    res.status(200).json({
+      status: "success",
+      data: results.rows[0],
+      messages: ["Junta Médica recusada com Sucesso!"],
+    });
+  });
 };
 
 /**
@@ -743,28 +712,24 @@ const RejeitarRespostaUtente = (req, res) => {
  *
  */
 const VerComunicacaoUtente = (req, res) => {
-	const { hashed_id } = req.params;
+  const { hashed_id } = req.params;
 
-	pool.query(
-		"SELECT * FROM listar_comunicacoes_requerimento($1)",
-		[hashed_id],
-		(error, results) => {
-			if (error) {
-				res.status(400).json({
-					recordsTotal: 0,
-					recordsFiltered: 0,
-					data: [],
-				});
-				return;
-			}
-			res.status(200).json({
-				recordsTotal: results.rows.length,
-				recordsFiltered: results.rows.length,
-				data: results.rows,
-			});
-		}
-	);
-}
+  pool.query("SELECT * FROM listar_comunicacoes_requerimento($1)", [hashed_id], (error, results) => {
+    if (error) {
+      res.status(400).json({
+        recordsTotal: 0,
+        recordsFiltered: 0,
+        data: [],
+      });
+      return;
+    }
+    res.status(200).json({
+      recordsTotal: results.rows.length,
+      recordsFiltered: results.rows.length,
+      data: results.rows,
+    });
+  });
+};
 
 /**
  * @swagger
@@ -781,26 +746,22 @@ const VerComunicacaoUtente = (req, res) => {
  *
  */
 const AgendarConsulta = (req, res) => {
-	const { hashed_id_requerimento, hashed_id_utilizador, data_agendamento, hora_agendamento, hashed_id_equipa_medica } = req.body;
-	pool.query(
-		"SELECT * FROM  agendar_consulta_requerimento($1, $2, $3, $4, $5)",
-		[hashed_id_requerimento, hashed_id_utilizador, data_agendamento, hora_agendamento, hashed_id_equipa_medica],
-		(error, results) => {
-			if (error) {
-				res.status(400).json({
-					status: "error",
-					data: null,
-					messages: [error.message]
-				});
-				return;
-			}
-			res.status(201).json({
-				status: "success",
-				data: results.rows[0],
-				messages: ["Consulta agendada com sucesso."],
-			});
-		}
-	);
+  const { hashed_id_requerimento, hashed_id_utilizador, data_agendamento, hora_agendamento, hashed_id_equipa_medica } = req.body;
+  pool.query("SELECT * FROM  agendar_consulta_requerimento($1, $2, $3, $4, $5)", [hashed_id_requerimento, hashed_id_utilizador, data_agendamento, hora_agendamento, hashed_id_equipa_medica], (error, results) => {
+    if (error) {
+      res.status(400).json({
+        status: "error",
+        data: null,
+        messages: [error.message],
+      });
+      return;
+    }
+    res.status(201).json({
+      status: "success",
+      data: results.rows[0],
+      messages: ["Consulta agendada com sucesso."],
+    });
+  });
 };
 
 /**
@@ -810,73 +771,119 @@ const AgendarConsulta = (req, res) => {
  *     tags: [Requerimentos]
  *     summary: Lista de Consultas Agendadas
  *     description: Lista de Consultas Agendadas para Junta Médica
+ *     parameters:
+ *       - in: query
+ *         name: data_inicio
+ *         schema:
+ *           type: string
+ *           format: date
+ *         required: true
+ *         description: Data de Início do Intervalo das Consultas
+ *       - in: query
+ *         name: data_fim
+ *         schema:
+ *           type: string
+ *           format: date
+ *         required: true
+ *         description: Data de Fim do Intervalo das Consultas
  *     responses:
  *          '200':
  *              description: Sucesso
+ *              content:
+ *                application/json:
+ *                  schema:
+ *                    type: object
+ *                    properties:
+ *                      status:
+ *                        type: string
+ *                      data:
+ *                        type: array
+ *                        items:
+ *                          type: object
+ *                      messages:
+ *                        type: array
+ *                        items:
+ *                          type: string
+ *                  example:
+ *                    status: "success"
+ *                    data:
+ *                      - hashed_id: "df4f9444-b180-403a-ad9e-4b9efeb08b18"
+ *                        utente:
+ *                          hashed_id: "5ec4bf21-4a5d-4ac4-b1ba-cc44a7f4278d"
+ *                          nome: "Rui Cruz"
+ *                          numero_utente: 123456789
+ *                          email_autenticacao: "ruicrux@hotmail.com"
+ *                        data_agendamento: "30/01/2024"
+ *                        hora_agendamento: "15:00:00"
+ *                        duracao_consulta: 60
+ *                        data_fim_agendamento: "30/01/2024"
+ *                        hora_fim_agendamento: "16:00:00"
+ *                        equipa_medica:
+ *                          hashed_id: "baec436e-4697-4bb7-b9dd-402559f7ac86"
+ *                          nome: "Equipa 1"
+ *                          medicos:
+ *                            - nome: "João Correia"
+ *                            - nome: "Rui Cruz"
+ *                        tipo_requerimento: 0
+ *                        texto_tipo_requerimento: "Multiuso"
+ *                    messages:
+ *                      - "Consultas obtidas com sucesso."
  *          '400':
  *              description: Erro
- *
  */
 const ListarConsultas = (req, res) => {
-	
-	const { data_inicio, data_fim } = req.query;
+  const { data_inicio, data_fim } = req.query;
 
-	pool.query(
-		"SELECT * FROM listar_agendamentos_consulta(NULL, NULL, $1, $2)",
-		[data_inicio, data_fim],
-		(error, results) => {
-			if (error) {
-				res.status(400).json({
-					status: "error",
-					data: null,
-					messages: [error.message]
-				});
-				return;
-			}
-			res.status(200).json({
-				status: "success",
-				data: results.rows,
-				messages: ["Consultas obtidas com sucesso."],
-			});
-		}
-	);
-
+  pool.query("SELECT * FROM listar_agendamentos_consulta(NULL, NULL, $1, $2)", [data_inicio, data_fim], (error, results) => {
+    if (error) {
+      res.status(400).json({
+        status: "error",
+        data: null,
+        messages: [error.message],
+      });
+      return;
+    }
+    res.status(200).json({
+      status: "success",
+      data: results.rows,
+      messages: ["Consultas obtidas com sucesso."],
+    });
+  });
 };
 
 const TestSendSMS = (req, res) => {
-	const numero_telemovel = '915504516';
-	const nome = 'João';
-	const texto = `Olá ${nome}, temos novidades! \nO seu requerimento foi avaliado por um dos nossos médicos, com base nas informações fornecidas por sí. \n\nConsulte a sua área reservada para dar continuidade ao processo. \n\nComprometidos com a Verdadeira Medida da Saúde`;
+  const numero_telemovel = "915504516";
+  const nome = "João";
+  const texto = `Olá ${nome}, temos novidades! \nO seu requerimento foi avaliado por um dos nossos médicos, com base nas informações fornecidas por sí. \n\nConsulte a sua área reservada para dar continuidade ao processo. \n\nComprometidos com a Verdadeira Medida da Saúde`;
 
-	if (numero_telemovel != null) {
-		SendSMS(numero_telemovel, texto);
-	}
+  if (numero_telemovel != null) {
+    SendSMS(numero_telemovel, texto);
+  }
 
-	res.status(200).json({
-		status: "success",
-		data: null,
-		messages: ["SMS enviado com sucesso."],
-	});
-
-}
+  res.status(200).json({
+    status: "success",
+    data: null,
+    messages: ["SMS enviado com sucesso."],
+  });
+};
 
 const TestSendPDF = (req, res) => {
-	const buildPdf = require("../pdf/pdf");
+  const buildPdf = require("../pdf/pdf");
 
-	const stream = res.writeHead(200, {
-		"Content-Type": "application/pdf",
-		"Content-Disposition": "attachment; filename=requerimento.pdf",
-	});
+  const stream = res.writeHead(200, {
+    "Content-Type": "application/pdf",
+    "Content-Disposition": "attachment; filename=requerimento.pdf",
+  });
 
-	buildPdf.buildPdf(
-		(data) => {
-			stream.write(data);
-		},
-		() => {
-			stream.end();
-		}
-	);
-}
+  buildPdf.buildPdf(
+    (data) => {
+      stream.write(data);
+    },
+    () => {
+      stream.end();
+    }
+  );
+};
 
 const SendSMS = async (to, text) => {
   try {
@@ -909,22 +916,22 @@ const SendSMS = async (to, text) => {
 };
 
 module.exports = {
-	RegistarRequerimento,
-	ListarRequerimentosDataTable,
-	ListarRequerimentos,
-	VerInformacaoRequerimentoByHashedID,
-	RegistarAcesso,
-  	ListarRequerimentosUtente,
-	ListarAcessosRequerimento,
-	ValidarRequerimento,
-	InvalidarRequerimento,
-	AvaliarRequerimento,
-	HistoricoEstadosRequerimento,
-	AceitarRespostaUtente,
-	RejeitarRespostaUtente,
-	VerComunicacaoUtente,
-	AgendarConsulta,
-	ListarConsultas,
-	TestSendSMS,
-	TestSendPDF,
+  RegistarRequerimento,
+  ListarRequerimentosDataTable,
+  ListarRequerimentos,
+  VerInformacaoRequerimentoByHashedID,
+  RegistarAcesso,
+  ListarRequerimentosUtente,
+  ListarAcessosRequerimento,
+  ValidarRequerimento,
+  InvalidarRequerimento,
+  AvaliarRequerimento,
+  HistoricoEstadosRequerimento,
+  AceitarRespostaUtente,
+  RejeitarRespostaUtente,
+  VerComunicacaoUtente,
+  AgendarConsulta,
+  ListarConsultas,
+  TestSendSMS,
+  TestSendPDF,
 };

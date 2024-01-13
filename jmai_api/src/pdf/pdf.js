@@ -1,43 +1,47 @@
-const PDFDocument = require('pdfkit');
+const fs = require("fs");
+const pdf = require("html-pdf");
 
-const header = (doc) => {
-    doc.image('src/pdf/images/logo_rps.png', 10, 10, {width: 80});
-    doc.image('src/pdf/images/logo_sns.png', 100, 10, {width: 80});
-    //lOG currrent path
-    doc.fontSize(13);
-    doc.font('Helvetica-Bold');
-    doc.text('Requerimento de Atestado Médico de Incapacidade', {align: 'center'}, 40);
-    doc.font('Helvetica');
-    doc.fontSize(10);
-    doc.text('Lei n.º 14/2021 de 6 de abril e Decreto-Lei n.º 1/2022 de 3 de janeiro', {align: 'center'}, 55);
-    //FULL ALIGN RIGHT
-    doc.fontSize(10);
-    doc.text('Data: 01/01/2024', 30, 10, {align: 'right', width: 560});
-    doc.text('Nº:', 30, 25, {align: 'right', width: 480});
-    doc.text(' REQ/00001/2024', 30, 25, {align: 'right', width: 560});
+const buildPdf = (res) => {
+	let html = `
+    <html>
+    <head>
+        <title>Teste PDF</title>
+    </head>
+    <body>
+        <div class="header">
 
-    //LINE 10px down
-    doc.moveTo(10, 75).lineTo(600, 75).stroke();
-}
+            <div class="logo">
+                <img src="{{image}}" alt="Logo RPS" width="100" height="100">
 
-const footer = (doc) => {
-}
+            </div>
+    </body>
+    </html>`;
+
+    var path = require('path');
+    var image = path.join('file://', __dirname, 'images', 'logo_rps.png');
+    console.log(image);
+    html = html.replace('{{image}}', image)
+
+	// Opções para a geração do PDF
+	const options = { 
+        format: "A4",
+        orientation: "portrait",
+        border: "10mm",
+    };
 
 
-const buildPdf = (dataCallback, endCallback) => {   
-    const doc = new PDFDocument();
-    doc.on('data', dataCallback);
-    doc.on('end', endCallback);
+	pdf.create(html, options).toBuffer((err, buffer) => {
+        if (err) {
+            res.status(500).send('Erro ao gerar o PDF');
+            return;
+        }
 
-    //Cabeçalho
-    header(doc);
+        res.type('application/pdf');
+        res.send(buffer);
 
-    //Footer
-    footer(doc);
-    
-    doc.end();
-}
+    });
+};
 
 module.exports = {
-    buildPdf
+	buildPdf,
 };

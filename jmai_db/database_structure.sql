@@ -28,6 +28,7 @@ CREATE TABLE
         hashed_id varchar(255) UNIQUE
     );
 ALTER TABLE requerimento ALTER COLUMN data_criacao SET DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE requerimento ADD COLUMN motivo_rejeicao varchar(255) DEFAULT NULL;
 
 
 CREATE SEQUENCE sequencia_pais

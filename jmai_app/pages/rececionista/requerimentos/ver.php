@@ -46,64 +46,70 @@ if ($get_tab === "requerimento_tab_2") {
 
                                             <div class="flex-grow-1">
                                                 <div class="d-flex justify-content-between align-items-start flex-wrap mb-2">
-                                                    <div class="d-flex flex-column">
-                                                        <div class="d-flex align-items-center mb-2">
-                                                            <a class="text-gray-900 text-hover-primary fs-2 fw-bold me-1"><?php echo $info_requerimento["informacao_utente"]["nome"] ?></a><a class="text-gray-900 text-hover-primary fs-3 ms-2">Nº Utente:<?php echo $info_requerimento["informacao_utente"]["numero_utente"] ?></a>
+                                                    <div class="d-flex flex-column order-2 order-md-1">
+                                                        <div class="d-flex align-items-center mb-2 flex-wrap">
+                                                            <a class="text-gray-900 text-hover-primary fs-2 fw-bold me-1"><?php echo $info_requerimento["informacao_utente"]["nome"] ?></a>
+                                                            <a class="text-gray-900 text-hover-primary fs-3 ms-2">Nº Utente:<?php echo $info_requerimento["informacao_utente"]["numero_utente"] ?></a>
                                                         </div>
 
                                                         <div class="d-flex flex-wrap fw-semibold fs-6 mb-4 pe-2">
                                                             <a class="d-flex align-items-center text-gray-400 me-5 mb-2">
-                                                                <i class="ki-outline ki-sms fs-4 me-1"></i><?php echo $info_requerimento["informacao_utente"]["email_autenticacao"] ?></a>
+                                                                <i class="ki-outline ki-sms fs-4 me-1"></i><?php echo $info_requerimento["informacao_utente"]["email_autenticacao"] ?>
+                                                            </a>
                                                             <a class="d-flex align-items-center text-gray-400 me-5 mb-2">
-                                                                <i class="ki-outline ki-phone fs-4 me-1"></i><?php echo $info_requerimento["numero_telemovel"] ?></a>
+                                                                <i class="ki-outline ki-phone fs-4 me-1"></i><?php echo $info_requerimento["numero_telemovel"] ?>
+                                                            </a>
                                                             <a class="d-flex align-items-center text-gray-400 mb-2">
                                                                 <i class="ki-outline ki-information-2 fs-4 me-1"></i>
                                                                 <?php echo $info_requerimento["data_criacao"] ?>
+                                                            </a>
                                                         </div>
 
-                                                        <!-- Numero Requrimento -->
-                                                        <span class="badge badge-warning me-2"><?php echo $info_requerimento["numero_requerimento"] ?></span>
+                                                        <div>
+                                                            <!-- Numero Requrimento -->
+                                                            <span class="badge badge-warning me-2"><?php echo $info_requerimento["numero_requerimento"] ?></span>
 
-                                                        <!-- Estado Requerimento -->
-                                                        <?php if ($info_requerimento["estado"] === 0) { ?>
-                                                            <span class="badge badge-info me-2">Pendente</span>
-                                                        <?php } else if ($info_requerimento["estado"] === 1) { ?>
-                                                            <span class="badge badge-warning me-2">Aguarda Avaliação</span>
-                                                        <?php } else if ($info_requerimento["estado"] === 2) { ?>
-                                                            <span class="badge badge-light-primary me-2">Avaliado</span>
-                                                        <?php } else if ($info_requerimento["estado"] === 3) { ?>
-                                                            <span class="badge badge-primary me-2">A Agendar</span>
-                                                        <?php } else if ($info_requerimento["estado"] === 4) { ?>
-                                                            <span class="badge badge-success me-2">Agendado</span>
-                                                        <?php } else if ($info_requerimento["estado"] === 5) { ?>
-                                                            <span class="badge badge-dark me-2">Inválido</span>
-                                                        <?php } else if ($info_requerimento["estado"] === 6) { ?>
-                                                            <span class="badge badge-danger me-2">Cancelado</span>
-                                                        <?php } else { ?>
-                                                            <span class="badge badge-light-dark me-2">Sem Informação Estado</span>
-                                                        <?php } ?>
+                                                            <!-- Estado Requerimento -->
+                                                            <?php if ($info_requerimento["estado"] === 0) { ?>
+                                                                <span class="badge badge-info me-2">Pendente</span>
+                                                            <?php } else if ($info_requerimento["estado"] === 1) { ?>
+                                                                <span class="badge badge-warning me-2">Aguarda Avaliação</span>
+                                                            <?php } else if ($info_requerimento["estado"] === 2) { ?>
+                                                                <span class="badge badge-light-primary me-2">Avaliado</span>
+                                                            <?php } else if ($info_requerimento["estado"] === 3) { ?>
+                                                                <span class="badge badge-primary me-2">A Agendar</span>
+                                                            <?php } else if ($info_requerimento["estado"] === 4) { ?>
+                                                                <span class="badge badge-success me-2">Agendado</span>
+                                                            <?php } else if ($info_requerimento["estado"] === 5) { ?>
+                                                                <span class="badge badge-dark me-2">Inválido</span>
+                                                            <?php } else if ($info_requerimento["estado"] === 6) { ?>
+                                                                <span class="badge badge-danger me-2">Cancelado</span>
+                                                            <?php } else { ?>
+                                                                <span class="badge badge-light-dark me-2">Sem Informação Estado</span>
+                                                            <?php } ?>
 
-                                                        <!-- Tipo Requerimento -->
-                                                        <?php if ($info_requerimento["tipo_requerimento"] === 0) { ?>
-                                                            <span class="badge badge-primary me-2">Multiuso</span>
-                                                        <?php } else if ($info_requerimento["tipo_requerimento"] === 1) { ?>
-                                                            <span class="badge badge-primary me-2">Importação de Veículo</span>
-                                                        <?php } else { ?>
-                                                            <span class="badge badge-light-dark me-2">Sem Informação Tipo</span>
-                                                        <?php } ?>
+                                                            <!-- Tipo Requerimento -->
+                                                            <?php if ($info_requerimento["tipo_requerimento"] === 0) { ?>
+                                                                <span class="badge badge-primary me-2">Multiuso</span>
+                                                            <?php } else if ($info_requerimento["tipo_requerimento"] === 1) { ?>
+                                                                <span class="badge badge-primary me-2">Importação de Veículo</span>
+                                                            <?php } else { ?>
+                                                                <span class="badge badge-light-dark me-2">Sem Informação Tipo</span>
+                                                            <?php } ?>
 
-                                                        <!-- Primeiro / ReAvaliação Requerimento -->
-                                                        <?php if ($info_requerimento["primeira_submissao"] === 1) { ?>
-                                                            <span class="badge badge-success me-2">Primeira Submissão</span>
-                                                        <?php } else if ($info_requerimento["primeira_submissao"] === 0) { ?>
-                                                            <span class="badge badge-danger me-2">ReAvaliação -<span class="ms-1"><?php echo "Data Última Submissão: " . $info_requerimento["data_submissao_anterior"] ?></span></span>
-                                                        <?php } else { ?>
-                                                            <span class="badge badge-light-dark me-2">Sem Informação</span>
-                                                        <?php } ?>
+                                                            <!-- Primeiro / ReAvaliação Requerimento -->
+                                                            <?php if ($info_requerimento["primeira_submissao"] === 1) { ?>
+                                                                <span class="badge badge-success me-2">Primeira Submissão</span>
+                                                            <?php } else if ($info_requerimento["primeira_submissao"] === 0) { ?>
+                                                                <span class="badge badge-danger me-2">ReAvaliação -<span class="ms-1"><?php echo "Data Última Submissão: " . $info_requerimento["data_submissao_anterior"] ?></span></span>
+                                                            <?php } else { ?>
+                                                                <span class="badge badge-light-dark me-2">Sem Informação</span>
+                                                            <?php } ?>
+                                                        </div>
 
                                                     </div>
 
-                                                    <div class="d-flex my-4">
+                                                    <div class="d-flex my-0 mb-4 mb-md-0 my-md-4 order-1 order-md-2">
 
                                                         <a class="btn btn-sm btn-success me-3" onclick="acceptRequest()">Validar Requerimento</a>
                                                         <a class="btn btn-sm btn-danger me-3" onclick="rejectRequest()">Recusar Requerimento</a>
@@ -254,6 +260,13 @@ if ($get_tab === "requerimento_tab_2") {
                 title: 'Recusar Requerimento',
                 text: "Tem a certeza que pretende recusar o Requerimento?",
                 icon: 'error',
+                input: "textarea",
+                inputAttributes: {
+                    autocapitalize: "off",
+                    placeholder: "Por favor indique o motivo da recusa do requerimento...",
+                    class: "form-control",
+                    style: "outline: none; resize: none; height: 150px;box-shadow: none; border: 1px solid #d3d3d3; border-radius: 6px; padding: 10px;"
+                },
                 showCancelButton: true,
                 showConfirmButton: true,
                 confirmButtonText: 'Sim, recusar!',
@@ -289,7 +302,8 @@ if ($get_tab === "requerimento_tab_2") {
                             },
                             body: JSON.stringify({
                                 hashed_id_requerimento: "<?php echo $hashed_id_requerimento ?>",
-                                hashed_id_utilizador: "<?php echo $id_user ?>"
+                                hashed_id_utilizador: "<?php echo $id_user ?>",
+                                motivo_rejeicao: result.value
                             }),
                         })
                         .then(response => response.json())

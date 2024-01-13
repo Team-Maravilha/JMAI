@@ -18,4 +18,6 @@ router.get("/dashboard_totais", authMiddleware, controller.DashboardTotais);
 
 router.get("/dashboard_totais_por_utilizador", authMiddleware, controller.DashboardTotaisPorUtilizador);
 
+router.get("/dashboard_totais_por_utente", authMiddleware, controller.DashboardTotaisPorUtente);
+
 module.exports = router;

@@ -43,7 +43,8 @@
                                                         <th class="ps-4 fs-6 min-w-200px" data-priority="3">Email Associado</th>
                                                         <th class="ps-4 fs-6 min-w-200px" data-priority="3">Telemóvel Associado</th>
                                                         <th class="ps-4 fs-6 min-w-100px" data-priority="4">Estado</th>
-                                                        <th class="pe-4 fs-6 min-w-100px text-sm-end rounded-end" data-priority="5">Data Pedido</th>
+                                                        <th class="pe-4 fs-6 min-w-100px" data-priority="5">Data Pedido</th>
+                                                        <th class="pe-4 fs-6 min-w-100px text-sm-end rounded-end" data-priority="6">Ações</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody></tbody>
@@ -113,6 +114,9 @@
                         {
                             data: "data_criacao"
                         },
+                        {
+                            data: null
+                        }
                     ],
                     columnDefs: [{
                             targets: 0,
@@ -244,13 +248,26 @@
                             orderable: true,
                             render: (data, type, row) => {
                                 return `
-									<div class="text-sm-end me-4">                                
+									<div class="text-sm-end ">                                
 										<div class="d-flex justify-content-center flex-column">
 											<span class="text-dark fw-bold mb-1 fs-6 lh-sm">${row.data_criacao}</span>
 										</div>
 									</div>
 								`;
                             },
+                        },
+                        {
+                            targets: 6,
+                            orderable: false,
+                            render: (data, type, row) => {
+                                return `
+                                <div class="me-4 text-end">
+                                    <button type="button" class="btn btn-icon btn-bg-light btn-color-success btn-active-light-success rounded w-35px h-35px me-1" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-dismiss="click" title="Ver Comprovativo de Requerimento" data-id="${row.hashed_id}" data-name="${row.numero_requerimento}" data-datatable-action="ver-pdf-avaliacao">
+                                        <i class="fs-2 ki-duotone ki-document"><span class="path1"></span><span class="path2"></span></i>
+                                    </button>
+                                </div>
+                                `;
+                            }
                         }
                     ],
                 })
@@ -424,6 +441,101 @@
                 })
             }
 
+            var handlePreviewPDF = () => {
+                const buttons = document.querySelectorAll(`[data-datatable-action="ver-pdf-avaliacao"]`);
+                var toaster_shown_document = false;
+                $("#datatable").on("click", "[data-datatable-action='ver-pdf-avaliacao']", (e) => {
+                    e.preventDefault()
+                    const button = e.currentTarget
+                    const parent = button.closest("tr")
+                    const id = button.getAttribute("data-id")
+                    const name = button.getAttribute("data-name")
+
+                    Swal.fire({
+                        icon: "warning",
+                        title: "Ver Comprovativo - " + name,
+                        text: "Tem a certeza que deseja ver o comprovativo do requerimento - " + name + "?",
+                        showCancelButton: true,
+                        buttonsStyling: false,
+                        cancelButtonText: "Não, cancelar",
+                        confirmButtonText: "Sim, ver!",
+                        reverseButtons: true,
+                        allowOutsideClick: false,
+                        customClass: {
+                            confirmButton: "btn fw-bold btn-success",
+                            cancelButton: "btn fw-bold btn-active-light-warning",
+                        },
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+
+                            if (toaster_shown_document) {
+                                toastr.clear(toaster_shown_document);
+                                toaster_shown_document = false;
+                            }
+
+                            toaster_shown_document = toastr.info("Aguarde enquanto o documento é gerado...", "Aguarde", {
+                                timeOut: 0,
+                                extendedTimeOut: 0,
+                                closeButton: false,
+                                tapToDismiss: false,
+                                progressBar: true,
+                                onHidden: function() {
+                                    toaster_shown_document = false;
+                                }
+                            });
+
+                            const options = {
+                                method: "GET",
+                                headers: {
+                                    "Content-Type": "application/pdf",
+                                }
+                            };
+
+                            fetch(`/api/controllers/gerar_pdf_requerimento?id_requerimento=${id}`, options)
+                                .then((response) => response.blob())
+                                .then((blob) => {
+                                    var newBlob = new Blob([blob], {
+                                        type: "application/pdf"
+                                    });
+                                    const data = window.URL.createObjectURL(newBlob);
+
+                                    // Open the PDF in a new tab
+                                    //window.open(data, '_blank');
+
+                                    // Create an <iframe> element
+                                    const iframe = document.createElement('iframe');
+                                    iframe.src = data;
+                                    iframe.style.display = 'none';
+
+                                    // Append the <iframe> element to the document body
+                                    document.body.appendChild(iframe);
+
+                                    // Wait for the PDF to load in the <iframe>
+                                    iframe.onload = () => {
+                                        // Open the print dialog
+                                        iframe.contentWindow.print();
+                                        setTimeout(function() {
+                                            // For Firefox it is necessary to delay revoking the ObjectURL
+                                            URL.revokeObjectURL(data);
+                                            //document.body.removeChild(iframe);
+                                        }, 100);
+
+                                    };
+
+                                    toastr.clear(toaster_shown_document);
+
+                                })
+                                .catch((error) => {
+                                    console.error(error)
+                                })
+
+
+                        }
+                    })
+                })
+
+            }
+
             return {
                 init: () => {
                     initDatatable()
@@ -431,6 +543,7 @@
                     handleSearchDatatable()
                     handleDeleteRows()
                     handleActivateRows()
+                    handlePreviewPDF()
                 },
             }
         })()

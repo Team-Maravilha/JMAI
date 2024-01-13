@@ -228,6 +228,38 @@ const DashboardTotaisPorUtilizador = (req, res) => {
 	});
 }
 
+/**
+ * @swagger
+ * /api/graficos/dashboard_totais_por_utente:
+ *   get:
+ *     tags: [Dashboard]
+ *     summary: Total Requerimentos para Indicadores Utentes
+ *     description: Obter Dados do Total Requerimentos para Indicadores Utentes
+ *     responses:
+ *          '200':
+ *              description: Sucesso
+ *          '400':
+ *              description: Erro
+ */
+const DashboardTotaisPorUtente = (req, res) => {
+	const { id_utente } = req.query;
+	pool.query("SELECT * FROM listar_contagem_dashboard_por_utente($1)", [id_utente], (error, results) => {
+		if (error) {
+			res.status(400).json({
+				status: "error",
+				data: null,
+				messages: [error.message]
+			});
+			return;
+		}
+		res.status(200).json({
+			status: "success",
+			data: results.rows[0],
+			messages: ["Totais obtidos com sucesso"]
+		});
+	});
+}
+
 module.exports = {
 	RequerimentoPorDistrito,
 	RequerimentoPorConcelho,
@@ -235,5 +267,6 @@ module.exports = {
 	RequerimentoPorEstado,
 	RequerimentoPorMesAnual,
 	DashboardTotais,
-	DashboardTotaisPorUtilizador
+	DashboardTotaisPorUtilizador,
+	DashboardTotaisPorUtente
 };

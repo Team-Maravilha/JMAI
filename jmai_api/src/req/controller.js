@@ -1,6 +1,7 @@
 const { parse } = require("dotenv");
 const pool = require("../../db");
 const SendEmail = require("../send_email/send_email");
+const { buildPdf } = require("../pdf/pdf");
 const axios = require("axios").default;
 // Definir as tags da Documentação
 /**
@@ -306,9 +307,8 @@ const ValidarRequerimento = (req, res) => {
  *
  */
 const InvalidarRequerimento = (req, res) => {
-  const { hashed_id_requerimento, hashed_id_utilizador } = req.body;
-
-  pool.query("SELECT * FROM alterar_estado_requerimento($1, $2, $3)", [hashed_id_requerimento, hashed_id_utilizador, 5], (error, results) => {
+  const { hashed_id_requerimento, hashed_id_utilizador, motivo_rejeicao } = req.body;
+  pool.query("SELECT * FROM rejeitar_requerimento($1, $2, $3)", [hashed_id_requerimento, hashed_id_utilizador, motivo_rejeicao], (error, results) => {
     if (error) {
       res.status(400).json({
         status: "error",
@@ -317,9 +317,103 @@ const InvalidarRequerimento = (req, res) => {
       });
       return;
     }
+
+	const nome = results.rows[0].nome;
+	const email_to = results.rows[0].email_preferencial;
+	const email_subjet = "JMAI | Requerimento Recusado";
+	const email_text = "O seu requerimento foi recusado";
+	const email_html = `
+			<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,400,500,600,700">
+			<link href="https://preview.keenthemes.com/metronic8/demo1/assets/plugins/global/plugins.bundle.css" rel="stylesheet" type="text/css">
+			<link href="https://preview.keenthemes.com/metronic8/demo1/assets/css/style.bundle.css" rel="stylesheet" type="text/css">
+			<style>
+				html,
+				body {
+					padding: 0;
+					margin: 0;
+					font-family: Inter, Helvetica, "sans-serif";
+				}
+			
+				a {
+					color: #009ef7;
+					text-decoration: none;
+				}
+			
+				a:hover {
+					color: #009ef7;
+				}
+			</style>
+			<div id="#kt_app_body_content" style="background-color:#D5D9E2; font-family:Arial,Helvetica,sans-serif; line-height: 1.5; min-height: 100%; font-weight: normal; font-size: 15px; color: #2F3044; margin:0; padding:0; padding-top: 40px; padding-bottom: 40px; width:100%;">
+				<div style="background-color:#ffffff; padding: 45px 0 34px 0; border-radius: 24px; margin:auto; max-width: 600px;">
+					<table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" height="auto" style="border-collapse:collapse">
+						<tbody>
+							<tr>
+								<td align="center" valign="center" style="text-align:center; padding-bottom: 0px">
+			
+									<!--begin:Email content-->
+									<div style="text-align:center; margin:0 15px 34px 15px">
+										<!--begin:Logo-->
+										<div style="margin-bottom: 10px">
+											<a href="" rel="noopener" target="_blank">
+												<img alt="Logo" src="https://firebasestorage.googleapis.com/v0/b/jmai-docs.appspot.com/o/imagens_templates_email%2Flogo.png?alt=media&token=108e658e-4147-49ad-a362-a5f4fbc6caec" style="height: 35px">
+											</a>
+										</div>
+										<!--end:Logo-->
+			
+										<!--begin:Media-->
+										<div style="margin-bottom: 15px">
+											<img alt="Logo" src="https://firebasestorage.googleapis.com/v0/b/jmai-docs.appspot.com/o/imagens_templates_email%2F17.png?alt=media&token=054a999a-71e6-41a0-94bd-a55d28f5447e" width="150px">
+										</div>
+										<!--end:Media-->
+			
+										<!--begin:Text-->
+										<div style="font-size: 14px; font-weight: 500; margin-bottom: 27px; font-family:Arial,Helvetica,sans-serif;">
+											<p style="margin-bottom:9px; color:#181C32; font-size: 22px; font-weight:700">Olá ${nome}, temos novidades não tão boas.</p>
+											<p style="margin-bottom:2px; color:#7E8299">O seu requerimento foi recusado.</p>
+											<p style="margin-bottom:2px; color:#7E8299">Aqui está o motivo:</p>
+											<p style="margin-bottom:2px; color:#7E8299">${motivo_rejeicao}</p>
+										</div>
+										<!--end:Text-->
+			
+										<!--begin:Action-->
+										<a href="http://jmai.localhost/" target="_blank" style="background-color:#49beb7; border-radius:6px;display:inline-block; padding:11px 19px; color: #FFFFFF; font-size: 14px; font-weight:500;">
+											Verificar
+										</a>
+										<!--begin:Action-->
+									</div>
+									<!--end:Email content-->
+								</td>
+							</tr>
+							<!--begin:Footer-->
+							<tr>
+								<td align="center" valign="center" style="text-align:center; padding-bottom: 10px">
+									<div style="text-align:center; margin:0 15px 34px 15px">
+										<div style="font-size: 14px; font-weight: 500; margin-bottom: 27px; font-family:Arial,Helvetica,sans-serif;">
+											<p style="margin-bottom:2px; color:#7E8299">Pedimos desculpa pelo incómodo.</p>
+											<p style="margin-bottom:2px; color:#7E8299">Se tiver alguma dúvida, entre em contacto connosco.</p>
+											<p style="margin-bottom:2px; color:#7E8299">Equipa JMAI</p>
+										</div>
+									</div>
+								</td>
+							</tr>
+							<tr>
+								<td align="center" valign="center" style="text-align:center">
+									<a href="#"><img alt="Logo" src="https://firebasestorage.googleapis.com/v0/b/jmai-docs.appspot.com/o/imagens_templates_email%2Frodape.png?alt=media&token=c3a94df4-e26d-4ad7-9f7b-96ae03f0e542" height="50px"></a>
+								</td>
+							</tr>
+			
+						</tbody>
+					</table>
+				</div>
+			</div>
+	`;
+	if (email_to != null) {
+		SendEmail(email_to, email_subjet, email_text, email_html);
+	}
+
     res.status(201).json({
       status: "success",
-      data: results.rows[0],
+      data: null,
       messages: ["Requerimento recusado com Sucesso!"],
     });
   });
@@ -746,22 +840,122 @@ const VerComunicacaoUtente = (req, res) => {
  *
  */
 const AgendarConsulta = (req, res) => {
-  const { hashed_id_requerimento, hashed_id_utilizador, data_agendamento, hora_agendamento, hashed_id_equipa_medica } = req.body;
-  pool.query("SELECT * FROM  agendar_consulta_requerimento($1, $2, $3, $4, $5)", [hashed_id_requerimento, hashed_id_utilizador, data_agendamento, hora_agendamento, hashed_id_equipa_medica], (error, results) => {
-    if (error) {
-      res.status(400).json({
-        status: "error",
-        data: null,
-        messages: [error.message],
-      });
-      return;
-    }
-    res.status(201).json({
-      status: "success",
-      data: results.rows[0],
-      messages: ["Consulta agendada com sucesso."],
-    });
-  });
+	const { hashed_id_requerimento, hashed_id_utilizador, data_agendamento, hora_agendamento, hashed_id_equipa_medica } = req.body;
+	pool.query(
+		"SELECT * FROM  agendar_consulta_requerimento($1, $2, $3, $4, $5)",
+		[hashed_id_requerimento, hashed_id_utilizador, data_agendamento, hora_agendamento, hashed_id_equipa_medica],
+		(error, results) => {
+			if (error) {
+				res.status(400).json({
+					status: "error",
+					data: null,
+					messages: [error.message]
+				});
+				return;
+			}
+
+			const nome = results.rows[0].nome;
+			const email_to = results.rows[0].email_preferencial;
+			const email_subjet = "JMAI | Consulta Agendada";
+			const email_text = "A sua consulta foi agendada com sucesso";
+			const email_html = `
+					<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,400,500,600,700">
+					<link href="https://preview.keenthemes.com/metronic8/demo1/assets/plugins/global/plugins.bundle.css" rel="stylesheet" type="text/css">
+					<link href="https://preview.keenthemes.com/metronic8/demo1/assets/css/style.bundle.css" rel="stylesheet" type="text/css">
+					<style>
+						html,
+						body {
+							padding: 0;
+							margin: 0;
+							font-family: Inter, Helvetica, "sans-serif";
+						}
+
+						a {
+							color: #009ef7;
+							text-decoration: none;
+						}
+
+						a:hover {
+							color: #009ef7;
+						}
+					</style>
+					<div id="#kt_app_body_content" style="background-color:#D5D9E2; font-family:Arial,Helvetica,sans-serif; line-height: 1.5; min-height: 100%; font-weight: normal; font-size: 15px; color: #2F3044; margin:0; padding:0; padding-top: 40px; padding-bottom: 40px; width:100%;">
+						<div style="background-color:#ffffff; padding: 45px 0 34px 0; border-radius: 24px; margin:auto; max-width: 600px;">
+							<table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" height="auto" style="border-collapse:collapse">
+								<tbody>
+									<tr>
+										<td align="center" valign="center" style="text-align:center; padding-bottom: 10px">
+
+											<!--begin:Email content-->
+											<div style="text-align:center; margin:0 15px 34px 15px">
+												<!--begin:Logo-->
+												<div style="margin-bottom: 10px">
+													<a href="" rel="noopener" target="_blank">
+														<img alt="Logo" src="https://firebasestorage.googleapis.com/v0/b/jmai-docs.appspot.com/o/imagens_templates_email%2Flogo.png?alt=media&token=108e658e-4147-49ad-a362-a5f4fbc6caec" style="height: 35px">
+													</a>
+												</div>
+												<!--end:Logo-->
+
+												<!--begin:Media-->
+												<div style="margin-bottom: 15px">
+													<img alt="Logo" src="https://firebasestorage.googleapis.com/v0/b/jmai-docs.appspot.com/o/imagens_templates_email%2F17.png?alt=media&token=054a999a-71e6-41a0-94bd-a55d28f5447e" width="150px">
+												</div>
+												<!--end:Media-->
+
+												<!--begin:Text-->
+												<div style="font-size: 14px; font-weight: 500; margin-bottom: 27px; font-family:Arial,Helvetica,sans-serif;">
+													<p style="margin-bottom:9px; color:#181C32; font-size: 22px; font-weight:700">Olá ${nome}, temos novidades!</p>
+													<p style="margin-bottom:2px; color:#7E8299">A sua consulta foi agendada com sucesso.</p>
+													<p style="margin-bottom:2px; color:#7E8299">Agora, basta comparecer no dia ${data_agendamento} pelas ${hora_agendamento} no local indicado.</p>
+													<p style="margin-bottom:2px; color:#7E8299">Não se esqueça de levar o seu documento de identificação, bem como os exames e relatórios médicos que possuir.</p>
+												</div>
+												<!--end:Text-->
+
+												<!--begin:Action-->
+												<a href="http://jmai.localhost/" target="_blank" style="background-color:#49beb7; border-radius:6px;display:inline-block; padding:11px 19px; color: #FFFFFF; font-size: 14px; font-weight:500;">
+													Verificar
+												</a>
+												<!--begin:Action-->
+											</div>
+											<!--end:Email content-->
+										</td>
+									</tr>
+
+									<!--begin:Footer-->
+									<tr>
+										<td align="center" valign="center" style="text-align:center; padding-bottom: 10px">
+											<div style="text-align:center; margin:0 15px 34px 15px">
+												<div style="font-size: 14px; font-weight: 500; margin-bottom: 27px; font-family:Arial,Helvetica,sans-serif;">
+													<p style="margin-bottom:2px; color:#7E8299">Pedimos desculpa pelo incómodo.</p>
+													<p style="margin-bottom:2px; color:#7E8299">Se tiver alguma dúvida, entre em contacto connosco.</p>
+													<p style="margin-bottom:2px; color:#7E8299">Equipa JMAI</p>
+												</div>
+											</div>
+										</td>
+									</tr>
+
+									<tr>
+										<td align="center" valign="center" style="text-align:center">
+											<a href="#"><img alt="Logo" src="https://firebasestorage.googleapis.com/v0/b/jmai-docs.appspot.com/o/imagens_templates_email%2Frodape.png?alt=media&token=c3a94df4-e26d-4ad7-9f7b-96ae03f0e542" height="50px"></a>
+										</td>
+									</tr>
+
+								</tbody>
+							</table>
+						</div>
+					</div>
+			`;
+			if (email_to != null) {
+				SendEmail(email_to, email_subjet, email_text, email_html);
+			}
+
+			res.status(201).json({
+				status: "success",
+				data: results.rows[0],
+				messages: ["Consulta agendada com sucesso."],
+			});
+		}
+	);
 };
 
 /**
@@ -868,22 +1062,10 @@ const TestSendSMS = (req, res) => {
 };
 
 const TestSendPDF = (req, res) => {
-  const buildPdf = require("../pdf/pdf");
+	
+	buildPdf(res);
 
-  const stream = res.writeHead(200, {
-    "Content-Type": "application/pdf",
-    "Content-Disposition": "attachment; filename=requerimento.pdf",
-  });
-
-  buildPdf.buildPdf(
-    (data) => {
-      stream.write(data);
-    },
-    () => {
-      stream.end();
-    }
-  );
-};
+}
 
 const SendSMS = async (to, text) => {
   try {

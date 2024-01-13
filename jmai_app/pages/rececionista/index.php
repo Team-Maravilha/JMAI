@@ -21,7 +21,7 @@ $page_name = "O Meu Espaço"
 
                                 <div class="row">
 
-                                    <div class="col-xl-8 mb-xl-10">
+                                    <div class="col-xl-8 mb-10">
                                         <div class="card card-flush h-xl-100">
                                             <div class="card-header rounded bgi-no-repeat bgi-size-cover bgi-position-y-top bgi-position-x-center align-items-start h-250px" style="background-image:url('<?php echo $link_home ?>assets/media/svg/shapes/abstract-2.svg')" data-bs-theme="light">
                                                 <!--begin::Title-->
@@ -37,7 +37,7 @@ $page_name = "O Meu Espaço"
                                                 <div class="mt-n20 position-relative">
                                                     <div class="row g-3 g-lg-6">
 
-                                                        <div class="col-4">
+                                                        <div class="col-12 col-sm-4">
                                                             <a href="requerimentos/lista">
                                                                 <div class="bg-gray-100 bg-opacity-70 rounded-2 px-6 py-5">
                                                                     <div class="symbol symbol-30px me-5 mb-8">
@@ -52,7 +52,7 @@ $page_name = "O Meu Espaço"
                                                             </a>
                                                         </div>
 
-                                                        <div class="col-4">
+                                                        <div class="col-12 col-sm-4">
                                                             <a href="agendar_requerimentos/lista">
                                                                 <div class="bg-gray-100 bg-opacity-70 rounded-2 px-6 py-5">
                                                                     <div class="symbol symbol-30px me-5 mb-8">
@@ -73,7 +73,7 @@ $page_name = "O Meu Espaço"
                                         </div>
                                     </div>
 
-                                    <div class="col-xl-4 mb-xl-10">
+                                    <div class="col-xl-4 mb-10">
                                         <div class="card background-blue h-md-100" data-bs-theme="light">
                                             <div class="card-body d-flex flex-column pt-13 pb-14">
                                                 <div class="m-0">
@@ -91,7 +91,7 @@ $page_name = "O Meu Espaço"
 
                                 <div class="row">
 
-                                    <div class="col-sm-6 col-xl-3 mb-xl-10">
+                                    <div class="col-sm-6 col-xl-3 mb-10">
                                         <div class="card h-lg-100">
                                             <div class="card-body d-flex justify-content-between align-items-start flex-column">
                                                 <div class="m-0">
@@ -107,7 +107,7 @@ $page_name = "O Meu Espaço"
                                         </div>
                                     </div>
 
-                                    <div class="col-sm-6 col-xl-3 mb-xl-10">
+                                    <div class="col-sm-6 col-xl-3 mb-10">
                                         <div class="card h-lg-100">
                                             <div class="card-body d-flex justify-content-between align-items-start flex-column">
                                                 <div class="m-0">
@@ -123,7 +123,7 @@ $page_name = "O Meu Espaço"
                                         </div>
                                     </div>
 
-                                    <div class="col-sm-6 col-xl-3 mb-xl-10">
+                                    <div class="col-sm-6 col-xl-3 mb-10">
                                         <div class="card h-lg-100">
                                             <div class="card-body d-flex justify-content-between align-items-start flex-column">
                                                 <div class="m-0">
@@ -139,7 +139,7 @@ $page_name = "O Meu Espaço"
                                         </div>
                                     </div>
 
-                                    <div class="col-sm-6 col-xl-3 mb-xl-10">
+                                    <div class="col-sm-6 col-xl-3 mb-10">
                                         <div class="card h-lg-100">
                                             <div class="card-body d-flex justify-content-between align-items-start flex-column">
                                                 <div class="m-0">

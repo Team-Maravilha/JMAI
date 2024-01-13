@@ -1,8 +1,8 @@
 <div id="kt_app_header" class="app-header justify-content-center">
     <div class="app-container container-xxl d-flex align-items-stretch justify-content-between" id="kt_app_header_container">
         <div class="d-flex align-items-center d-lg-none ms-n2 me-2" title="Show sidebar menu">
-            <div class="btn btn-icon btn-color-white btn-active-color-primary w-35px h-35px" id="kt_app_sidebar_mobile_toggle">
-                <i class="ki-duotone ki-abstract-14 fs-2">
+            <div class="btn btn-icon btn-color-white btn-active-color-secondary w-35px h-35px" id="kt_app_header_menu_toggle">
+                <i class="ki-duotone ki-abstract-14 fs-1">
                     <span class="path1"></span>
                     <span class="path2"></span>
                 </i>
@@ -12,7 +12,7 @@
         <div class="d-flex align-items-center flex-grow-1 flex-lg-grow-0 me-5 me-lg-0">
             <a>
                 <img alt="Logo" src="<?php echo $link_home ?>assets/media/uploads/logos/logo-white.svg" class="d-none d-sm-block mw-175px" />
-                <img alt="Logo" src="<?php echo $link_home ?>assets/media/uploads/logos/logo-white.svg" class="d-block d-sm-none mw-75px" />
+                <img alt="Logo" src="<?php echo $link_home ?>assets/media/uploads/logos/logo-white.svg" class="d-block d-sm-none mw-125px" />
             </a>
         </div>
         <!--end::Logo-->
@@ -22,34 +22,33 @@
                 <div class="app-header-menu app-header-mobile-drawer align-items-stretch" data-kt-drawer="true" data-kt-drawer-name="app-header-menu" data-kt-drawer-activate="{default: true, lg: false}" data-kt-drawer-overlay="true" data-kt-drawer-width="250px" data-kt-drawer-direction="start" data-kt-drawer-toggle="#kt_app_header_menu_toggle" data-kt-swapper="true" data-kt-swapper-mode="{default: 'append', lg: 'prepend'}" data-kt-swapper-parent="{default: '#kt_app_body', lg: '#kt_app_header_wrapper'}">
                     <div class="menu menu-rounded menu-active-bg menu-state-primary menu-column menu-lg-row menu-title-gray-700 menu-icon-gray-500 menu-arrow-gray-500 menu-bullet-gray-500 my-5 my-lg-0 align-items-stretch fw-semibold px-2 px-lg-0" id="kt_app_header_menu" data-kt-menu="true">
 
-                        <div class="menu-item here menu-lg-down-accordion menu-sub-lg-down-indention me-0 me-lg-2">
+                        <img alt="Logo" src="<?php echo $link_home ?>assets/media/uploads/logos/logo.svg" class="d-block d-lg-none mw-200px ms-3 my-10" />
+
+                        <div class="menu-item menu-lg-down-accordion menu-sub-lg-down-indention me-0 me-lg-2">
                             <span class="menu-link">
                                 <a href="<?php echo $link_home ?>pages/admin/">
                                     <span class="menu-title">Início</span>
-                                    <span class="menu-arrow d-lg-none"></span>
                                 </a>
                             </span>
                         </div>
 
-                        <div class="menu-item here menu-lg-down-accordion menu-sub-lg-down-indention me-0 me-lg-2">
+                        <div class="menu-item menu-lg-down-accordion menu-sub-lg-down-indention me-0 me-lg-2">
                             <span class="menu-link">
                                 <a href="<?php echo $link_home ?>pages/admin/requerimentos/lista">
                                     <span class="menu-title">Requerimentos</span>
-                                    <span class="menu-arrow d-lg-none"></span>
                                 </a>
                             </span>
                         </div>
 
-                        <div class="menu-item here menu-lg-down-accordion menu-sub-lg-down-indention me-0 me-lg-2">
+                        <div class="menu-item menu-lg-down-accordion menu-sub-lg-down-indention me-0 me-lg-2">
                             <span class="menu-link">
                                 <a href="<?php echo $link_home ?>pages/admin/utentes/lista">
                                     <span class="menu-title">Utentes</span>
-                                    <span class="menu-arrow d-lg-none"></span>
                                 </a>
                             </span>
                         </div>
 
-                        <div data-kt-menu-trigger="{default: 'click', lg: 'hover'}" data-kt-menu-placement="bottom-start" class="menu-item here show menu-here-bg menu-lg-down-accordion me-0 me-lg-2">
+                        <div data-kt-menu-trigger="{default: 'click', lg: 'hover'}" data-kt-menu-placement="bottom-start" class="menu-item menu-here-bg menu-lg-down-accordion me-0 me-lg-2">
                             <span class="menu-link">
                                 <span class="menu-title">Parametrizações</span>
                                 <span class="menu-arrow d-lg-none"></span>
@@ -134,20 +133,20 @@
                 <div class="app-header-menu app-header-mobile-drawer align-items-stretch" data-kt-drawer="true" data-kt-drawer-name="app-header-menu" data-kt-drawer-activate="{default: true, lg: false}" data-kt-drawer-overlay="true" data-kt-drawer-width="250px" data-kt-drawer-direction="start" data-kt-drawer-toggle="#kt_app_header_menu_toggle" data-kt-swapper="true" data-kt-swapper-mode="{default: 'append', lg: 'prepend'}" data-kt-swapper-parent="{default: '#kt_app_body', lg: '#kt_app_header_wrapper'}">
                     <div class="menu menu-rounded menu-active-bg menu-state-primary menu-column menu-lg-row menu-title-gray-700 menu-icon-gray-500 menu-arrow-gray-500 menu-bullet-gray-500 my-5 my-lg-0 align-items-stretch fw-semibold px-2 px-lg-0" id="kt_app_header_menu" data-kt-menu="true">
 
-                        <div class="menu-item here menu-lg-down-accordion menu-sub-lg-down-indention me-0 me-lg-2">
+                        <img alt="Logo" src="<?php echo $link_home ?>assets/media/uploads/logos/logo.svg" class="d-block d-lg-none mw-200px ms-3 my-10" />
+
+                        <div class="menu-item menu-lg-down-accordion menu-sub-lg-down-indention me-0 me-lg-2">
                             <span class="menu-link">
                                 <a href="<?php echo $link_home ?>pages/medico/">
                                     <span class="menu-title">Início</span>
-                                    <span class="menu-arrow d-lg-none"></span>
                                 </a>
                             </span>
                         </div>
 
-                        <div class="menu-item here menu-lg-down-accordion menu-sub-lg-down-indention me-0 me-lg-2">
+                        <div class="menu-item menu-lg-down-accordion menu-sub-lg-down-indention me-0 me-lg-2">
                             <span class="menu-link">
                                 <a href="<?php echo $link_home ?>pages/medico/requerimentos/lista">
                                     <span class="menu-title">Requerimentos</span>
-                                    <span class="menu-arrow d-lg-none"></span>
                                 </a>
                             </span>
                         </div>
@@ -159,29 +158,28 @@
                 <div class="app-header-menu app-header-mobile-drawer align-items-stretch" data-kt-drawer="true" data-kt-drawer-name="app-header-menu" data-kt-drawer-activate="{default: true, lg: false}" data-kt-drawer-overlay="true" data-kt-drawer-width="250px" data-kt-drawer-direction="start" data-kt-drawer-toggle="#kt_app_header_menu_toggle" data-kt-swapper="true" data-kt-swapper-mode="{default: 'append', lg: 'prepend'}" data-kt-swapper-parent="{default: '#kt_app_body', lg: '#kt_app_header_wrapper'}">
                     <div class="menu menu-rounded menu-active-bg menu-state-primary menu-column menu-lg-row menu-title-gray-700 menu-icon-gray-500 menu-arrow-gray-500 menu-bullet-gray-500 my-5 my-lg-0 align-items-stretch fw-semibold px-2 px-lg-0" id="kt_app_header_menu" data-kt-menu="true">
 
-                        <div class="menu-item here menu-lg-down-accordion menu-sub-lg-down-indention me-0 me-lg-2">
+                        <img alt="Logo" src="<?php echo $link_home ?>assets/media/uploads/logos/logo.svg" class="d-block d-lg-none mw-200px ms-3 my-10" />
+
+                        <div class="menu-item menu-lg-down-accordion menu-sub-lg-down-indention me-0 me-lg-2">
                             <span class="menu-link">
                                 <a href="<?php echo $link_home ?>pages/rececionista/">
                                     <span class="menu-title">Início</span>
-                                    <span class="menu-arrow d-lg-none"></span>
                                 </a>
                             </span>
                         </div>
 
-                        <div class="menu-item here menu-lg-down-accordion menu-sub-lg-down-indention me-0 me-lg-2">
+                        <div class="menu-item menu-lg-down-accordion menu-sub-lg-down-indention me-0 me-lg-2">
                             <span class="menu-link">
                                 <a href="<?php echo $link_home ?>pages/rececionista/requerimentos/lista">
                                     <span class="menu-title">Validar Requerimentos</span>
-                                    <span class="menu-arrow d-lg-none"></span>
                                 </a>
                             </span>
                         </div>
 
-                        <div class="menu-item here menu-lg-down-accordion menu-sub-lg-down-indention me-0 me-lg-2">
+                        <div class="menu-item menu-lg-down-accordion menu-sub-lg-down-indention me-0 me-lg-2">
                             <span class="menu-link">
                                 <a href="<?php echo $link_home ?>pages/rececionista/agendar_requerimentos/lista">
                                     <span class="menu-title">Agendar Junta Médica</span>
-                                    <span class="menu-arrow d-lg-none"></span>
                                 </a>
                             </span>
                         </div>
@@ -193,17 +191,18 @@
                 <div class="app-header-menu app-header-mobile-drawer align-items-stretch" data-kt-drawer="true" data-kt-drawer-name="app-header-menu" data-kt-drawer-activate="{default: true, lg: false}" data-kt-drawer-overlay="true" data-kt-drawer-width="250px" data-kt-drawer-direction="start" data-kt-drawer-toggle="#kt_app_header_menu_toggle" data-kt-swapper="true" data-kt-swapper-mode="{default: 'append', lg: 'prepend'}" data-kt-swapper-parent="{default: '#kt_app_body', lg: '#kt_app_header_wrapper'}">
                     <div class="menu menu-rounded menu-active-bg menu-state-primary menu-column menu-lg-row menu-title-gray-700 menu-icon-gray-500 menu-arrow-gray-500 menu-bullet-gray-500 my-5 my-lg-0 align-items-stretch fw-semibold px-2 px-lg-0" id="kt_app_header_menu" data-kt-menu="true">
 
-                        <div class="menu-item here menu-lg-down-accordion menu-sub-lg-down-indention me-0 me-lg-2">
+                        <img alt="Logo" src="<?php echo $link_home ?>assets/media/uploads/logos/logo.svg" class="d-block d-lg-none mw-200px ms-3 my-10" />
+
+                        <div class="menu-item menu-lg-down-accordion menu-sub-lg-down-indention me-0 me-lg-2">
                             <span class="menu-link">
                                 <a href="<?php echo $link_home ?>pages/utente/">
                                     <span class="menu-title">Início</span>
-                                    <span class="menu-arrow d-lg-none"></span>
                                 </a>
                             </span>
                         </div>
 
-                        <div data-kt-menu-trigger="{default: 'click', lg: 'hover'}" data-kt-menu-placement="bottom-start" class="menu-item here show menu-here-bg menu-lg-down-accordion me-0 me-lg-2">
-                            <span class="menu-link">
+                        <div data-kt-menu-trigger="{default: 'click', lg: 'hover'}" data-kt-menu-placement="bottom-start" class="menu-item menu-here-bg menu-lg-down-accordion me-0 me-lg-2">
+                            <span class="fs-sm-3 menu-link">
                                 <span class="menu-title">Requerimentos</span>
                                 <span class="menu-arrow d-lg-none"></span>
                             </span>
@@ -251,11 +250,10 @@
                             </div>
                         </div>
 
-                        <div class="menu-item here menu-lg-down-accordion menu-sub-lg-down-indention me-0 me-lg-2">
+                        <div class="menu-item menu-lg-down-accordion menu-sub-lg-down-indention me-0 me-lg-2">
                             <span class="menu-link">
                                 <a href="<?php echo $link_home ?>pages/utente/notificacoes/lista">
                                     <span class="menu-title">Notificações</span>
-                                    <span class="menu-arrow d-lg-none"></span>
                                 </a>
                             </span>
                         </div>
@@ -266,6 +264,7 @@
             <?php } ?>
 
             <div class="app-navbar flex-shrink-0">
+
                 <div class="app-navbar-item ms-5" id="kt_header_user_menu_toggle">
                     <div class="cursor-pointer symbol symbol-35px symbol-md-40px" data-kt-menu-trigger="{default: 'click', lg: 'hover'}" data-kt-menu-attach="parent" data-kt-menu-placement="bottom-end">
                         <img class="symbol symbol-35px symbol-md-40px" src="<?php echo $default_avatar ?>" alt="user" />
@@ -292,16 +291,6 @@
                         <div class="menu-item px-5">
                             <a href="<?php echo $link_home ?>pages/auth/logout" class="menu-link px-5">Terminar Sessão</a>
                         </div>
-                    </div>
-                </div>
-                <div class="app-navbar-item d-lg-none ms-2 me-n2" title="Show header menu">
-                    <div class="btn btn-icon btn-color-white btn-active-color-primary w-30px h-30px w-md-35px h-md-35px" id="kt_app_header_menu_toggle">
-                        <i class="ki-duotone ki-text-align-left fs-2 fs-md-1 fw-bold">
-                            <span class="path1"></span>
-                            <span class="path2"></span>
-                            <span class="path3"></span>
-                            <span class="path4"></span>
-                        </i>
                     </div>
                 </div>
             </div>

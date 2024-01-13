@@ -339,6 +339,14 @@
                             render: (data, type, row) => {
                                 return `
 									<div>
+                                        ${
+                                            row.estado >= 2 && row.estado <= 4 ?
+                                            `
+                                                <button type="button" class="btn btn-icon btn-bg-light btn-color-success btn-active-light-success rounded w-35px h-35px me-1" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-dismiss="click" title="Ver Avaliação" data-id="${row.hashed_id}" data-name="${row.numero_requerimento}" data-datatable-action="ver-pdf-avaliacao">
+                                                    <i class="fs-2 ki-duotone ki-document"><span class="path1"></span><span class="path2"></span></i>
+                                                </button>
+                                            ` : ``
+                                        }
 										<a href="ver?id=${row.hashed_id}" class="btn btn-icon btn-bg-light btn-color-info btn-active-light-info rounded w-35px h-35px me-1"><i class="ki-outline ki-information-2 fs-2"></i></a>
 									</div>
 								`
@@ -516,6 +524,101 @@
                 })
             }
 
+            var handlePreviewPDF = () => {
+                const buttons = document.querySelectorAll(`[data-datatable-action="ver-pdf-avaliacao"]`);
+                var toaster_shown_document = false;
+                $("#datatable").on("click", "[data-datatable-action='ver-pdf-avaliacao']", (e) => {
+                    e.preventDefault()
+                    const button = e.currentTarget
+                    const parent = button.closest("tr")
+                    const id = button.getAttribute("data-id")
+                    const name = button.getAttribute("data-name")
+
+                    Swal.fire({
+                        icon: "warning",
+                        title: "Ver Avaliação - " + name,
+                        text: "Tem a certeza que deseja ver a avaliação do requerimento - " + name + "?",
+                        showCancelButton: true,
+                        buttonsStyling: false,
+                        cancelButtonText: "Não, cancelar",
+                        confirmButtonText: "Sim, ver!",
+                        reverseButtons: true,
+                        allowOutsideClick: false,
+                        customClass: {
+                            confirmButton: "btn fw-bold btn-success",
+                            cancelButton: "btn fw-bold btn-active-light-warning",
+                        },
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+
+                            if (toaster_shown_document) {
+                                toastr.clear(toaster_shown_document);
+                                toaster_shown_document = false;
+                            }
+
+                            toaster_shown_document = toastr.info("Aguarde enquanto o documento é gerado...", "Aguarde", {
+                                timeOut: 0,
+                                extendedTimeOut: 0,
+                                closeButton: false,
+                                tapToDismiss: false,
+                                progressBar: true,
+                                onHidden: function() {
+                                    toaster_shown_document = false;
+                                }
+                            });
+
+                            const options = {
+                                method: "GET",
+                                headers: {
+                                    "Content-Type": "application/pdf",
+                                }
+                            };
+
+                            fetch(`/api/controllers/gerar_pdf_avaliacao?id_requerimento=${id}`, options)
+                                .then((response) => response.blob())
+                                .then((blob) => {
+                                    var newBlob = new Blob([blob], {
+                                        type: "application/pdf"
+                                    });
+                                    const data = window.URL.createObjectURL(newBlob);
+
+                                    // Open the PDF in a new tab
+                                    //window.open(data, '_blank');
+
+                                    // Create an <iframe> element
+                                    const iframe = document.createElement('iframe');
+                                    iframe.src = data;
+                                    iframe.style.display = 'none';
+
+                                    // Append the <iframe> element to the document body
+                                    document.body.appendChild(iframe);
+
+                                    // Wait for the PDF to load in the <iframe>
+                                    iframe.onload = () => {
+                                        // Open the print dialog
+                                        iframe.contentWindow.print();
+                                        setTimeout(function() {
+                                            // For Firefox it is necessary to delay revoking the ObjectURL
+                                            URL.revokeObjectURL(data);
+                                            //document.body.removeChild(iframe);
+                                        }, 100);
+
+                                    };
+
+                                    toastr.clear(toaster_shown_document);
+
+                                })
+                                .catch((error) => {
+                                    console.error(error)
+                                })
+
+
+                        }
+                    })
+                })
+
+            }
+
             var handleFilterDatatable = () => {
                 const filterButton = document.querySelector(`[data-datatable-action="filter"]`);
 
@@ -531,6 +634,7 @@
                     handleSearchDatatable()
                     handleDeleteRows()
                     handleActivateRows()
+                    handlePreviewPDF()
                     handleFilterDatatable()
                 },
             }

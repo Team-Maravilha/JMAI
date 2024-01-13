@@ -865,6 +865,79 @@ $$ LANGUAGE plpgsql;
 
 
 /**
+    * Esta função permite rejeitar um requerimento.
+    * @param {String} hashed_id_requerimento_param - O identificador do requerimento a ser obtido.
+    * @param {String} hashed_id_utilizador_param - O identificador do utilizador a ser obtido.
+    * @param {String} motivo_rejeicao_param - O motivo de rejeição a ser obtido.
+    * @returns {Boolean} True se o requerimento for rejeitado, false caso contrário.
+*/
+CREATE OR REPLACE FUNCTION rejeitar_requerimento(
+    hashed_id_requerimento_param varchar(255),
+    hashed_id_utilizador_param varchar(255),
+    motivo_rejeicao_param varchar(255)
+)
+RETURNS TABLE (
+    nome varchar(255),
+    email_preferencial varchar(255)
+) AS $$
+DECLARE
+    id_requerimento_aux integer;
+    id_utilizador_aux integer;
+    estado_aux integer;
+    email_preferencial_aux VARCHAR(255);
+    nome_aux VARCHAR(255);
+BEGIN
+
+    IF hashed_id_requerimento_param IS NULL OR hashed_id_requerimento_param = '' THEN
+        RAISE EXCEPTION 'O identificador do requerimento não é válido.';
+    ELSIF NOT EXISTS(SELECT * FROM requerimento WHERE requerimento.hashed_id = hashed_id_requerimento_param) THEN
+        RAISE EXCEPTION 'Ocorreu um erro ao verificar o requerimento.';
+    ELSE
+        SELECT requerimento.id_requerimento INTO id_requerimento_aux FROM requerimento WHERE requerimento.hashed_id = hashed_id_requerimento_param;
+    END IF;
+
+    IF hashed_id_utilizador_param IS NULL OR hashed_id_utilizador_param = '' THEN
+        RAISE EXCEPTION 'O identificador do utilizador não é válido.';
+    ELSIF NOT EXISTS(SELECT * FROM utilizador WHERE utilizador.hashed_id = hashed_id_utilizador_param) THEN
+        RAISE EXCEPTION 'Ocorreu um erro ao verificar o utilizador.';
+    ELSE
+        SELECT utilizador.id_utlizador INTO id_utilizador_aux FROM utilizador WHERE utilizador.hashed_id = hashed_id_utilizador_param;
+    END IF;
+
+    SELECT requerimento.estado INTO estado_aux FROM requerimento WHERE requerimento.id_requerimento = id_requerimento_aux;
+
+    SELECT requerimento.email_preferencial INTO email_preferencial_aux FROM requerimento WHERE requerimento.id_requerimento = id_requerimento_aux;
+    IF email_preferencial_aux IS NULL OR email_preferencial_aux = '' THEN
+        email_preferencial_aux := (
+            SELECT utente.email_autenticacao FROM utente WHERE utente.id_utente = (
+                SELECT requerimento.id_utente FROM requerimento WHERE requerimento.id_requerimento = id_requerimento_aux
+            )
+        );
+    END IF;
+
+    SELECT utente.nome INTO nome_aux FROM utente WHERE utente.id_utente = (
+        SELECT requerimento.id_utente FROM requerimento WHERE requerimento.id_requerimento = id_requerimento_aux
+    );
+
+    IF motivo_rejeicao_param IS NULL OR motivo_rejeicao_param = '' THEN
+        RAISE EXCEPTION 'O motivo de rejeição não é válido.';
+    END IF;
+
+    IF estado_aux <> 0 THEN
+        RAISE EXCEPTION 'O requerimento não está no estado Pendente.';
+    END IF;
+
+    PERFORM alterar_estado_requerimento(hashed_id_requerimento_param, hashed_id_utilizador_param, 5);
+
+    UPDATE requerimento SET motivo_rejeicao = motivo_rejeicao_param WHERE requerimento.id_requerimento = id_requerimento_aux;
+
+    RETURN QUERY SELECT nome_aux, email_preferencial_aux;
+
+END;
+$$ LANGUAGE plpgsql;
+
+
+/**
     * Esta função permite avaliar um requerimento.
     * @param {String} hashed_id_requerimento - O identificador do requerimento a ser avaliado.
     * @param {String} hashed_id_utilizador - O identificador do utilizador a ser avaliado.
@@ -1279,7 +1352,9 @@ CREATE OR REPLACE FUNCTION agendar_consulta_requerimento(
     hashed_id_equipa_medica_param varchar(255)
 )
 RETURNS TABLE (
-    hashed_id_agendamento varchar(255)
+    hashed_id_agendamento varchar(255),
+    nome varchar(255),
+    email_preferencial varchar(255)
 ) AS $$
 DECLARE
     id_requerimento_aux integer;
@@ -1287,6 +1362,9 @@ DECLARE
     id_equipa_medica_aux integer;
     data_ageendamento_aux timestamp;
     estado_aux integer;
+    nome_aux varchar(255);
+    email_preferencial_aux varchar(255);
+    hashed_id_aux varchar(255);
 BEGIN
     
     IF hashed_id_requerimento_param IS NULL OR hashed_id_requerimento_param = '' THEN
@@ -1330,6 +1408,19 @@ BEGIN
         SELECT equipa_medica.id_equipa_medica INTO id_equipa_medica_aux FROM equipa_medica WHERE equipa_medica.hashed_id = hashed_id_equipa_medica_param;
     END IF;
 
+    SELECT requerimento.email_preferencial INTO email_preferencial_aux FROM requerimento WHERE requerimento.id_requerimento = id_requerimento_aux;
+    IF email_preferencial_aux IS NULL OR email_preferencial_aux = '' THEN
+        email_preferencial_aux := (
+            SELECT utente.email_autenticacao FROM utente WHERE utente.id_utente = (
+                SELECT requerimento.id_utente FROM requerimento WHERE requerimento.id_requerimento = id_requerimento_aux
+            )
+        );
+    END IF;
+
+    SELECT utente.nome INTO nome_aux FROM utente WHERE utente.id_utente = (
+        SELECT requerimento.id_utente FROM requerimento WHERE requerimento.id_requerimento = id_requerimento_aux
+    );
+
     INSERT INTO agendamento_consulta (
         id_requerimento,
         id_utilizador,
@@ -1346,7 +1437,9 @@ BEGIN
 
     PERFORM alterar_estado_requerimento(hashed_id_requerimento_param, hashed_id_utilizador_param, 4);
 
-    RETURN QUERY SELECT hashed_id FROM agendamento_consulta WHERE agendamento_consulta.id_requerimento = id_requerimento_aux;
+    SELECT hashed_id INTO hashed_id_aux FROM agendamento_consulta WHERE agendamento_consulta.id_requerimento = id_requerimento_aux; 
+
+    RETURN QUERY SELECT hashed_id_aux, nome_aux, email_preferencial_aux;
 
 END;
 $$ LANGUAGE plpgsql;
@@ -1971,10 +2064,81 @@ $$ LANGUAGE plpgsql;
 
 
 
+/**
+    * Esta função permite obter uma contagem de dados para o dashboard por utente.
+    * @param {String} hashed_id_utente - O identificador do utente a ser obtido.
+    * @returns {Table} Os dados obtidos.
+*/
+CREATE OR REPLACE FUNCTION listar_contagem_dashboard_por_utente(
+    hashed_id_utente varchar(255)
+)
+RETURNS TABLE (
+    total_requerimentos bigint,
+    total_requerimentos_validados bigint,
+    total_requerimentos_invalidos bigint,
+    total_requerimentos_agendados bigint
+)
+AS $$
+DECLARE
+    id_utente_aux integer;
+BEGIN
 
+    IF hashed_id_utente IS NULL OR hashed_id_utente = '' THEN
+        RAISE EXCEPTION 'O identificador do utente não é válido.';
+    ELSIF NOT EXISTS(SELECT * FROM utente WHERE utente.hashed_id = hashed_id_utente) THEN
+        RAISE EXCEPTION 'Ocorreu um erro ao verificar o utente.';
+    ELSE
+        SELECT utente.id_utente INTO id_utente_aux FROM utente WHERE utente.hashed_id = hashed_id_utente;
+    END IF;
 
+    RETURN QUERY
+    WITH estados AS (
+        SELECT 0 AS estado, 'Pendente' AS texto_estado
+        UNION ALL SELECT 1, 'Aguarda Avaliação'
+        UNION ALL SELECT 2, 'Avaliado'
+        UNION ALL SELECT 3, 'A Agendar'
+        UNION ALL SELECT 4, 'Agendado'
+        UNION ALL SELECT 5, 'Inválido'
+        UNION ALL SELECT 6, 'Cancelado'
+    )
+    SELECT
+        (
+            SELECT 
+                COUNT(r.id_requerimento) 
+            FROM requerimento r 
+            WHERE r.id_utente = id_utente_aux
+        ),
+        (
+            SELECT 
+                COUNT(r.id_requerimento) 
+            FROM requerimento r 
+            INNER JOIN avaliacao_requerimento ar ON r.id_requerimento = ar.id_requerimento 
+            WHERE r.id_utente = id_utente_aux AND r.estado > 0 AND r.estado <> 5 AND r.estado <> 6
+        ),
+        (
+            SELECT 
+                COUNT(r.id_requerimento) 
+            FROM requerimento r 
+            WHERE r.id_utente = id_utente_aux AND r.estado = 5
+        ),
+        (
+            SELECT 
+                COUNT(r.id_requerimento) 
+            FROM requerimento r 
+            INNER JOIN agendamento_consulta ac ON r.id_requerimento = ac.id_requerimento 
+            WHERE r.id_utente = id_utente_aux AND r.estado = 4
+        )
+    FROM
+        estados e
+        LEFT JOIN requerimento r ON e.estado = r.estado
+    GROUP BY
+        e.estado, e.texto_estado
+    ORDER BY
+        e.texto_estado DESC
+    LIMIT 1;
 
-
+END;
+$$ LANGUAGE plpgsql;
 
 
 

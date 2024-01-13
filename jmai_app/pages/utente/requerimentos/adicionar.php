@@ -446,7 +446,7 @@
                                     tries_distrito_residencia++;
                                 }, 200);
 
-                                toastr.success('Sinconização com o Registo Nacional de Utentes efetuada com sucesso!', 'Sucesso!');
+                                toastr.success('Sincronização com o Registo Nacional de Utentes efetuada com sucesso!', 'Sucesso!');
                             }
                         });
 

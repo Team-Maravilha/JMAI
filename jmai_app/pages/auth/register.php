@@ -7,7 +7,7 @@
                 position: relative;
             }
 
-            body::before {
+            /* body::before {
                 content: '';
                 position: absolute;
                 top: 0;
@@ -23,10 +23,34 @@
 
             [data-bs-theme="dark"] body::before {
                 background-image: url('<?php echo $link_home ?>assets/media/uploads/fundos/login.jpg');
+                object-fit: cover;
+            } */
+
+            .kt_background_image {
+                position: relative;
+            }
+
+            .kt_background_image::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                right: 0;
+                bottom: 0;
+                left: 0;
+                background-image: url('<?php echo $link_home ?>assets/media/uploads/fundos/login.jpg');
+                background-position: left;
+                background-size: cover !important;
+                opacity: 0.5;
+                z-index: -1;
+            }
+
+            [data-bs-theme="dark"] .kt_background_image::before {
+                background-image: url('<?php echo $link_home ?>assets/media/uploads/fundos/login.jpg');
+                object-fit: cover;
             }
         </style>
-        <div class="d-flex flex-column flex-column-fluid flex-lg-row">
-            <div class="d-flex flex-center w-lg-50 pt-15 pt-lg-0 px-10 ms-20">
+        <div class="d-flex flex-column flex-column-fluid flex-lg-row kt_background_image">
+            <div class="d-flex flex-center w-lg-50 pt-15 pt-lg-0 px-10 ms-20 d-none d-lg-flex">
                 <div class="d-flex flex-center flex-lg-start flex-column">
                     <a href="index.html" class="mb-7">
                         <img alt="Logo" class="mw-75" src="<?php echo $link_home ?>assets/media/uploads/logos/logo.svg" />
@@ -35,9 +59,10 @@
                 </div>
             </div>
 
-            <div class="d-flex flex-column-fluid flex-lg-row-auto justify-content-center justify-content-lg-end p-12 p-lg-20">
-                <div class="bg-body d-flex flex-column align-items-stretch flex-center rounded-4 w-md-600px p-20">
-                    <div class="d-flex flex-center flex-column flex-column-fluid px-lg-10">
+            <div class="d-flex flex-column-fluid flex-lg-row-auto justify-content-center justify-content-lg-end p-5 p-lg-20">
+                <div class="bg-body d-flex flex-column align-items-stretch flex-center rounded-4 w-md-600px p-md-20 py-15 px-10">
+                    <div class="d-flex flex-center flex-column flex-column-fluid px-lg-10 pb-15 pb-lg-20">
+                        <img alt="Logo" class="mw-75 mw-md-250px mb-10 d-block d-lg-none" src="<?php echo $link_home ?>assets/media/uploads/logos/logo.svg" />
                         <form class="form w-100" novalidate="novalidate" id="register-form">
                             <div class="text-center mb-11">
                                 <h1 class="text-gray-900 fs-2x text-dark-blue fw-bolder mb-3">Registar</h1>
